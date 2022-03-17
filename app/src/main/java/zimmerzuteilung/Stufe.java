@@ -1,11 +1,11 @@
 package zimmerzuteilung;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 public class Stufe {
     int stufe;
-    List<Klasse> klassen = new ArrayList<>();
+    Map<Klasse.BEZEICHNUNG, Klasse> klassen = new HashMap<>();
 
     Stufe(int stufe) throws IllegalArgumentException{
         if (stufe<9 || stufe>12){
@@ -15,8 +15,8 @@ public class Stufe {
         this.stufe = stufe;
     }
 
-    boolean klasseHinzufuegen(Klasse klasse){
-        for(Map.Entry<Klasse.enumKlasse, Klasse> eintrag : this.klassen.entrySet()){
+    boolean addKlasse(Klasse klasse){
+        for(Map.Entry<Klasse.BEZEICHNUNG, Klasse> eintrag : this.klassen.entrySet()){
             if(eintrag.getKey() == klasse.bezeichnung){
                 return false;
             }
@@ -25,4 +25,27 @@ public class Stufe {
         this.klassen.put(klasse.bezeichnung, klasse);
         return true;
     }
+
+    /*public void initKlassen() {
+        switch (this.stufe) {
+            case 9:
+                this.klassen.put(Klasse.BEZEICHNUNG.neunM, new Klasse(Klasse.BEZEICHNUNG.neunM));
+                this.klassen.put(Klasse.BEZEICHNUNG.neunS, new Klasse(Klasse.BEZEICHNUNG.neunS));
+                this.klassen.put(Klasse.BEZEICHNUNG.neunN, new Klasse(Klasse.BEZEICHNUNG.neunN));
+            case 10:
+                this.klassen.put(Klasse.BEZEICHNUNG.zehnM, new Klasse(Klasse.BEZEICHNUNG.zehnM));
+                this.klassen.put(Klasse.BEZEICHNUNG.zehnS, new Klasse(Klasse.BEZEICHNUNG.zehnS));
+                this.klassen.put(Klasse.BEZEICHNUNG.zehnN, new Klasse(Klasse.BEZEICHNUNG.zehnN));
+            case 11:
+                this.klassen.put(Klasse.BEZEICHNUNG.elfM, new Klasse(Klasse.BEZEICHNUNG.elfM));
+                this.klassen.put(Klasse.BEZEICHNUNG.elfS, new Klasse(Klasse.BEZEICHNUNG.elfS));
+                this.klassen.put(Klasse.BEZEICHNUNG.elfN, new Klasse(Klasse.BEZEICHNUNG.elfN));
+            case 12:
+                this.klassen.put(Klasse.BEZEICHNUNG.zwoelfM, new Klasse(Klasse.BEZEICHNUNG.zwoelfM));
+                this.klassen.put(Klasse.BEZEICHNUNG.zwoelfS, new Klasse(Klasse.BEZEICHNUNG.zwoelfS));
+                this.klassen.put(Klasse.BEZEICHNUNG.zwoelfN, new Klasse(Klasse.BEZEICHNUNG.zwoelfN));
+            default:
+                throw new IllegalArgumentException();
+        }
+    }*/
 }
