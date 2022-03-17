@@ -10,8 +10,8 @@ public class Schueler {
     public Schueler(String name, Geschlecht geschlecht, int stufe, Zweig zweig){
         this.name = name;
         this.geschlecht = geschlecht;
-        this.klasse = Klasse.findeOderErstelleKlasse(stufe, zweig);
-        this.klasse.schuelerHinzufuegen(this);
+        //this.klasse = Klasse.findeOderErstelleKlasse(stufe, zweig);
+        //this.klasse.schuelerHinzufuegen(this);
     }
 
 }

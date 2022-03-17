@@ -1,18 +1,18 @@
 package zimmerzuteilung;
 
-import java.util.Map;
-import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
-public class Zweig{
-    public enum enumZweig{
-        MUSIK, SPRACHEN, NAWI;
-    }    
+public class Stufe {
+    int stufe;
+    List<Klasse> klassen = new ArrayList<>();
 
-    enumZweig bezeichung;
-    Map<Klasse.enumKlasse, Klasse> klassen = new HashMap<>();
+    Stufe(int stufe) throws IllegalArgumentException{
+        if (stufe<9 || stufe>12){
+            throw new IllegalArgumentException();
+        }
 
-    Zweig(enumZweig bezeichnung){
-        this.bezeichung = bezeichnung;
+        this.stufe = stufe;
     }
 
     boolean klasseHinzufuegen(Klasse klasse){
