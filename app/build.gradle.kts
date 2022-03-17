@@ -26,7 +26,6 @@ dependencies {
     // import gurobi library:
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     
-    implementation("org.jetbrains:annotations:20.1.0")
 }
 
 application {
