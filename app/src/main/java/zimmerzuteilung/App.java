@@ -3,6 +3,8 @@
  */
 package zimmerzuteilung;
 
+import gurobi.*;
+
 public class App {
     public String getGreeting() {
         return "Hello World!";

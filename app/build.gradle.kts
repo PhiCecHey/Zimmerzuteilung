@@ -22,6 +22,11 @@ dependencies {
 
     // This dependency is used by the application.
     implementation("com.google.guava:guava:30.1.1-jre")
+
+    // import gurobi library:
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    
+    implementation("org.jetbrains:annotations:20.1.0")
 }
 
 application {
