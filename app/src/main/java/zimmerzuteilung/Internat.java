@@ -27,4 +27,9 @@ public class Internat {
         return true;
     }
 
+    public void initZimmer(){
+        // von config file lesen
+        // zimmer neu erstellen und zur map hinzufügen
+    }
+
 }
