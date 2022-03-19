@@ -5,15 +5,21 @@ import java.util.HashMap;
 
 public class Internat {
 
+    /*
     public enum BEZEICHNUNG{
         Klausur, II, III, Fueha, V, VI, VII;
     }
-
     BEZEICHNUNG bezeichnung;
-    Map<Integer, Zimmer> zimmer = new HashMap<>();
-
     Internat(BEZEICHNUNG bezeichnung){
         this.bezeichnung = bezeichnung;
+    }
+    */
+    
+    String name;
+    Map<Integer, Zimmer> zimmer = new HashMap<>();
+
+    Internat(String name){
+        this.name = name;
     }
 
     boolean addZimmer(Zimmer zimmer){

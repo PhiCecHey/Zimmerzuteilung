@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.UUID;
 
-import org.checkerframework.checker.units.qual.s;
 
 public class Zimmer {
     int nummer;

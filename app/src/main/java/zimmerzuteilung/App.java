@@ -3,6 +3,7 @@
  */
 package zimmerzuteilung;
 
+import java.util.*;
 import gurobi.*;
 
 public class App {
@@ -11,6 +12,12 @@ public class App {
     }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        Map<String, Integer> m = new HashMap<>();
+        m.put("test", 1);
+        m.put("test", 1);
+        System.out.println(m.get("test"));
+        int a = 3;
+
+
     }
 }

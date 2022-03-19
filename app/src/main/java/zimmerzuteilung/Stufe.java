@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class Stufe {
     int stufe;
-    Map<Klasse.BEZEICHNUNG, Klasse> klassen = new HashMap<>();
+    Map<String, Klasse> klassen = new HashMap<>();
 
     Stufe(int stufe) throws IllegalArgumentException{
         if (stufe<9 || stufe>12){
@@ -16,13 +16,13 @@ public class Stufe {
     }
 
     boolean addKlasse(Klasse klasse){
-        for(Map.Entry<Klasse.BEZEICHNUNG, Klasse> eintrag : this.klassen.entrySet()){
-            if(eintrag.getKey() == klasse.bezeichnung){
+        for(Map.Entry<String, Klasse> eintrag : this.klassen.entrySet()){
+            if(eintrag.getKey() == klasse.name){
                 return false;
             }
         }
 
-        this.klassen.put(klasse.bezeichnung, klasse);
+        this.klassen.put(klasse.name, klasse);
         return true;
     }
 

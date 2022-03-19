@@ -4,29 +4,36 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class Zweig {
+    /*
     public enum BEZEICHNUNG {
         MUSIK, SPRACHEN, NAWI;
     }
-
-    BEZEICHNUNG bezeichung;
+    BEZEICHNUNG bezeichung;    
     Map<Klasse.BEZEICHNUNG, Klasse> klassen = new HashMap<>();
-
     Zweig(BEZEICHNUNG bezeichnung) {
         this.bezeichung = bezeichnung;
     }
+    */
+
+    String name;
+    Map<String, Klasse> klassen = new HashMap<>();
+
+    Zweig(String name) {
+        this.name = name;
+    }
 
     boolean addKlasse(Klasse klasse){
-        for(Map.Entry<Klasse.BEZEICHNUNG, Klasse> eintrag : this.klassen.entrySet()){
-            if(eintrag.getKey() == klasse.bezeichnung){
+        for(Map.Entry<String, Klasse> eintrag : this.klassen.entrySet()){
+            if(eintrag.getKey() == klasse.name){
                 return false;
             }
         }
 
-        this.klassen.put(klasse.bezeichnung, klasse);
+        this.klassen.put(klasse.name, klasse);
         return true;
     }
 
-    public void initKlassen() {
+    /*public void initKlassen() {
         switch (this.bezeichung) {
             case MUSIK:
                 this.klassen.put(Klasse.BEZEICHNUNG.neunM, new Klasse(Klasse.BEZEICHNUNG.neunM));
@@ -46,6 +53,6 @@ public class Zweig {
             default:
                 throw new IllegalArgumentException();
         }
-    }
+    }*/
 
 }

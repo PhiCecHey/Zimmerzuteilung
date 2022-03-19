@@ -1,14 +1,12 @@
 package zimmerzuteilung;
 
-import java.util.List;
-import java.util.ArrayList;
-// import java.util.Map;
-// import java.util.HashMap;
+import java.util.Map;
+import java.util.HashMap;
 
 public class Schule {
-    static List<Stufe> stufen = new ArrayList<>();
-    static List<Zweig> zweige = new ArrayList<>();
-    //static Map<Klasse.BEZEICHNUNG, Klasse> klassen = new HashMap<>();
+    static Map<Integer, Stufe> stufen = new HashMap<>();
+    static Map<String, Zweig> zweige = new HashMap<>();
+    // static Map<String, Klasse> klassen = new HashMap<>();
 
     public static void initSchule() {
         Schule.initZweige();
@@ -17,102 +15,102 @@ public class Schule {
     }
 
     private static void initZweige() {
-        Schule.zweige.add(new Zweig(Zweig.BEZEICHNUNG.MUSIK));
-        Schule.zweige.add(new Zweig(Zweig.BEZEICHNUNG.SPRACHEN));
-        Schule.zweige.add(new Zweig(Zweig.BEZEICHNUNG.NAWI));
+        Schule.zweige.put("MUSIK", new Zweig("MUSIK"));
+        Schule.zweige.put("SPRACHEN", new Zweig("SPRACHEN"));
+        Schule.zweige.put("NAWI", new Zweig("NAWI"));
     }
 
     private static void initStufen() {
-        Schule.stufen.add(new Stufe(9));
-        Schule.stufen.add(new Stufe(10));
-        Schule.stufen.add(new Stufe(11));
-        Schule.stufen.add(new Stufe(12));
+        Schule.stufen.put(9, new Stufe(9));
+        Schule.stufen.put(10, new Stufe(10));
+        Schule.stufen.put(11, new Stufe(11));
+        Schule.stufen.put(12, new Stufe(12));
     }
 
     private static void initKlassen() {
         // 9:
-        Klasse m9 = new Klasse(Klasse.BEZEICHNUNG.neunM);
-        Klasse s9 = new Klasse(Klasse.BEZEICHNUNG.neunS);
-        Klasse n9 = new Klasse(Klasse.BEZEICHNUNG.neunN);
+        Klasse m9 = new Klasse9("9m");
+        Klasse s9 = new Klasse9("9s");
+        Klasse n9 = new Klasse9("9n");
 
-        // Schule.klassen.put(Klasse.BEZEICHNUNG.neunM, m9);
-        // Schule.klassen.put(Klasse.BEZEICHNUNG.neunS, s9);
-        // Schule.klassen.put(Klasse.BEZEICHNUNG.neunN, n9);
+        // Schule.klassen.put(Klasse.name.neunM, m9);
+        // Schule.klassen.put(Klasse.name.neunS, s9);
+        // Schule.klassen.put(Klasse.name.neunN, n9);
 
         // 10:
-        Klasse m10 = new Klasse(Klasse.BEZEICHNUNG.zehnM);
-        Klasse s10 = new Klasse(Klasse.BEZEICHNUNG.zehnS);
-        Klasse n10 = new Klasse(Klasse.BEZEICHNUNG.neunN);
+        Klasse m10 = new Klasse10("10m");
+        Klasse s10 = new Klasse10("10s");
+        Klasse n10 = new Klasse10("10n");
 
-        // Schule.klassen.put(Klasse.BEZEICHNUNG.zehnM, m10);
-        // Schule.klassen.put(Klasse.BEZEICHNUNG.zehnS, s10);
-        // Schule.klassen.put(Klasse.BEZEICHNUNG.zehnN, n10);
+        // Schule.klassen.put(Klasse.name.zehnM, m10);
+        // Schule.klassen.put(Klasse.name.zehnS, s10);
+        // Schule.klassen.put(Klasse.name.zehnN, n10);
 
         // 11:
-        Klasse m11 = new Klasse(Klasse.BEZEICHNUNG.elfM);
-        Klasse s11 = new Klasse(Klasse.BEZEICHNUNG.elfS);
-        Klasse n11 = new Klasse(Klasse.BEZEICHNUNG.elfN);
+        Klasse m11 = new Klasse11("11m");
+        Klasse s11 = new Klasse11("11s");
+        Klasse n11 = new Klasse11("11n");
 
-        // Schule.klassen.put(Klasse.BEZEICHNUNG.elfM, m11);
-        // Schule.klassen.put(Klasse.BEZEICHNUNG.elfS, s11);
-        // Schule.klassen.put(Klasse.BEZEICHNUNG.elfN, n11);
+        // Schule.klassen.put(Klasse.name.elfM, m11);
+        // Schule.klassen.put(Klasse.name.elfS, s11);
+        // Schule.klassen.put(Klasse.name.elfN, n11);
 
         // 12:
-        Klasse m12 = new Klasse(Klasse.BEZEICHNUNG.zwoelfM);
-        Klasse s12 = new Klasse(Klasse.BEZEICHNUNG.zwoelfS);
-        Klasse n12 = new Klasse(Klasse.BEZEICHNUNG.zwoelfN);
+        Klasse m12 = new Klasse12("12m");
+        Klasse s12 = new Klasse12("12s");
+        Klasse n12 = new Klasse12("12n");
 
-        // Schule.klassen.put(Klasse.BEZEICHNUNG.zwoelfM, m12);
-        // Schule.klassen.put(Klasse.BEZEICHNUNG.zwoelfS, s12);
-        // Schule.klassen.put(Klasse.BEZEICHNUNG.zwoelfN, n12);
+        // Schule.klassen.put(Klasse.name.zwoelfM, m12);
+        // Schule.klassen.put(Klasse.name.zwoelfS, s12);
+        // Schule.klassen.put(Klasse.name.zwoelfN, n12);
 
         // stufen:
-        for (Stufe s : Schule.stufen) {
-            switch (s.stufe) {
+        for (Map.Entry<Integer, Stufe> eintrag : Schule.stufen.entrySet()) {
+            switch (eintrag.getKey()) {
                 case 9:
-                    s.addKlasse(m9);
-                    s.addKlasse(s9);
-                    s.addKlasse(n9);
+                    eintrag.getValue().addKlasse(m9);
+                    eintrag.getValue().addKlasse(s9);
+                    eintrag.getValue().addKlasse(n9);
                     break;
                 case 10:
-                    s.addKlasse(m10);
-                    s.addKlasse(s10);
-                    s.addKlasse(n10);
+                    eintrag.getValue().addKlasse(m10);
+                    eintrag.getValue().addKlasse(s10);
+                    eintrag.getValue().addKlasse(n10);
                     break;
                 case 11:
-                    s.addKlasse(m11);
-                    s.addKlasse(s11);
-                    s.addKlasse(n11);
+                    eintrag.getValue().addKlasse(m11);
+                    eintrag.getValue().addKlasse(s11);
+                    eintrag.getValue().addKlasse(n11);
                     break;
                 case 12:
-                    s.addKlasse(m12);
-                    s.addKlasse(s12);
-                    s.addKlasse(n12);
+                    eintrag.getValue().addKlasse(m12);
+                    eintrag.getValue().addKlasse(s12);
+                    eintrag.getValue().addKlasse(n12);
                     break;
                 default:
                     throw new IllegalArgumentException();
             }
         }
 
-        for (Zweig z : zweige) {
-            switch (z.bezeichung) {
-                case MUSIK:
-                    z.addKlasse(m9);
-                    z.addKlasse(m10);
-                    z.addKlasse(m11);
-                    z.addKlasse(m12);
+        for (Map.Entry<String, Zweig> eintrag : Schule.zweige.entrySet()) {
+            switch (eintrag.getKey()) {
+                case "MUSIK":
+                    eintrag.getValue().addKlasse(m9);
+                    eintrag.getValue().addKlasse(m10);
+                    eintrag.getValue().addKlasse(m11);
+                    eintrag.getValue().addKlasse(m12);
                     break;
-                case SPRACHEN:
-                    z.addKlasse(s9);
-                    z.addKlasse(s10);
-                    z.addKlasse(s11);
-                    z.addKlasse(s12);
+                case "SPRACHEN":
+                    eintrag.getValue().addKlasse(s9);
+                    eintrag.getValue().addKlasse(s10);
+                    eintrag.getValue().addKlasse(s11);
+                    eintrag.getValue().addKlasse(s12);
                     break;
-                case NAWI:
-                    z.addKlasse(n9);
-                    z.addKlasse(n10);
-                    z.addKlasse(n11);
-                    z.addKlasse(n12);
+                case "NAWI":
+                    eintrag.getValue().addKlasse(n9);
+                    eintrag.getValue().addKlasse(n10);
+                    eintrag.getValue().addKlasse(n11);
+                    eintrag.getValue().addKlasse(n12);
                     break;
                 default:
                     throw new IllegalArgumentException();
