@@ -1,4 +1,4 @@
-package zimmerzuteilung;
+package zimmerzuteilung.objekte;
 
 public class Klasse9 extends Klasse{
 

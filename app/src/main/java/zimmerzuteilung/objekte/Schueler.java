@@ -1,4 +1,4 @@
-package zimmerzuteilung;
+package zimmerzuteilung.objekte;
 
 //import java.util.UUID;
 
