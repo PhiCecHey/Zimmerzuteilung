@@ -2,12 +2,11 @@ package zimmerzuteilung;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.UUID;
 
 
 public class Zimmer {
     int nummer;
-    Map<UUID, Schueler> bewohner = new HashMap<>();
+    Map<Integer, Schueler> bewohner = new HashMap<>();
 
     Zimmer(Internat internat, int nummer) throws IllegalArgumentException{
         if(nummer < 0){
@@ -18,7 +17,7 @@ public class Zimmer {
     }
 
     boolean addSchueler(Schueler schueler){
-        for(Map.Entry<UUID, Schueler> eintrag : this.bewohner.entrySet()){
+        for(Map.Entry<Integer, Schueler> eintrag : this.bewohner.entrySet()){
             if(eintrag.getKey() == schueler.ID){
                 return false;
             }
