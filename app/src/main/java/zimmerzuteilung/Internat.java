@@ -24,12 +24,12 @@ public class Internat {
 
     boolean addZimmer(Zimmer zimmer){
         for(Map.Entry<Integer, Zimmer> eintrag : this.zimmer.entrySet()){
-            if(eintrag.getKey() == zimmer.nummer){
+            if(eintrag.getKey() == zimmer.ID){
                 return false;
             }
         }
 
-        this.zimmer.put(zimmer.nummer, zimmer);
+        this.zimmer.put(zimmer.ID, zimmer);
         return true;
     }
 
