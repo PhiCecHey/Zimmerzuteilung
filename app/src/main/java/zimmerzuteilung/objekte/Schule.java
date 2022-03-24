@@ -4,8 +4,8 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class Schule {
-    static Map<Integer, Stufe> stufen = new HashMap<>();
-    static Map<String, Zweig> zweige = new HashMap<>();
+    public static Map<Integer, Stufe> stufen = new HashMap<>();
+    public static Map<String, Zweig> zweige = new HashMap<>();
     // static Map<String, Klasse> klassen = new HashMap<>();
 
     public static void initSchule() {

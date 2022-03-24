@@ -3,12 +3,21 @@
  */
 package zimmerzuteilung;
 
+import zimmerzuteilung.objekte.*;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Map;
 
 class AppTest {
     @Test void appHasAGreeting() {
         App classUnderTest = new App();
         assertNotNull(classUnderTest.getGreeting(), "app should have a greeting");
+    }
+
+    @Test void initSchule(){
+        Schule.initSchule();
+        assertEquals(Schule.stufen.size(), 4);
+        assertEquals(Schule.zweige.size(), 3);
     }
 }

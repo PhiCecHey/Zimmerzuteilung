@@ -5,6 +5,7 @@ package zimmerzuteilung;
 
 import java.util.*;
 import gurobi.*;
+import zimmerzuteilung.algorithmen.Gurobi;
 
 public class App {
     public String getGreeting() {
@@ -12,12 +13,8 @@ public class App {
     }
 
     public static void main(String[] args) {
-        Map<String, Integer> m = new HashMap<>();
-        m.put("test", 1);
-        m.put("test", 1);
-        System.out.println(m.get("test"));
-        int a = 3;
-
+     
+        Gurobi.main(args);
 
     }
 }

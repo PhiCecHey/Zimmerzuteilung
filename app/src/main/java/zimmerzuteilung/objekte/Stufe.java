@@ -4,10 +4,10 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class Stufe {
-    int stufe;
+    final int stufe;
     Map<String, Klasse> klassen = new HashMap<>();
 
-    Stufe(int stufe) throws IllegalArgumentException{
+    public Stufe(int stufe) throws IllegalArgumentException{
         if (stufe<9 || stufe>12){
             throw new IllegalArgumentException();
         }

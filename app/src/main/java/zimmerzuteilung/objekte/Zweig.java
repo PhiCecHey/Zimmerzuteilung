@@ -15,7 +15,7 @@ public class Zweig {
     }
     */
 
-    String name;
+    final String name;
     Map<String, Klasse> klassen = new HashMap<>();
 
     Zweig(String name) {

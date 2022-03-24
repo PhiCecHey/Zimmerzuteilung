@@ -5,24 +5,23 @@ import java.util.HashMap;
 
 
 public class Zimmer {
-    int ID;
+    static int anzahl = 0;
+
+    final int ID;
     String nummer;
     Map<Integer, Schueler> bewohner = new HashMap<>();
 
-    Zimmer(Internat internat, int ID) throws IllegalArgumentException{
-        if(ID < 0){
-            throw new IllegalArgumentException();
-        }
-        this.ID = ID;
+    Zimmer(Internat internat) throws IllegalArgumentException{
+        ++Zimmer.anzahl;
+        this.ID = Zimmer.anzahl;
+
         internat.addZimmer(this);
-        this.nummer = Integer.toString(this.ID);
     }
 
-    Zimmer(Internat internat, int ID, String nummer) throws IllegalArgumentException{
-        if(ID < 0){
-            throw new IllegalArgumentException();
-        }
-        this.ID = ID;
+    Zimmer(Internat internat, String nummer) throws IllegalArgumentException{
+        ++Zimmer.anzahl;
+        this.ID = Zimmer.anzahl;
+
         internat.addZimmer(this);
         this.nummer = nummer;
     }
