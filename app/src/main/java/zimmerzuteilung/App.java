@@ -3,7 +3,7 @@
  */
 package zimmerzuteilung;
 
-import java.util.*;
+//import java.util.*;
 import gurobi.*;
 import zimmerzuteilung.algorithmen.Gurobi;
 
@@ -13,7 +13,6 @@ public class App {
     }
 
     public static void main(String[] args) {
-     
         Gurobi.main(args);
 
     }

@@ -7,7 +7,7 @@ import zimmerzuteilung.objekte.*;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Map;
+//import java.util.Map;
 
 class AppTest {
     @Test void appHasAGreeting() {
