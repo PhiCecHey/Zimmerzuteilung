@@ -17,5 +17,6 @@ gradle-app.setting
 build
 
 .vscode
+.code-workspace
 bin
 .idea
