@@ -17,6 +17,9 @@ gradle-app.setting
 build
 
 .vscode
-.code-workspace
+*.code-workspace
 bin
 .idea
+
+rumspielen
+*.log
