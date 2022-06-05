@@ -26,6 +26,9 @@ dependencies {
     // import gurobi library:
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.0.1")
+
 }
 
 application {
