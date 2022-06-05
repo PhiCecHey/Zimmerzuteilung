@@ -11,9 +11,9 @@ public class Schueler {
     Vorteil zur randomID: verbraucht weniger Platz und ist effizienter im Vergleich. */
     static int anzahl = 0; 
 
-    String name;
-    Geschlecht geschlecht;
-    final int ID;
+    public final String name;
+    public final Geschlecht geschlecht;
+    public final int ID;
 
     public Schueler(String name, Geschlecht geschlecht){
         this.name = name;
