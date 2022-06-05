@@ -1,5 +1,7 @@
 package zimmerzuteilung.algorithmen;
 
+import zimmerzuteilung.objekte.*;
+import zimmerzuteilung.objekte.Schueler.Geschlecht;
 import gurobi.*;
 
 public class Gurobi {
@@ -13,51 +15,47 @@ public class Gurobi {
             model.set(GRB.StringAttr.ModelName, "zimmerzuteilung");
 
             // ------------------------- VARIABLES -------------------------
-            int s = 7, z = 3;
-            GRBVar[][] vars = new GRBVar[z][s]; // befindet sich schüler schon im zimmer? [Schüler][Zimmer]
+            int anzahlSchueler = 7, anzahlZimmer = 4;
 
-            for (int i = 0; i < z; i++) {
-                for (int j = 0; j < s; j++) {
-                    String st = "zuteilung_" + String.valueOf(i) + "_" + String.valueOf(j);
-                    vars[i][j] = model.addVar(0.0, 1.0, 0.0, GRB.BINARY, st);
+            Schueler[] arraySchueler = new Schueler[anzahlSchueler];
+            for (int s = 0; s < anzahlSchueler; ++s) {
+                if (s % 2 == 0) {
+                    arraySchueler[s] = new Schueler(Integer.toString(s), Geschlecht.m);
+                } else {
+                    arraySchueler[s] = new Schueler(Integer.toString(s), Geschlecht.w);
+                }
+            }
+
+            GRBVar[][] zimmerSchueler = new GRBVar[anzahlZimmer][anzahlSchueler]; // befindet sich schüler schon im
+            // zimmer?
+            // [Schüler][Zimmer]
+
+            for (int z = 0; z < anzahlZimmer; ++z) {
+                for (int s = 0; s < anzahlSchueler; ++s) {
+                    String st = "zuteilung_" + String.valueOf(z) + "_" + String.valueOf(s);
+                    zimmerSchueler[z][s] = model.addVar(0.0, 1.0, 0.0, GRB.BINARY, st);
                 }
             }
 
             // ------------------------ CONSTRAINTS ------------------------
             GRBLinExpr expr;
 
-            // jeder schüler darf nur in 1 zimmer / each value appears once per row
-            for (int i = 0; i < s; i++) {
-                expr = new GRBLinExpr();
-                for (int j = 0; j < z; j++) {
-                    expr.addTerm(1.0, vars[j][i]);
-                }
-                String st = "einZimmerProSchüler_" + String.valueOf(i);
-                model.addConstr(expr, GRB.EQUAL, 1.0, st);
-            }
-
-            // max 2 leute pro zimmer / each value apperas max twice per collumn
-            for (int i = 0; i < z; i++) {
-                expr = new GRBLinExpr();
-                for (int j = 0; j < s; j++) {
-                    expr.addTerm(1.0, vars[i][j]);
-                }
-                String st = "maxZweiSchülerProZimmer_" + String.valueOf(i);
-                model.addConstr(expr, GRB.LESS_EQUAL, 3.0, st);
-
-            }
+            einZimmerProSchueler(model, anzahlSchueler, anzahlZimmer, zimmerSchueler);
+            maxSchuelerProZimmer(model, anzahlSchueler, anzahlZimmer, zimmerSchueler);
+            keineGemischtenZimmer(model, anzahlSchueler, anzahlZimmer,
+                    zimmerSchueler, arraySchueler);
 
             // -------------------------- OPTIMIZE -------------------------
             model.optimize();
 
             // --------------------------- PRINT ---------------------------
-            double[][] x = model.get(GRB.DoubleAttr.X, vars);
+            double[][] x = model.get(GRB.DoubleAttr.X, zimmerSchueler);
 
             System.out.println("OUTPUT:");
-            for (int i = 0; i < z; i++) {
+            for (int z = 0; z < anzahlZimmer; z++) {
                 String str = "";
-                for (int j = 0; j < s; j++) {
-                    str += x[i][j] + "   ";
+                for (int s = 0; s < anzahlSchueler; s++) {
+                    str += x[z][s] + "   ";
                 }
                 System.out.println(str);
             }
@@ -71,4 +69,74 @@ public class Gurobi {
                     e.getMessage());
         }
     }
+
+    private static void einZimmerProSchueler(GRBModel model, int anzahlSchueler, int anzahlZimmer,
+            GRBVar[][] zimmerSchueler) {
+        try {
+            GRBLinExpr expr;
+
+            // jeder schüler darf nur in 1 zimmer / each value appears once per row
+            for (int s = 0; s < anzahlSchueler; ++s) {
+                expr = new GRBLinExpr();
+                for (int z = 0; z < anzahlZimmer; ++z) {
+                    expr.addTerm(1.0, zimmerSchueler[z][s]);
+                }
+                String st = "einZimmerProSchüler_" + String.valueOf(s);
+                model.addConstr(expr, GRB.EQUAL, 1.0, st);
+            }
+        } catch (GRBException e) {
+            System.out.println("Error code: " + e.getErrorCode() + ". " +
+                    e.getMessage());
+        }
+    }
+
+    private static void maxSchuelerProZimmer(GRBModel model, int anzahlSchueler, int anzahlZimmer,
+            GRBVar[][] zimmerSchueler) {
+        try {
+            GRBLinExpr expr;
+            int max = 3;
+            for (int z = 0; z < anzahlZimmer; ++z) {
+                expr = new GRBLinExpr();
+                for (int s = 0; s < anzahlSchueler; ++s) {
+                    expr.addTerm(1.0, zimmerSchueler[z][s]);
+                }
+                String st = "maxZweiSchülerProZimmer_" + String.valueOf(z);
+                model.addConstr(expr, GRB.LESS_EQUAL, max, st);
+            }
+        } catch (GRBException e) {
+            System.out.println("Error code: " + e.getErrorCode() + ". " +
+                    e.getMessage());
+        }
+    }
+
+    private static void keineGemischtenZimmer(GRBModel model, int anzahlSchueler, int anzahlZimmer,
+            GRBVar[][] zimmerSchueler, Schueler[] arraySchueler) {
+        try {
+            GRBLinExpr expr;
+            for (int s1 = 0; s1 < anzahlSchueler; ++s1) {
+                for (int s2 = 0; s2 < anzahlSchueler; ++s2) {
+                    for (int z = 0; z < anzahlZimmer; ++z) {
+                        expr = new GRBLinExpr();
+                        if (s1 != s2) {
+                            String st = "keineGemischtenZimmer_" + String.valueOf(z) + "_" + String.valueOf(s1) + "_"
+                                    + String.valueOf(s2);
+                            expr.addTerm(1, zimmerSchueler[z][s1]);
+                            expr.addTerm(1, zimmerSchueler[z][s2]);
+                            if (arraySchueler[s1].geschlecht.equals(arraySchueler[s2].geschlecht)) {
+                                // gleiches geschlecht
+                                model.addConstr(expr, GRB.LESS_EQUAL, 2, st);
+                            } else {
+                                // unterschiedliches geschlecht
+                                model.addConstr(expr, GRB.LESS_EQUAL, 1, st);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (GRBException e) {
+            System.out.println("Error code: " + e.getErrorCode() + ". " +
+                    e.getMessage());
+        }
+    }
+
 }
