@@ -3,7 +3,7 @@ package zimmerzuteilung.objekte;
 import java.util.Map;
 import java.util.HashMap;
 
-public class Class {
+class Class {
     public enum SPECIALIZATION {
         NAWI, MUSIK, SPRACHEN;
     }

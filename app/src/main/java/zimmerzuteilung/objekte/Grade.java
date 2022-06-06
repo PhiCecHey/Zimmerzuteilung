@@ -3,7 +3,7 @@ package zimmerzuteilung.objekte;
 import java.util.Map;
 import java.util.HashMap;
 
-public class Grade {
+class Grade {
     private int grade;
     private Map<Integer, Class> classes = new HashMap<>();
 

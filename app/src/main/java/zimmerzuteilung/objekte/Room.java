@@ -3,7 +3,7 @@ package zimmerzuteilung.objekte;
 import java.util.Map;
 import java.util.HashMap;
 
-public class Room {
+class Room {
     private static int count = 0;
 
     private final int id;
