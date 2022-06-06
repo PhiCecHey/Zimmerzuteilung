@@ -63,6 +63,10 @@ public class Room {
         return this.id;
     }
 
+    public int getCapacity(){
+        return this.capacity;
+    }
+
     @Override
     public String toString() {
         String string = "Room{id: " + this.id + ", number: " + this.number + 
