@@ -9,6 +9,8 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
+
+    id("org.jetbrains.kotlin.jvm") version "1.7.0-RC2"
 }
 
 repositories {
