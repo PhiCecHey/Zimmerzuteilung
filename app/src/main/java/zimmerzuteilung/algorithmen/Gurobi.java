@@ -90,8 +90,6 @@ public class Gurobi {
             Student[] aStudents, Room[] aRooms) {
         try {
             GRBLinExpr expr;
-
-            // jeder schüler darf nur in 1 zimmer / each value appears once per row
             for (int s = 0; s < aStudents.length; ++s) {
                 expr = new GRBLinExpr();
                 for (int z = 0; z < aRooms.length; ++z) {
@@ -110,14 +108,13 @@ public class Gurobi {
             Student[] aStudents, Room[] aRooms) {
         try {
             GRBLinExpr expr;
-            int max = 3;
             for (int z = 0; z < aRooms.length; ++z) {
                 expr = new GRBLinExpr();
                 for (int s = 0; s < aStudents.length; ++s) {
                     expr.addTerm(1.0, roomsStudents[z][s]);
                 }
                 String st = "maxStudentsPerRoom_" + String.valueOf(z);
-                model.addConstr(expr, GRB.LESS_EQUAL, max, st);
+                model.addConstr(expr, GRB.LESS_EQUAL, aRooms[z].getCapacity(), st);
             }
         } catch (GRBException e) {
             System.out.println("Error code: " + e.getErrorCode() + ". " +
