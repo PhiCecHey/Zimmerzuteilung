@@ -12,7 +12,7 @@ public class Class {
 
     private SPECIALIZATION specialization;
     private int id;
-    private Map<Integer, Student> studentsOfClass = new HashMap<>();
+    private Map<Integer, Student> students = new HashMap<>();
 
     public Class(final SPECIALIZATION special) {
         this.specialization = special;
@@ -28,8 +28,24 @@ public class Class {
         return this.specialization;
     }
 
+    Map<Integer, Student> getStudents(){
+        return this.students;
+    }
+
+    @Override
+    public String toString(){
+        String string = "Class{id: " + this.id + ", specialization: " + this.specialization;
+
+        for(Student student : this.students.values()){
+            string += student.toString() + ", ";
+        }
+
+        string += "}";
+        return string;
+    }
+
     Student findStudent(final Student student) {
-        for (var entry : this.studentsOfClass.entrySet()) {
+        for (var entry : this.students.entrySet()) {
             if (entry.getKey() == student.getId()) {
                 return entry.getValue();
             }
@@ -38,7 +54,7 @@ public class Class {
     }
 
     boolean containsStudent(final Student student) {
-        for (var entry : this.studentsOfClass.entrySet()) {
+        for (var entry : this.students.entrySet()) {
             if (entry.getKey() == student.getId()) {
                 return true;
             }
@@ -48,14 +64,10 @@ public class Class {
 
     boolean addStudent(final Student student) {
         if (this.findStudent(student) == null) {
-            this.studentsOfClass.put(student.getId(), student);
+            this.students.put(student.getId(), student);
             return true;
         }
         System.out.println("student already in class");
         return false;
-    }
-
-    Map<Integer, Student> getStudents(){
-        return this.studentsOfClass;
     }
 }

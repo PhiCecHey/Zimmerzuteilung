@@ -57,13 +57,21 @@ class Building {
         return this.id;
     }
 
-    public void initRooms() {
-        // von config file lesen
-        // zimmer neu erstellen und zur map hinzufügen
-    }
-
     Map<Integer, Room> getRooms() {
         return this.rooms;
     }
 
+    @Override
+    public String toString(){
+        String string = "Building{id: " + this.id + ", name: " + this.name + ", rooms: [";
+        for(Room room : this.rooms.values()){
+            string += room.toString() + ", ";
+        }        
+        return  string += "]}";
+    }
+
+    public void initRooms() {
+        // von config file lesen
+        // zimmer neu erstellen und zur map hinzufügen
+    }
 }

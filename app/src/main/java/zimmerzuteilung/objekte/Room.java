@@ -14,6 +14,9 @@ public class Room {
     Room(final Building building, final int c) throws IllegalArgumentException {
         this.id = Room.count;
         this.number = Integer.toString(this.id);
+        if (c < 1) {
+            throw new IllegalArgumentException("Capacity may not be < 1");
+        }
         this.capacity = c;
 
         building.addRoom(this);
@@ -23,6 +26,9 @@ public class Room {
     Room(final int c) throws IllegalArgumentException {
         this.id = Room.count;
         this.number = Integer.toString(this.id);
+        if (c < 1) {
+            throw new IllegalArgumentException("Capacity may not be < 1");
+        }
         this.capacity = c;
 
         ++Room.count;
@@ -32,6 +38,9 @@ public class Room {
             throws IllegalArgumentException {
         ++Room.count;
         this.id = Room.count;
+        if (c < 1) {
+            throw new IllegalArgumentException("Capacity may not be < 1");
+        }
         this.capacity = c;
 
         building.addRoom(this);
@@ -42,6 +51,9 @@ public class Room {
             throws IllegalArgumentException {
         ++Room.count;
         this.id = Room.count;
+        if (c < 1) {
+            throw new IllegalArgumentException("Capacity may not be < 1");
+        }
         this.capacity = c;
 
         this.number = n;
@@ -49,6 +61,19 @@ public class Room {
 
     public int getId() {
         return this.id;
+    }
+
+    @Override
+    public String toString() {
+        String string = "Room{id: " + this.id + ", number: " + this.number + 
+        ", capacity: " + this.capacity + ", roomMates: [";
+
+        for(Student student : this.roomMates.values()){
+            string += student.toString();
+        }
+        string += "]}";
+
+        return string;
     }
 
     boolean addStudent(final Student student) {

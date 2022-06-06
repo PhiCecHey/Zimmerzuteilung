@@ -15,6 +15,56 @@ public class School {
         this.initClasses();
     }
 
+    public Student[] getStudents() {
+        List<Student> lStudents = new LinkedList<>();
+        for (Grade grade : this.grades.values()) {
+            for (Class clas : grade.getClasses().values()) {
+                for (Student student : clas.getStudents().values()) {
+                    lStudents.add(student);
+                }
+            }
+        }
+        Student[] aStudents = new Student[lStudents.size()];
+        int i = 0;
+        for (Student student : lStudents) {
+            aStudents[i] = student;
+            ++i;
+        }
+        return aStudents;
+    }
+
+    public Room[] getRooms() {
+        List<Room> lRooms = new LinkedList<>();
+        for (Building building : this.buildings.values()) {
+            for (Room room : building.getRooms().values()) {
+                lRooms.add(room);
+            }
+        }
+        Room[] aRooms = new Room[lRooms.size()];
+        int i = 0;
+        for (Room room : lRooms) {
+            aRooms[i] = room;
+            ++i;
+        }
+        return aRooms;
+    }
+
+    @Override
+    public String toString() {
+        String string = "School{grades: [";
+
+        for(Grade grade : this.grades.values()){
+            string += grade.toString() + ", ";
+        }
+        string += "], buildings: [";
+
+        for(Building building : this.buildings.values()){
+            string += building.toString() + ", ";
+        }
+        string += "]}";
+        return string;
+    }
+
     private void initGrades() {
         this.grades.put(9, new Grade(9));
         this.grades.put(10, new Grade(10));
@@ -145,6 +195,8 @@ public class School {
 
         this.initRandomBuildingsWithRandomRooms(nBuildings,
                 minNRooms, maxNRooms, minCap, maxCap);
+
+        System.out.println(this.toString());
     }
 
     public int countStudents() {
@@ -167,39 +219,5 @@ public class School {
             }
         }
         return count;
-    }
-
-    public Student[] getStudents() {
-        List<Student> lStudents = new LinkedList<>();
-        for (Grade grade : this.grades.values()) {
-            for (Class clas : grade.getClasses().values()) {
-                for (Student student : clas.getStudents().values()) {
-                    lStudents.add(student);
-                }
-            }
-        }
-        Student[] aStudents = new Student[lStudents.size()];
-        int i = 0;
-        for (Student student : lStudents) {
-            aStudents[i] = student;
-            ++i;
-        }
-        return aStudents;
-    }
-
-    public Room[] getRooms() {
-        List<Room> lRooms = new LinkedList<>();
-        for (Building building : this.buildings.values()) {
-            for (Room room : building.getRooms().values()) {
-                lRooms.add(room);
-            }
-        }
-        Room[] aRooms = new Room[lRooms.size()];
-        int i = 0;
-        for (Room room : lRooms) {
-            aRooms[i] = room;
-            ++i;
-        }
-        return aRooms;
     }
 }

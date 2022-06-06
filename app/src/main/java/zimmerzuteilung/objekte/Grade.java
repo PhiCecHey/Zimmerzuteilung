@@ -19,13 +19,29 @@ class Grade {
         return this.classes;
     }
 
+    int getGrade(){
+        return this.grade;
+    }
+
+    @Override
+    public String toString(){
+        String string = "Grade{grade: " + this.grade + ", classes: [";
+
+        for(Class clas : this.classes.values()){
+            string += clas.toString() + ", ";
+        }
+
+        string += "]}";
+        return string;
+    }
+
     boolean addClass(final Class clas) {
         for (Map.Entry<Integer, Class> entry : this.classes.entrySet()) {
             if (entry.getKey() == clas.getId()) {
+                System.out.println("Class already in Grade!");
                 return false;
             }
         }
-
         this.classes.put(clas.getId(), clas);
         return true;
     }
@@ -37,9 +53,5 @@ class Grade {
             }
         }
         return null;
-    }
-
-    int getGrade(){
-        return this.grade;
     }
 }
