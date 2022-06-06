@@ -3,8 +3,8 @@
  */
 package zimmerzuteilung;
 
-//import java.util.*;
-import gurobi.*;
+import java.util.List;
+import java.util.ArrayList;
 import zimmerzuteilung.algorithmen.Gurobi;
 
 public class App {
@@ -13,7 +13,11 @@ public class App {
     }
 
     public static void main(String[] args) {
-        Gurobi.main(args);
+        List<Gurobi.CONSTRAINTS> constraints = new ArrayList<>();
+        constraints.add(Gurobi.CONSTRAINTS.maxStudentsPerRoom);
+        constraints.add(Gurobi.CONSTRAINTS.oneRoomPerStudent);
+        constraints.add(Gurobi.CONSTRAINTS.onlySameSex);
+        Gurobi.calculate(constraints, 7, 4);
 
     }
 }
