@@ -3,7 +3,7 @@ package zimmerzuteilung.objekte;
 import java.util.Map;
 import java.util.HashMap;
 
-public class Internat {
+public class Building {
 
     /*
      * public enum BEZEICHNUNG{
@@ -16,24 +16,24 @@ public class Internat {
      */
 
     private String name;
-    private Map<Integer, Zimmer> zimmer = new HashMap<>();
+    private Map<Integer, Room> rooms = new HashMap<>();
 
-    Internat(final String n) {
+    Building(final String n) {
         this.name = n;
     }
 
-    boolean addZimmer(Zimmer zimmer) {
-        for (Map.Entry<Integer, Zimmer> eintrag : this.zimmer.entrySet()) {
-            if (eintrag.getKey() == zimmer.getId()) {
+    boolean addRoom(Room room) {
+        for (Map.Entry<Integer, Room> entry : this.rooms.entrySet()) {
+            if (entry.getKey() == room.getId()) {
                 return false;
             }
         }
 
-        this.zimmer.put(zimmer.getId(), zimmer);
+        this.rooms.put(room.getId(), room);
         return true;
     }
 
-    public void initZimmer() {
+    public void initRooms() {
         // von config file lesen
         // zimmer neu erstellen und zur map hinzufügen
     }

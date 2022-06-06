@@ -3,26 +3,26 @@ package zimmerzuteilung.objekte;
 import java.util.Map;
 import java.util.HashMap;
 
-public class Stufe {
-    private int stufe;
-    private Map<String, Klasse> klassen = new HashMap<>();
+public class Grade {
+    private int grade;
+    private Map<Integer, Class> classes = new HashMap<>();
 
-    public Stufe(final int s) throws IllegalArgumentException {
-        if (s < 9 || s > 12) {
+    public Grade(final int g) throws IllegalArgumentException {
+        if (g < 9 || g > 12) {
             throw new IllegalArgumentException();
         }
 
-        this.stufe = s;
+        this.grade = g;
     }
 
-    boolean addKlasse(final Klasse klasse) {
-        for (Map.Entry<String, Klasse> eintrag : this.klassen.entrySet()) {
-            if (eintrag.getKey() == klasse.getName()) {
+    boolean addClass(final Class clas) {
+        for (Map.Entry<Integer, Class> entry : this.classes.entrySet()) {
+            if (entry.getKey() == clas.getId()) {
                 return false;
             }
         }
 
-        this.klassen.put(klasse.getName(), klasse);
+        this.classes.put(clas.getId(), clas);
         return true;
     }
 

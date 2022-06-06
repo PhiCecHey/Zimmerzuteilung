@@ -16,6 +16,6 @@ class AppTest {
     }
 
     @Test void initSchule(){
-        Schule.initSchule();
+        School.initSchule();
     }
 }

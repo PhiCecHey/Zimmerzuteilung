@@ -2,9 +2,9 @@ package zimmerzuteilung.objekte;
 
 //import java.util.UUID;
 
-public class Schueler {
-    public enum Geschlecht {
-        m, w, d
+public class Student {
+    public enum Sex {
+        m, f, d
     }
 
     /*
@@ -12,26 +12,26 @@ public class Schueler {
      * somit ihre ID. Vorteil zur randomID: verbraucht weniger Platz
      * und ist effizienter im Vergleich.
      */
-    private static int anzahl = 0;
+    private static int count = 0;
 
     private final String name;
-    private final Geschlecht geschlecht;
+    private final Sex sex;
     private final int id;
 
-    public Schueler(final String n, final Geschlecht g) {
+    public Student(final String n, final Sex g) {
         this.name = n;
-        this.geschlecht = g;
+        this.sex = g;
 
-        ++Schueler.anzahl; // der erste Schueler kriegt also Nr. 1
-        this.id = Schueler.anzahl;
+        ++Student.count; // der erste Schueler kriegt also Nr. 1
+        this.id = Student.count;
     }
 
     public int getId() {
         return this.id;
     }
 
-    public Geschlecht getGeschlecht() {
-        return this.geschlecht;
+    public Sex getSex() {
+        return this.sex;
     }
 
 }

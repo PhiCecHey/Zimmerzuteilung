@@ -1,7 +1,7 @@
 package zimmerzuteilung.algorithmen;
 
 import zimmerzuteilung.objekte.*;
-import zimmerzuteilung.objekte.Schueler.Geschlecht;
+import zimmerzuteilung.objekte.Student.Sex;
 import gurobi.*;
 
 public class Gurobi {
@@ -17,12 +17,12 @@ public class Gurobi {
             // ------------------------- VARIABLES -------------------------
             int anzahlSchueler = 7, anzahlZimmer = 4;
 
-            Schueler[] arraySchueler = new Schueler[anzahlSchueler];
+            Student[] arraySchueler = new Student[anzahlSchueler];
             for (int s = 0; s < anzahlSchueler; ++s) {
                 if (s % 2 == 0) {
-                    arraySchueler[s] = new Schueler(Integer.toString(s), Geschlecht.m);
+                    arraySchueler[s] = new Student(Integer.toString(s), Sex.m);
                 } else {
-                    arraySchueler[s] = new Schueler(Integer.toString(s), Geschlecht.w);
+                    arraySchueler[s] = new Student(Integer.toString(s), Sex.f);
                 }
             }
 
@@ -110,7 +110,7 @@ public class Gurobi {
     }
 
     private static void keineGemischtenZimmer(GRBModel model, int anzahlSchueler, int anzahlZimmer,
-            GRBVar[][] zimmerSchueler, Schueler[] arraySchueler) {
+            GRBVar[][] zimmerSchueler, Student[] arraySchueler) {
         try {
             GRBLinExpr expr;
             for (int s1 = 0; s1 < anzahlSchueler; ++s1) {
@@ -122,7 +122,7 @@ public class Gurobi {
                                     + String.valueOf(s2);
                             expr.addTerm(1, zimmerSchueler[z][s1]);
                             expr.addTerm(1, zimmerSchueler[z][s2]);
-                            if (arraySchueler[s1].getGeschlecht().equals(arraySchueler[s2].getGeschlecht())) {
+                            if (arraySchueler[s1].getSex().equals(arraySchueler[s2].getSex())) {
                                 // gleiches geschlecht
                                 model.addConstr(expr, GRB.LESS_EQUAL, 2, st);
                             } else {
