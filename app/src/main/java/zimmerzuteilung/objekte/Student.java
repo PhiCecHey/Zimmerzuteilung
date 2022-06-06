@@ -1,9 +1,9 @@
 package zimmerzuteilung.objekte;
 
-//import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Student {
-    public enum Sex {
+    public enum SEX {
         m, f, d
     }
 
@@ -15,10 +15,10 @@ public class Student {
     private static int count = 0;
 
     private final String name;
-    private final Sex sex;
+    private final SEX sex;
     private final int id;
 
-    public Student(final String n, final Sex g) {
+    public Student(final String n, final SEX g) {
         this.name = n;
         this.sex = g;
 
@@ -26,11 +26,26 @@ public class Student {
         this.id = Student.count;
     }
 
+    public Student() {
+        int randomNum = ThreadLocalRandom.current().nextInt(0, 3);
+        if (randomNum == 0) {
+            this.sex = Student.SEX.f;
+        } else if (randomNum == 1) {
+            this.sex = Student.SEX.m;
+        } else {
+            this.sex = Student.SEX.d;
+        }
+
+        ++Student.count; // der erste Schueler kriegt also Nr. 1
+        this.id = Student.count;
+        this.name = Integer.toString(this.id);
+    }
+
     public int getId() {
         return this.id;
     }
 
-    public Sex getSex() {
+    public SEX getSex() {
         return this.sex;
     }
 

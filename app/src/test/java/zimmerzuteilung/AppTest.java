@@ -15,7 +15,9 @@ class AppTest {
         assertNotNull(classUnderTest.getGreeting(), "app should have a greeting");
     }
 
-    @Test void initSchule(){
-        School.initSchule();
+    @Test void randomSchool(){
+        School school = new School();        
+        school.createRandomSchool(20);
+        
     }
 }

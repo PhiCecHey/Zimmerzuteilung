@@ -2,7 +2,7 @@ package zimmerzuteilung.algorithmen;
 
 import java.util.List;
 import zimmerzuteilung.objekte.*;
-import zimmerzuteilung.objekte.Student.Sex;
+import zimmerzuteilung.objekte.Student.SEX;
 import gurobi.*;
 
 public class Gurobi {
@@ -23,9 +23,9 @@ public class Gurobi {
             Student[] aStudents = new Student[nStudents];
             for (int s = 0; s < nStudents; ++s) {
                 if (s % 2 == 0) {
-                    aStudents[s] = new Student(Integer.toString(s), Sex.m);
+                    aStudents[s] = new Student(Integer.toString(s), SEX.m);
                 } else {
-                    aStudents[s] = new Student(Integer.toString(s), Sex.f);
+                    aStudents[s] = new Student(Integer.toString(s), SEX.f);
                 }
             }
 

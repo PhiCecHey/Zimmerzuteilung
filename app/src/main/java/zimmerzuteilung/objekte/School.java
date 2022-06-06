@@ -2,23 +2,24 @@ package zimmerzuteilung.objekte;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class School {
-    private static Map<Integer, Grade> grades = new HashMap<>();
+    private Map<Integer, Grade> grades = new HashMap<>();
 
-    public static void initSchule() {
-        School.initGrades();
-        School.initClasses();
+    public School() {
+        this.initGrades();
+        this.initClasses();
     }
 
-    private static void initGrades() {
-        School.grades.put(9, new Grade(9));
-        School.grades.put(10, new Grade(10));
-        School.grades.put(11, new Grade(11));
-        School.grades.put(12, new Grade(12));
+    private void initGrades() {
+        this.grades.put(9, new Grade(9));
+        this.grades.put(10, new Grade(10));
+        this.grades.put(11, new Grade(11));
+        this.grades.put(12, new Grade(12));
     }
 
-    private static void initClasses() {
+    private void initClasses() {
         // 9:
         Class m9 = new Class(Class.SPECIALIZATION.MUSIK);
         Class s9 = new Class(Class.SPECIALIZATION.SPRACHEN);
@@ -40,7 +41,7 @@ public class School {
         Class n12 = new Class(Class.SPECIALIZATION.NAWI);
 
         // stufen:
-        for (Map.Entry<Integer, Grade> entry : School.grades.entrySet()) {
+        for (var entry : this.grades.entrySet()) {
             switch (entry.getKey()) {
                 case 9:
                     entry.getValue().addClass(m9);
@@ -68,11 +69,73 @@ public class School {
         }
     }
 
-    public static boolean addStudent(final Student student, final Class clas) {
+    boolean addStudent(final Student student, final Class clas) {
         if (clas.containsStudent(student)) {
             return false;
         }
         clas.addStudent(student);
         return true;
     }
+
+    Class findClass(Class.SPECIALIZATION special, int grade) {
+        for (var entry : this.grades.entrySet()) {
+            if (entry.getValue().getGrade() == grade) {
+                return entry.getValue().getClass(special);
+            }
+        }
+        return null;
+    }
+
+    private Class findRandomClass() {
+        Class clas;
+        int randGrade = ThreadLocalRandom.current().nextInt(9, 13);
+        int randSpecial = ThreadLocalRandom.current().nextInt(0, 3);
+        Class.SPECIALIZATION special;
+
+        switch (randSpecial) {
+            case 0:
+                special = Class.SPECIALIZATION.MUSIK;
+                break;
+            case 1:
+                special = Class.SPECIALIZATION.SPRACHEN;
+                break;
+            case 2:
+                special = Class.SPECIALIZATION.NAWI;
+                break;
+            default:
+                special = Class.SPECIALIZATION.MUSIK;
+                System.out.println("Something went wrong: School get Random Class randSpecial");
+                break;
+        }
+
+        switch (randGrade) {
+            case 9:
+                clas = this.findClass(special, 9);
+                break;
+            case 10:
+                clas = this.findClass(special, 10);
+                break;
+            case 11:
+                clas = this.findClass(special, 11);
+                break;
+            case 12:
+                clas = this.findClass(special, 12);
+                break;
+            default:
+                clas = this.findClass(special, 9);
+                System.out.println("Something went wrong: School get Random Class randGrade");
+                break;
+        }
+
+        return clas;
+    }
+
+    public void createRandomSchool(int nStudents) {
+        for (int i = 0; i < nStudents; ++i) {
+            this.addStudent(new Student(), this.findRandomClass());
+        }
+    }
+
+    
+
 }
