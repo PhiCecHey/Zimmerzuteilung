@@ -1,8 +1,8 @@
 # Zimmerzuteilung
 
 Dependencies:
-Gurobi Optimizer: https://www.gurobi.com/products/gurobi-optimizer/
-Java 17
+1. Gurobi Optimizer: https://www.gurobi.com/products/gurobi-optimizer/
+2. Java 17
 
 How to run: 
 1. Clone repository
