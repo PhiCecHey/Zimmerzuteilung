@@ -18,7 +18,7 @@ public class Student {
     private final SEX sex;
     private final int id;
 
-    private final ThreeWishes wish;
+    private final ThreeWishes wish = null;
 
     public Student(final String n, final SEX g) {
         this.name = n;
