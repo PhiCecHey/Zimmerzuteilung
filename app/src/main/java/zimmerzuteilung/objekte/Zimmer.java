@@ -3,44 +3,48 @@ package zimmerzuteilung.objekte;
 import java.util.Map;
 import java.util.HashMap;
 
-
 public class Zimmer {
-    static int anzahl = 0;
+    private static int anzahl = 0;
 
-    final int ID;
-    String nummer;
-    int kapazitaet;
-    Map<Integer, Schueler> bewohner = new HashMap<>();
+    private final int id;
+    private String nummer;
+    private int kapazitaet;
+    private Map<Integer, Schueler> bewohner = new HashMap<>();
 
-    Zimmer(Internat internat, int kapazitaet) throws IllegalArgumentException{
+    Zimmer(final Internat i, final int k) throws IllegalArgumentException {
         ++Zimmer.anzahl;
-        this.ID = Zimmer.anzahl;
-        this.kapazitaet = kapazitaet;
+        this.id = Zimmer.anzahl;
+        this.kapazitaet = k;
 
-        internat.addZimmer(this);
+        i.addZimmer(this);
     }
 
-    Zimmer(Internat internat, String nummer, int kapazitaet) throws IllegalArgumentException{
+    Zimmer(final Internat internat, final String n, final int k)
+            throws IllegalArgumentException {
         ++Zimmer.anzahl;
-        this.ID = Zimmer.anzahl;
-        this.kapazitaet = kapazitaet;
+        this.id = Zimmer.anzahl;
+        this.kapazitaet = k;
 
         internat.addZimmer(this);
-        this.nummer = nummer;
+        this.nummer = n;
     }
 
-    boolean addSchueler(Schueler schueler){
-        if (this.kapazitaet <= this.bewohner.size()){
+    public int getId() {
+        return this.id;
+    }
+
+    boolean addSchueler(final Schueler schueler) {
+        if (this.kapazitaet <= this.bewohner.size()) {
             return false;
         }
 
-        for(Map.Entry<Integer, Schueler> eintrag : this.bewohner.entrySet()){
-            if(eintrag.getKey() == schueler.ID){
+        for (Map.Entry<Integer, Schueler> eintrag : this.bewohner.entrySet()) {
+            if (eintrag.getKey() == schueler.getId()) {
                 return false;
             }
         }
 
-        this.bewohner.put(schueler.ID, schueler);
+        this.bewohner.put(schueler.getId(), schueler);
         return true;
     }
 }

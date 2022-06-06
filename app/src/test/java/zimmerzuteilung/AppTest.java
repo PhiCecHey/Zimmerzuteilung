@@ -17,7 +17,5 @@ class AppTest {
 
     @Test void initSchule(){
         Schule.initSchule();
-        assertEquals(Schule.stufen.size(), 4);
-        assertEquals(Schule.zweige.size(), 3);
     }
 }

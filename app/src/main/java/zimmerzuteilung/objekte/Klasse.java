@@ -6,23 +6,27 @@ import java.util.UUID;
 
 public class Klasse {
     /*
-    public enum BEZEICHNUNG {
-        neunM, neunS, neunN,
-        zehnM, zehnS, zehnN,
-        elfM, elfS, elfN,
-        zwoelfM, zwoelfS, zwoelfN;
-    }
-    BEZEICHNUNG bezeichnung;
-    Klasse(BEZEICHNUNG bezeichnung){
-        this.bezeichnung = bezeichnung;
-    }
-    */
+     * public enum BEZEICHNUNG {
+     * neunM, neunS, neunN,
+     * zehnM, zehnS, zehnN,
+     * elfM, elfS, elfN,
+     * zwoelfM, zwoelfS, zwoelfN;
+     * }
+     * BEZEICHNUNG bezeichnung;
+     * Klasse(BEZEICHNUNG bezeichnung){
+     * this.bezeichnung = bezeichnung;
+     * }
+     */
 
-    String name;
-    Map<UUID, Schueler> schuelerDerKlasse = new HashMap<>();
+    private String name;
+    private Map<UUID, Schueler> schuelerDerKlasse = new HashMap<>();
 
-    Klasse(String name){
-        this.name = name;
+    Klasse(final String n) {
+        this.name = n;
     }
-    
+
+    public String getName() {
+        return this.name;
+    }
+
 }

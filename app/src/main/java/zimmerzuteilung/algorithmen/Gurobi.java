@@ -122,7 +122,7 @@ public class Gurobi {
                                     + String.valueOf(s2);
                             expr.addTerm(1, zimmerSchueler[z][s1]);
                             expr.addTerm(1, zimmerSchueler[z][s2]);
-                            if (arraySchueler[s1].geschlecht.equals(arraySchueler[s2].geschlecht)) {
+                            if (arraySchueler[s1].getGeschlecht().equals(arraySchueler[s2].getGeschlecht())) {
                                 // gleiches geschlecht
                                 model.addConstr(expr, GRB.LESS_EQUAL, 2, st);
                             } else {
