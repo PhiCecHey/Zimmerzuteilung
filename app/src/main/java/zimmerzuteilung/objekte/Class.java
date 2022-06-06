@@ -3,7 +3,7 @@ package zimmerzuteilung.objekte;
 import java.util.Map;
 import java.util.HashMap;
 
-class Class {
+public class Class {
     public enum SPECIALIZATION {
         NAWI, MUSIK, SPRACHEN;
     }
@@ -14,7 +14,7 @@ class Class {
     private int id;
     private Map<Integer, Student> studentsOfClass = new HashMap<>();
 
-    Class(final SPECIALIZATION special) {
+    public Class(final SPECIALIZATION special) {
         this.specialization = special;
         this.id = Class.count;
         ++Class.count;
@@ -30,7 +30,7 @@ class Class {
 
     Student findStudent(final Student student) {
         for (var entry : this.studentsOfClass.entrySet()) {
-            if (entry.getKey().equals(student.getId())) {
+            if (entry.getKey() == student.getId()) {
                 return entry.getValue();
             }
         }
@@ -39,7 +39,7 @@ class Class {
 
     boolean containsStudent(final Student student) {
         for (var entry : this.studentsOfClass.entrySet()) {
-            if (entry.getKey().equals(student.getId())) {
+            if (entry.getKey() == student.getId()) {
                 return true;
             }
         }
@@ -47,10 +47,15 @@ class Class {
     }
 
     boolean addStudent(final Student student) {
-        if (this.findStudent(student) != null) {
+        if (this.findStudent(student) == null) {
             this.studentsOfClass.put(student.getId(), student);
             return true;
         }
+        System.out.println("student already in class");
         return false;
+    }
+
+    Map<Integer, Student> getStudents(){
+        return this.studentsOfClass;
     }
 }

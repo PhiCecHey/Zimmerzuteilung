@@ -2,10 +2,13 @@ package zimmerzuteilung.objekte;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.LinkedList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class School {
     private Map<Integer, Grade> grades = new HashMap<>();
+    private Map<Integer, Building> buildings = new HashMap<>();
 
     public School() {
         this.initGrades();
@@ -69,21 +72,23 @@ public class School {
         }
     }
 
-    boolean addStudent(final Student student, final Class clas) {
-        if (clas.containsStudent(student)) {
-            return false;
-        }
-        clas.addStudent(student);
-        return true;
-    }
-
     Class findClass(Class.SPECIALIZATION special, int grade) {
         for (var entry : this.grades.entrySet()) {
             if (entry.getValue().getGrade() == grade) {
-                return entry.getValue().getClass(special);
+                return entry.getValue().findClass(special);
             }
         }
         return null;
+    }
+
+    private void initRandomBuildingsWithRandomRooms(int nBuildings,
+            int minNRooms, int maxNRooms, int minCap, int maxCap) {
+        for (int i = 0; i < nBuildings; ++i) {
+            int nRoom = ThreadLocalRandom.current().nextInt(minNRooms, maxNRooms + 1);
+            Building b = new Building();
+            b.addRandomRooms(nRoom, minCap, maxCap);
+            this.buildings.put(b.getId(), b);
+        }
     }
 
     private Class findRandomClass() {
@@ -130,12 +135,71 @@ public class School {
         return clas;
     }
 
-    public void createRandomSchool(int nStudents) {
+    public void createRandomSchool(int nStudents, int nBuildings,
+            int minNRooms, int maxNRooms, int minCap, int maxCap) {
         for (int i = 0; i < nStudents; ++i) {
-            this.addStudent(new Student(), this.findRandomClass());
+            Student student = new Student();
+            Class clas = this.findRandomClass();
+            clas.addStudent(student);
         }
+
+        this.initRandomBuildingsWithRandomRooms(nBuildings,
+                minNRooms, maxNRooms, minCap, maxCap);
     }
 
-    
+    public int countStudents() {
+        int count = 0;
+        for (Grade grade : this.grades.values()) {
+            for (Class clas : grade.getClasses().values()) {
+                for (Student student : clas.getStudents().values()) {
+                    ++count;
+                }
+            }
+        }
+        return count;
+    }
 
+    public int countRooms() {
+        int count = 0;
+        for (Building building : this.buildings.values()) {
+            for (Room room : building.getRooms().values()) {
+                ++count;
+            }
+        }
+        return count;
+    }
+
+    public Student[] getStudents() {
+        List<Student> lStudents = new LinkedList<>();
+        for (Grade grade : this.grades.values()) {
+            for (Class clas : grade.getClasses().values()) {
+                for (Student student : clas.getStudents().values()) {
+                    lStudents.add(student);
+                }
+            }
+        }
+        Student[] aStudents = new Student[lStudents.size()];
+        int i = 0;
+        for (Student student : lStudents) {
+            aStudents[i] = student;
+            ++i;
+        }
+        return aStudents;
+    }
+
+    public Room[] getRooms() {
+        List<Room> lRooms = new LinkedList<>();
+        for (Building building : this.buildings.values()) {
+            for (Room room : building.getRooms().values()) {
+                lRooms.add(room);
+            }
+        }
+        Room[] aRooms = new Room[lRooms.size()];
+        int i = 0;
+        for (Room room : lRooms) {
+            aRooms[i] = room;
+            ++i;
+        }
+        return aRooms;
+    }
 }

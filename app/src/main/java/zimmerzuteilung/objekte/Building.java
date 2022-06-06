@@ -2,6 +2,7 @@ package zimmerzuteilung.objekte;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 class Building {
 
@@ -15,11 +16,23 @@ class Building {
      * }
      */
 
+    private static int count = 0;
+
+    private int id;
     private String name;
     private Map<Integer, Room> rooms = new HashMap<>();
 
     Building(final String n) {
         this.name = n;
+
+        this.id = Building.count;
+        ++Building.count;
+    }
+
+    Building() {
+        this.id = Building.count;
+        this.name = Integer.toString(this.id);
+        ++Building.count;
     }
 
     boolean addRoom(Room room) {
@@ -33,9 +46,24 @@ class Building {
         return true;
     }
 
+    public void addRandomRooms(int nRooms, int minCapacity, int maxCapacity) {
+        for (int i = 0; i < nRooms; ++i) {
+            int randCap = ThreadLocalRandom.current().nextInt(minCapacity, maxCapacity + 1);
+            this.addRoom(new Room(randCap));
+        }
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
     public void initRooms() {
         // von config file lesen
         // zimmer neu erstellen und zur map hinzufügen
+    }
+
+    Map<Integer, Room> getRooms() {
+        return this.rooms;
     }
 
 }

@@ -10,8 +10,9 @@ public class Gurobi {
         oneRoomPerStudent, maxStudentsPerRoom, onlySameSex;
     }
 
-    public static void calculate(List<Gurobi.CONSTRAINTS> constraints,
-            int nStudents, int nRooms) {
+    public static void calculate(List<Gurobi.CONSTRAINTS> constraints, School school) {
+        Student[] aStudents = school.getStudents();
+        Room[] aRooms = school.getRooms();
 
         try {
             // --------------------------- MODEL ---------------------------
@@ -20,19 +21,11 @@ public class Gurobi {
             model.set(GRB.StringAttr.ModelName, "zimmerzuteilung");
 
             // ------------------------- VARIABLES -------------------------
-            Student[] aStudents = new Student[nStudents];
-            for (int s = 0; s < nStudents; ++s) {
-                if (s % 2 == 0) {
-                    aStudents[s] = new Student(Integer.toString(s), SEX.m);
-                } else {
-                    aStudents[s] = new Student(Integer.toString(s), SEX.f);
-                }
-            }
 
-            GRBVar[][] roomsStudents = new GRBVar[nRooms][nStudents]; // zuordnung
+            GRBVar[][] roomsStudents = new GRBVar[aRooms.length][aStudents.length]; // zuordnung
 
-            for (int z = 0; z < nRooms; ++z) {
-                for (int s = 0; s < nStudents; ++s) {
+            for (int z = 0; z < aRooms.length; ++z) {
+                for (int s = 0; s < aStudents.length; ++s) {
                     String st = "zuteilung_" + String.valueOf(z) + "_" + String.valueOf(s);
                     roomsStudents[z][s] = model.addVar(0.0, 1.0, 0.0, GRB.BINARY, st);
                 }
@@ -40,8 +33,7 @@ public class Gurobi {
 
             // ------------------------ CONSTRAINTS ------------------------
 
-            Gurobi.addConstraints(constraints, model, nStudents, nRooms,
-                    roomsStudents, aStudents);
+            Gurobi.addConstraints(constraints, model, roomsStudents, aStudents, aRooms);
 
             // -------------------------- OPTIMIZE -------------------------
             model.optimize();
@@ -50,9 +42,9 @@ public class Gurobi {
             double[][] x = model.get(GRB.DoubleAttr.X, roomsStudents);
 
             System.out.println("OUTPUT:");
-            for (int r = 0; r < nRooms; r++) {
+            for (int r = 0; r < aRooms.length; r++) {
                 String str = "";
-                for (int s = 0; s < nStudents; s++) {
+                for (int s = 0; s < aStudents.length; s++) {
                     str += x[r][s] + "   ";
                 }
                 System.out.println(str);
@@ -69,42 +61,40 @@ public class Gurobi {
     }
 
     private static boolean addConstraints(List<Gurobi.CONSTRAINTS> constraints,
-            GRBModel model, int nStudents, int nRooms, GRBVar[][] roomsStudents,
-            Student[] aStudents) {
+            GRBModel model, GRBVar[][] roomsStudents, Student[] aStudents, Room[] aRooms) {
         boolean everythingWorked = true;
         for (var c : constraints) {
-            Gurobi.addConstraintToModel(c, model, nStudents, nRooms, roomsStudents, aStudents);
+            Gurobi.addConstraintToModel(c, model, roomsStudents, aStudents, aRooms);
         }
         return everythingWorked;
     }
 
     private static boolean addConstraintToModel(Gurobi.CONSTRAINTS constraint,
-            GRBModel model, int nStudents, int nRooms, GRBVar[][] roomsStudents,
-            Student[] aStudents) {
+            GRBModel model, GRBVar[][] roomsStudents, Student[] aStudents, Room[] aRooms) {
         switch (constraint) {
             case oneRoomPerStudent:
-                oneRoomPerStudent(model, nStudents, nRooms, roomsStudents);
+                oneRoomPerStudent(model, roomsStudents, aStudents, aRooms);
                 return true;
             case maxStudentsPerRoom:
-                maxStudentsPerRoom(model, nStudents, nRooms, roomsStudents);
+                maxStudentsPerRoom(model, roomsStudents, aStudents, aRooms);
                 return true;
             case onlySameSex:
-                onlySameSex(model, nStudents, nRooms, roomsStudents, aStudents);
+                onlySameSex(model, roomsStudents, aStudents, aRooms);
                 return true;
             default:
                 return false;
         }
     }
 
-    private static void oneRoomPerStudent(GRBModel model, int nStudents, int nRooms,
-            GRBVar[][] roomsStudents) {
+    private static void oneRoomPerStudent(GRBModel model, GRBVar[][] roomsStudents,
+            Student[] aStudents, Room[] aRooms) {
         try {
             GRBLinExpr expr;
 
             // jeder schüler darf nur in 1 zimmer / each value appears once per row
-            for (int s = 0; s < nStudents; ++s) {
+            for (int s = 0; s < aStudents.length; ++s) {
                 expr = new GRBLinExpr();
-                for (int z = 0; z < nRooms; ++z) {
+                for (int z = 0; z < aRooms.length; ++z) {
                     expr.addTerm(1.0, roomsStudents[z][s]);
                 }
                 String st = "oneRoomPerStudent_" + String.valueOf(s);
@@ -116,14 +106,14 @@ public class Gurobi {
         }
     }
 
-    private static void maxStudentsPerRoom(GRBModel model, int nStudents, int nRooms,
-            GRBVar[][] roomsStudents) {
+    private static void maxStudentsPerRoom(GRBModel model, GRBVar[][] roomsStudents,
+            Student[] aStudents, Room[] aRooms) {
         try {
             GRBLinExpr expr;
             int max = 3;
-            for (int z = 0; z < nRooms; ++z) {
+            for (int z = 0; z < aRooms.length; ++z) {
                 expr = new GRBLinExpr();
-                for (int s = 0; s < nStudents; ++s) {
+                for (int s = 0; s < aStudents.length; ++s) {
                     expr.addTerm(1.0, roomsStudents[z][s]);
                 }
                 String st = "maxStudentsPerRoom_" + String.valueOf(z);
@@ -135,20 +125,20 @@ public class Gurobi {
         }
     }
 
-    private static void onlySameSex(GRBModel model, int nStudents, int nRooms,
-            GRBVar[][] roomsStudents, Student[] aStudents) {
+    private static void onlySameSex(GRBModel model, GRBVar[][] roomsStudents,
+            Student[] aStudents, Room[] aRooms) {
         try {
             GRBLinExpr expr;
-            for (int s1 = 0; s1 < nStudents; ++s1) {
-                for (int s2 = 0; s2 < nStudents; ++s2) {
-                    for (int z = 0; z < nRooms; ++z) {
+            for (int s1 = 0; s1 < aStudents.length; ++s1) {
+                for (int s2 = 0; s2 < aStudents.length; ++s2) {
+                    for (int z = 0; z < aRooms.length; ++z) {
                         expr = new GRBLinExpr();
                         if (s1 != s2) {
                             String st = "onlySameSex_" + String.valueOf(z) + "_" + String.valueOf(s1) + "_"
                                     + String.valueOf(s2);
                             expr.addTerm(1, roomsStudents[z][s1]);
                             expr.addTerm(1, roomsStudents[z][s2]);
-                            if (aStudents[s1].getSex().equals(aStudents[s2].getSex())) {
+                            if (aStudents[s1].getSex() == aStudents[s2].getSex()) {
                                 // gleiches geschlecht
                                 model.addConstr(expr, GRB.LESS_EQUAL, 2, st);
                             } else {

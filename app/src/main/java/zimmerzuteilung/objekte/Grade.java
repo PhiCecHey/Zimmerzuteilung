@@ -7,7 +7,7 @@ class Grade {
     private int grade;
     private Map<Integer, Class> classes = new HashMap<>();
 
-    public Grade(final int g) throws IllegalArgumentException {
+    Grade(final int g) throws IllegalArgumentException {
         if (g < 9 || g > 12) {
             throw new IllegalArgumentException();
         }
@@ -15,7 +15,7 @@ class Grade {
         this.grade = g;
     }
 
-    public Map<Integer, Class> getClasses() {
+    Map<Integer, Class> getClasses() {
         return this.classes;
     }
 
@@ -30,16 +30,16 @@ class Grade {
         return true;
     }
 
-    public Class getClass(Class.SPECIALIZATION special) {
+    Class findClass(Class.SPECIALIZATION special) {
         for (var entry : this.classes.entrySet()) {
-            if (entry.getValue().getSpecialization().equals(special)) {
+            if (entry.getValue().getSpecialization() == special) {
                 return entry.getValue();
             }
         }
         return null;
     }
 
-    public int getGrade(){
+    int getGrade(){
         return this.grade;
     }
 }

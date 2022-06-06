@@ -3,7 +3,7 @@ package zimmerzuteilung.objekte;
 import java.util.Map;
 import java.util.HashMap;
 
-class Room {
+public class Room {
     private static int count = 0;
 
     private final int id;
@@ -11,21 +11,39 @@ class Room {
     private int capacity;
     private Map<Integer, Student> roomMates = new HashMap<>();
 
-    Room(final Building i, final int k) throws IllegalArgumentException {
-        ++Room.count;
+    Room(final Building building, final int c) throws IllegalArgumentException {
         this.id = Room.count;
-        this.capacity = k;
+        this.number = Integer.toString(this.id);
+        this.capacity = c;
 
-        i.addRoom(this);
+        building.addRoom(this);
+        ++Room.count;
     }
 
-    Room(final Building internat, final String n, final int k)
+    Room(final int c) throws IllegalArgumentException {
+        this.id = Room.count;
+        this.number = Integer.toString(this.id);
+        this.capacity = c;
+
+        ++Room.count;
+    }
+
+    Room(final Building building, final String n, final int c)
             throws IllegalArgumentException {
         ++Room.count;
         this.id = Room.count;
-        this.capacity = k;
+        this.capacity = c;
 
-        internat.addRoom(this);
+        building.addRoom(this);
+        this.number = n;
+    }
+
+    Room(final String n, final int c)
+            throws IllegalArgumentException {
+        ++Room.count;
+        this.id = Room.count;
+        this.capacity = c;
+
         this.number = n;
     }
 

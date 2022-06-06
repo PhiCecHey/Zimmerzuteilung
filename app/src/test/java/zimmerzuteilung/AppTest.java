@@ -16,8 +16,6 @@ class AppTest {
     }
 
     @Test void randomSchool(){
-        School school = new School();        
-        school.createRandomSchool(20);
-        
+        School school = new School();           
     }
 }
