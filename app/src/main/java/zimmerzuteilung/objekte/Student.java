@@ -18,6 +18,8 @@ public class Student {
     private final SEX sex;
     private final int id;
 
+    private final ThreeWishes wish;
+
     public Student(final String n, final SEX g) {
         this.name = n;
         this.sex = g;
