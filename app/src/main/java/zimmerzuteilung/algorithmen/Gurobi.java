@@ -66,21 +66,24 @@ public class Gurobi {
 
             // =============================== PRINT ===============================
 
-            GRBVar[][] grbVars = new GRBVar[aRooms.length][aStudents.length];
-
-            for (int r = 0; r < aRooms.length; ++r) {
-                for (int s = 0; s < aStudents.length; ++s) {
-                    grbVars[r][s] = roomsStudents[r][s].grbvar;
-                }
-            }
-
+            GRBVar[][] grbVars = Gurobi.getGRBVars(roomsStudents,
+                    aRooms.length, aStudents.length);
             double[][] x = model.get(GRB.DoubleAttr.X, grbVars);
 
-            System.out.println("OUTPUT:");
+            System.out.println("\n===================== ALLOCATION =====================");
             for (int r = 0; r < aRooms.length; r++) {
                 String str = "";
                 for (int s = 0; s < aStudents.length; s++) {
                     str += x[r][s] + "   ";
+                }
+                System.out.println(str);
+            }
+
+            System.out.println("\n==================== SCORE MATRIX ====================");
+            for (int r = 0; r < aRooms.length; ++r) {
+                String str = "";
+                for (int s = 0; s < aStudents.length; ++s) {
+                    str += scoreMatrix[r][s] + " ";
                 }
                 System.out.println(str);
             }
@@ -202,6 +205,16 @@ public class Gurobi {
         return scoreMatrix;
     }
 
+    private static GRBVar[][] getGRBVars(Combination[][] roomsStudents, int nRooms, int nStudents) {
+        GRBVar[][] grbvars = new GRBVar[nRooms][nStudents];
+        for (int r = 0; r < nRooms; ++r) {
+            for (int s = 0; s < nStudents; ++s) {
+                grbvars[r][s] = roomsStudents[r][s].grbvar;
+            }
+        }
+        return grbvars;
+    }
+
     private static GRBLinExpr calculateObjectiveLinExpr(Combination[][] roomsStudents,
             double[][] scoreMatrix, int nRooms, int nStudents) {
         GRBLinExpr objective = new GRBLinExpr();
@@ -215,8 +228,8 @@ public class Gurobi {
 
     private static double[][] calculateScores(Combination[][] roomsStudents,
             int nRooms, int nStudents) {
-                roomsStudents[0][0].score = 10000;
-
+        roomsStudents[0][0].score = 2;
+        roomsStudents[1][1].score = 7;
 
         return Gurobi.getScoreMatrix(roomsStudents, nRooms, nStudents);
     }
