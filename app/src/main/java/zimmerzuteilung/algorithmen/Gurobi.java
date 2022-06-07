@@ -13,6 +13,7 @@ public class Gurobi {
         GRBVar grbvar;
         Student student;
         Room room;
+        double score = 1;
 
         Combination(GRBVar g, Room r, Student s) {
             this.grbvar = g;
@@ -45,18 +46,13 @@ public class Gurobi {
                 }
             }
 
-            double[][] scoreMatrix = new double[aRooms.length][aStudents.length];
-            for (int r = 0; r < aRooms.length; ++r) {
-                for (int s = 0; s < aStudents.length; ++s) {
-                    scoreMatrix[r][s] = 1;
-                }
-            }
-
             // ============================= OBJECTIVE =============================
 
-            Gurobi.calculateScoreMatrix(aStudents, aRooms);
+            double[][] scoreMatrix = Gurobi.calculateScoreMatrix(roomsStudents, aStudents, aRooms);
+
             GRBLinExpr objective = Gurobi.calculateObjectiveLinExpr(roomsStudents,
                     scoreMatrix, aStudents.length, aRooms.length);
+
             model.setObjective(objective, GRB.MAXIMIZE);
 
             // ============================ CONSTRAINTS ============================
@@ -195,26 +191,30 @@ public class Gurobi {
 
     // ================================= OBJECTIVE =================================
 
-    private static GRBLinExpr calculateObjectiveLinExpr(Combination[][] roomsStudents,
-            double[][] scoreMatrix, int nStudents, int nRooms) {
-
-        GRBLinExpr objective = new GRBLinExpr();
-
-        for (int r = 0; r < nStudents; ++r) {
-            for (int s = 0; s < nRooms; ++s) {
-                try {
-                    objective.addTerm(scoreMatrix[r][s], roomsStudents[r][s].grbvar);
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
+    private static double[][] getScoreMatrix(Combination[][] roomsStudents, int nRooms, int nStudents) {
+        double[][] scoreMatrix = new double[nRooms][nStudents];
+        for (int r = 0; r < nRooms; ++r) {
+            for (int s = 0; s < nStudents; ++s) {
+                scoreMatrix[r][s] = roomsStudents[r][s].score;
             }
         }
+        return scoreMatrix;
+    }
 
+    private static GRBLinExpr calculateObjectiveLinExpr(Combination[][] roomsStudents,
+            double[][] scoreMatrix, int nStudents, int nRooms) {
+        GRBLinExpr objective = new GRBLinExpr();
+        for (int r = 0; r < nRooms; ++r) {
+            for (int s = 0; s < nStudents; ++s) {
+                objective.addTerm(scoreMatrix[r][s], roomsStudents[r][s].grbvar);
+            }
+        }
         return objective;
     }
 
-    private static double[][] calculateScoreMatrix(Student[] aStudents, Room[] aRooms) {
-        double[][] scoreMatrix = new double[aRooms.length][aStudents.length];
+    private static double[][] calculateScoreMatrix(Combination[][] roomsStudents,
+            Student[] aStudents, Room[] aRooms) {
+        double[][] scoreMatrix = getScoreMatrix(roomsStudents, aRooms.length, aStudents.length);
 
         return scoreMatrix;
     }
