@@ -19,13 +19,13 @@ public class Gurobi {
         Room[] aRooms = school.getRooms();
 
         try {
-            // ========================= MODEL ==========================
+            // ============================= MODEL =============================
 
             GRBEnv env = new GRBEnv();
             GRBModel model = new GRBModel(env);
             model.set(GRB.StringAttr.ModelName, "zimmerzuteilung");
 
-            // ======================== VARIABLES =======================
+            // =========================== VARIABLES ===========================
 
             // zuordnung
             Allocations allocations = new Allocations(aRooms.length,
@@ -240,7 +240,7 @@ public class Gurobi {
         for (int r = 0; r < allocations.nRooms(); ++r) {
             for (int s = 0; s < allocations.nStudents(); ++s) {
                 Room room = allocations.get(r, s).room();
-                Student student = allocations.get(r, s).student();
+                Student student = allocations.get(r, s).suspect();
                 Wish wish = student.getWish();
 
                 if (roomScores.length != wish.rooms().length) {
@@ -261,7 +261,7 @@ public class Gurobi {
             final float[] mateScores) throws ArrayIndexOutOfBoundsException {
         for (int r = 0; r < allocations.nRooms(); ++r) {
             for (int s1 = 0; s1 < allocations.nStudents(); ++s1) {
-                Student student1 = allocations.get(r, s1).student();
+                Student student1 = allocations.get(r, s1).suspect();
                 Wish wish = student1.getWish();
 
                 if (mateScores.length != wish.mates().length) {
