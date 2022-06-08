@@ -15,10 +15,10 @@ public class App {
     }
 
     public static void main(String[] args) {
-        List<Gurobi.CONSTRAINTS> constraints = new ArrayList<>();
-        constraints.add(Gurobi.CONSTRAINTS.maxStudentsPerRoom);
-        constraints.add(Gurobi.CONSTRAINTS.oneRoomPerStudent);
-        constraints.add(Gurobi.CONSTRAINTS.onlySameSex);
+        List<Gurobi.RULES> constraints = new ArrayList<>();
+        constraints.add(Gurobi.RULES.maxStudentsPerRoom);
+        constraints.add(Gurobi.RULES.oneRoomPerStudent);
+        constraints.add(Gurobi.RULES.onlySameSex);
 
         School school = new School();
         school.createRandomSchool(5, 2, 1, 3, 1, 5);

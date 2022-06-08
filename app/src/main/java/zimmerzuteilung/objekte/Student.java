@@ -18,11 +18,11 @@ public class Student {
     private final SEX sex;
     private final int id;
 
-    private final ThreeWishes wish = null;
+    private Wish wish;
 
-    public Student(final String n, final SEX g) {
+    public Student(final String n, final SEX s) {
         this.name = n;
-        this.sex = g;
+        this.sex = s;
 
         ++Student.count; // der erste Schueler kriegt also Nr. 1
         this.id = Student.count;
@@ -49,6 +49,14 @@ public class Student {
 
     public SEX getSex() {
         return this.sex;
+    }
+
+    void setWish(Wish w){
+        this.wish = w;
+    }
+
+    public Wish getWish(){
+        return this.wish;
     }
 
     @Override
