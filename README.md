@@ -9,4 +9,4 @@ How to run:
 2. cd Zimmerzuteilung
 3. ./gradlew run
 
-Aktuell werden "zufällige" Schüler "zufälligen" Räumen zugewiesen. Dabei werden die drei Regeln eingehalten: 1 Zimmer pro Person, maximal so viele Personen pro Zimmer wie das Zimmer Platz hat und keine gemischten (m, w, d) Zimmer. Außerdem werden jeweils die drei Mitbewohner- und Zimmerwnüsche stark bevorzugt (mit jeweils anderen Gewichtungen).
+Aktuell werden "zufällige" Schüler "zufälligen" Räumen zugewiesen. Dabei werden die drei Regeln eingehalten: 1 Zimmer pro Person, maximal so viele Personen pro Zimmer wie das Zimmer Platz hat und keine gemischten (m, w, d) Zimmer. Außerdem werden jeweils die drei Mitbewohner- und Zimmerwünsche stark bevorzugt (mit jeweils anderen Gewichtungen).
