@@ -13,55 +13,63 @@ public class Gurobi {
         respectRoomWishes, respectMateWishes;
     }
 
-    public static void calculate(List<Gurobi.RULES> constraints, School school) {
+    public static void calculate(final List<Gurobi.RULES> constraints,
+            final School school) {
         Student[] aStudents = school.getStudents();
         Room[] aRooms = school.getRooms();
 
         try {
-            // ============================== MODEL ===============================
+            // ========================= MODEL ==========================
 
             GRBEnv env = new GRBEnv();
             GRBModel model = new GRBModel(env);
             model.set(GRB.StringAttr.ModelName, "zimmerzuteilung");
 
-            // ============================= VARIABLES ============================
+            // ======================== VARIABLES =======================
 
             // zuordnung
-            Allocations allocations = new Allocations(aRooms.length, aStudents.length);
+            Allocations allocations = new Allocations(aRooms.length,
+                    aStudents.length);
 
             for (int r = 0; r < aRooms.length; ++r) {
                 for (int s = 0; s < aStudents.length; ++s) {
-                    String st = "zuteilung_" + String.valueOf(r) + "_" + String.valueOf(s);
+                    String st = "zuteilung_" + String.valueOf(r)
+                            + "_" + String.valueOf(s);
                     allocations.set(r, s, new Allocation(
-                            aRooms[r], aStudents[s], model.addVar(0.0, 1.0, 0.0, GRB.BINARY, st)));
+                            aRooms[r], aStudents[s],
+                            model.addVar(0.0, 1.0, 0.0, GRB.BINARY, st)));
                 }
             }
 
-            // ============================= OBJECTIVE =============================
+            // =========================== OBJECTIVE ===========================
 
             List<Gurobi.RULES> rules = new ArrayList<Gurobi.RULES>();
 
-            double[][] scoreMatrix = Gurobi.calculateScores(allocations, rules, new float[] { 9, 8, 6 },
+            double[][] scoreMatrix = Gurobi.calculateScores(
+                    allocations, rules, new float[] { 9, 8, 6 },
                     new float[] { 10, 10, 10 });
 
-            GRBLinExpr objective = Gurobi.calculateObjectiveLinExpr(allocations, scoreMatrix);
+            GRBLinExpr objective = Gurobi.calculateObjectiveLinExpr(
+                    allocations, scoreMatrix);
 
             model.setObjective(objective, GRB.MAXIMIZE);
 
-            // ============================ CONSTRAINTS ============================
+            // ========================== CONSTRAINTS ==========================
 
-            Gurobi.addConstraints(constraints, model, allocations, aRooms, aStudents);
+            Gurobi.addConstraints(constraints, model, allocations,
+                    aRooms, aStudents);
 
-            // ============================== OPTIMIZE =============================
+            // ============================ OPTIMIZE ===========================
 
             model.optimize();
 
-            // =============================== PRINT ===============================
+            // ============================= PRINT =============================
 
             GRBVar[][] grbVars = Gurobi.getGRBVars(allocations);
             double[][] x = model.get(GRB.DoubleAttr.X, grbVars);
 
-            System.out.println("\n===================== ALLOCATION =====================");
+            System.out.println(
+                    "\n===================== ALLOCATION =====================");
             for (int r = 0; r < aRooms.length; r++) {
                 String str = "";
                 for (int s = 0; s < aStudents.length; s++) {
@@ -70,7 +78,8 @@ public class Gurobi {
                 System.out.println(str);
             }
 
-            System.out.println("\n==================== SCORE MATRIX ====================");
+            System.out.println(
+                    "\n==================== SCORE MATRIX ====================");
             for (int r = 0; r < aRooms.length; ++r) {
                 String str = "";
                 for (int s = 0; s < aStudents.length; ++s) {
@@ -79,21 +88,22 @@ public class Gurobi {
                 System.out.println(str);
             }
 
-            // =============================== CLEAN ===============================
+            // ============================= CLEAN =============================
 
             model.dispose();
             env.dispose();
 
         } catch (GRBException e) {
-            System.out.println("Error code: " + e.getErrorCode() + ". " +
-                    e.getMessage());
+            System.out.println("Error code: " + e.getErrorCode() + ". "
+                    + e.getMessage());
         }
     }
 
-    // ================================ CONSTRAINTS ================================
+    // ============================== CONSTRAINTS ==============================
 
-    private static void addConstraints(List<Gurobi.RULES> rules,
-            GRBModel model, Allocations allocations, Room[] aRooms, Student[] aStudents) {
+    private static void addConstraints(final List<Gurobi.RULES> rules,
+            final GRBModel model, final Allocations allocations,
+            final Room[] aRooms, final Student[] aStudents) {
         if (rules.contains(Gurobi.RULES.maxStudentsPerRoom)) {
             maxStudentsPerRoom(model, allocations, aRooms, aStudents);
         }
@@ -105,8 +115,9 @@ public class Gurobi {
         }
     }
 
-    private static void oneRoomPerStudent(GRBModel model,
-            Allocations allocations, Room[] aRooms, Student[] aStudents) {
+    private static void oneRoomPerStudent(final GRBModel model,
+            final Allocations allocations, final Room[] aRooms,
+            final Student[] aStudents) {
         try {
             GRBLinExpr expr;
             for (int s = 0; s < aStudents.length; ++s) {
@@ -118,13 +129,14 @@ public class Gurobi {
                 model.addConstr(expr, GRB.EQUAL, 1.0, st);
             }
         } catch (GRBException e) {
-            System.out.println("Error code: " + e.getErrorCode() + ". " +
-                    e.getMessage());
+            System.out.println("Error code: " + e.getErrorCode() + ". "
+                    + e.getMessage());
         }
     }
 
-    private static void maxStudentsPerRoom(GRBModel model,
-            Allocations allocations, Room[] aRooms, Student[] aStudents) {
+    private static void maxStudentsPerRoom(final GRBModel model,
+            final Allocations allocations,
+            final Room[] aRooms, final Student[] aStudents) {
         try {
             GRBLinExpr expr;
             for (int z = 0; z < aRooms.length; ++z) {
@@ -133,16 +145,18 @@ public class Gurobi {
                     expr.addTerm(1.0, allocations.get(z, s).grbVar());
                 }
                 String st = "maxStudentsPerRoom_" + String.valueOf(z);
-                model.addConstr(expr, GRB.LESS_EQUAL, aRooms[z].getCapacity(), st);
+                model.addConstr(
+                        expr, GRB.LESS_EQUAL, aRooms[z].getCapacity(), st);
             }
         } catch (GRBException e) {
-            System.out.println("Error code: " + e.getErrorCode() + ". " +
-                    e.getMessage());
+            System.out.println("Error code: " + e.getErrorCode() + ". "
+                    + e.getMessage());
         }
     }
 
-    private static void onlySameSex(GRBModel model,
-            Allocations allocations, Room[] aRooms, Student[] aStudents) {
+    private static void onlySameSex(final GRBModel model,
+            final Allocations allocations, final Room[] aRooms,
+            final Student[] aStudents) {
         try {
             GRBLinExpr expr;
             for (int s1 = 0; s1 < aStudents.length; ++s1) {
@@ -150,7 +164,8 @@ public class Gurobi {
                     for (int r = 0; r < aRooms.length; ++r) {
                         expr = new GRBLinExpr();
                         if (s1 != s2) {
-                            String st = "onlySameSex_" + String.valueOf(r) + "_" + String.valueOf(s1) + "_"
+                            String st = "onlySameSex_" + String.valueOf(r)
+                                    + "_" + String.valueOf(s1) + "_"
                                     + String.valueOf(s2);
                             expr.addTerm(1, allocations.get(r, s1).grbVar());
                             expr.addTerm(1, allocations.get(r, s2).grbVar());
@@ -166,14 +181,14 @@ public class Gurobi {
                 }
             }
         } catch (GRBException e) {
-            System.out.println("Error code: " + e.getErrorCode() + ". " +
-                    e.getMessage());
+            System.out.println("Error code: " + e.getErrorCode() + ". "
+                    + e.getMessage());
         }
     }
 
-    // ================================= OBJECTIVE =================================
+    // =============================== OBJECTIVE ===============================
 
-    private static double[][] getScoreMatrix(Allocations allocations) {
+    private static double[][] getScoreMatrix(final Allocations allocations) {
         double[][] scoreMatrix = new double[allocations.nRooms()][allocations.nStudents()];
         for (int r = 0; r < allocations.nRooms(); ++r) {
             for (int s = 0; s < allocations.nStudents(); ++s) {
@@ -183,7 +198,7 @@ public class Gurobi {
         return scoreMatrix;
     }
 
-    private static GRBVar[][] getGRBVars(Allocations allocations) {
+    private static GRBVar[][] getGRBVars(final Allocations allocations) {
         GRBVar[][] grbvars = new GRBVar[allocations.nRooms()][allocations.nStudents()];
         for (int r = 0; r < allocations.nRooms(); ++r) {
             for (int s = 0; s < allocations.nStudents(); ++s) {
@@ -193,19 +208,21 @@ public class Gurobi {
         return grbvars;
     }
 
-    private static GRBLinExpr calculateObjectiveLinExpr(Allocations allocations,
-            double[][] scoreMatrix) {
+    private static GRBLinExpr calculateObjectiveLinExpr(
+            final Allocations allocations, final double[][] scoreMatrix) {
         GRBLinExpr objective = new GRBLinExpr();
         for (int r = 0; r < allocations.nRooms(); ++r) {
             for (int s = 0; s < allocations.nStudents(); ++s) {
-                objective.addTerm(scoreMatrix[r][s], allocations.get(r, s).grbVar());
+                objective.addTerm(scoreMatrix[r][s],
+                        allocations.get(r, s).grbVar());
             }
         }
         return objective;
     }
 
-    private static double[][] calculateScores(Allocations allocations,
-            List<Gurobi.RULES> rules, float[] roomScores, float[] mateScores) {
+    private static double[][] calculateScores(final Allocations allocations,
+            final List<Gurobi.RULES> rules, final float[] roomScores,
+            final float[] mateScores) {
 
         if (rules.contains(Gurobi.RULES.respectRoomWishes)) {
             Gurobi.respectRoomWishes(allocations, roomScores);
@@ -217,7 +234,8 @@ public class Gurobi {
         return Gurobi.getScoreMatrix(allocations);
     }
 
-    private static void respectRoomWishes(Allocations allocations, float[] roomScores)
+    private static void respectRoomWishes(final Allocations allocations,
+            final float[] roomScores)
             throws ArrayIndexOutOfBoundsException {
         for (int r = 0; r < allocations.nRooms(); ++r) {
             for (int s = 0; s < allocations.nStudents(); ++s) {
@@ -226,7 +244,8 @@ public class Gurobi {
                 Wish wish = student.getWish();
 
                 if (roomScores.length != wish.rooms().length) {
-                    throw new ArrayIndexOutOfBoundsException("respectRoomWishes");
+                    throw new ArrayIndexOutOfBoundsException(
+                            "respectRoomWishes");
                 }
 
                 for (int i = 0; i < roomScores.length; ++i) {
@@ -238,15 +257,16 @@ public class Gurobi {
         }
     }
 
-    private static void respectMateWishes(Allocations allocations,
-            float[] mateScores) throws ArrayIndexOutOfBoundsException {
+    private static void respectMateWishes(final Allocations allocations,
+            final float[] mateScores) throws ArrayIndexOutOfBoundsException {
         for (int r = 0; r < allocations.nRooms(); ++r) {
             for (int s1 = 0; s1 < allocations.nStudents(); ++s1) {
                 Student student1 = allocations.get(r, s1).student();
                 Wish wish = student1.getWish();
 
                 if (mateScores.length != wish.mates().length) {
-                    throw new ArrayIndexOutOfBoundsException("respectMateWishes");
+                    throw new ArrayIndexOutOfBoundsException(
+                            "respectMateWishes");
                 }
 
                 for (int s2 = 0; s2 < allocations.nStudents(); ++s2) {

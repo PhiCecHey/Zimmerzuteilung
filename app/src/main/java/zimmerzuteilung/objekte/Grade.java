@@ -19,15 +19,15 @@ class Grade {
         return this.classes;
     }
 
-    int getGrade(){
+    int getGrade() {
         return this.grade;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         String string = "Grade{grade: " + this.grade + ", classes: [";
 
-        for(Class clas : this.classes.values()){
+        for (Class clas : this.classes.values()) {
             string += clas.toString() + ", ";
         }
 
@@ -46,7 +46,7 @@ class Grade {
         return true;
     }
 
-    Class findClass(Class.SPECIALIZATION special) {
+    Class findClass(final Class.SPECIALIZATION special) {
         for (var entry : this.classes.entrySet()) {
             if (entry.getValue().getSpecialization() == special) {
                 return entry.getValue();

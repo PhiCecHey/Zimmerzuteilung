@@ -35,7 +35,7 @@ class Building {
         ++Building.count;
     }
 
-    boolean addRoom(Room room) {
+    boolean addRoom(final Room room) {
         for (Map.Entry<Integer, Room> entry : this.rooms.entrySet()) {
             if (entry.getKey() == room.id()) {
                 return false;
@@ -46,9 +46,11 @@ class Building {
         return true;
     }
 
-    public void addRandomRooms(int nRooms, int minCapacity, int maxCapacity) {
+    public void addRandomRooms(final int nRooms, final int minCapacity,
+            final int maxCapacity) {
         for (int i = 0; i < nRooms; ++i) {
-            int randCap = ThreadLocalRandom.current().nextInt(minCapacity, maxCapacity + 1);
+            int randCap = ThreadLocalRandom.current().nextInt(
+                    minCapacity, maxCapacity + 1);
             this.addRoom(new Room(randCap));
         }
     }
@@ -62,12 +64,13 @@ class Building {
     }
 
     @Override
-    public String toString(){
-        String string = "Building{id: " + this.id + ", name: " + this.name + ", rooms: [";
-        for(Room room : this.rooms.values()){
+    public String toString() {
+        String string = "Building{id: " + this.id + ", name: " + this.name
+                + ", rooms: [";
+        for (Room room : this.rooms.values()) {
             string += room.toString() + ", ";
-        }        
-        return  string += "]}";
+        }
+        return string += "]}";
     }
 
     public void initRooms() {

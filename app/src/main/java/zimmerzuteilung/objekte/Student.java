@@ -51,17 +51,18 @@ public class Student {
         return this.sex;
     }
 
-    void setWish(Wish w){
+    void setWish(final Wish w) {
         this.wish = w;
     }
 
-    public Wish getWish(){
+    public Wish getWish() {
         return this.wish;
     }
 
     @Override
-    public String toString(){
-        return "Student{id: " + this.id + ", name: " + this.name + ", sex: " + this.sex + "}";
+    public String toString() {
+        return "Student{id: " + this.id + ", name: " + this.name + ", sex: "
+                + this.sex + "}";
     }
 
 }

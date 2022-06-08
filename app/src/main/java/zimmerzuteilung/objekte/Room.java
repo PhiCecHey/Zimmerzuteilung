@@ -63,16 +63,16 @@ public class Room {
         return this.id;
     }
 
-    public int getCapacity(){
+    public int getCapacity() {
         return this.capacity;
     }
 
     @Override
     public String toString() {
-        String string = "Room{id: " + this.id + ", number: " + this.number + 
-        ", capacity: " + this.capacity + ", roomMates: [";
+        String string = "Room{id: " + this.id + ", number: " + this.number
+                + ", capacity: " + this.capacity + ", roomMates: [";
 
-        for(Student student : this.roomMates.values()){
+        for (Student student : this.roomMates.values()) {
             string += student.toString();
         }
         string += "]}";

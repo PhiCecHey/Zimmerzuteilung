@@ -28,15 +28,16 @@ public class Class {
         return this.specialization;
     }
 
-    Map<Integer, Student> getStudents(){
+    Map<Integer, Student> getStudents() {
         return this.students;
     }
 
     @Override
-    public String toString(){
-        String string = "Class{id: " + this.id + ", specialization: " + this.specialization;
+    public String toString() {
+        String string = "Class{id: " + this.id + ", specialization: "
+                + this.specialization;
 
-        for(Student student : this.students.values()){
+        for (Student student : this.students.values()) {
             string += student.toString() + ", ";
         }
 

@@ -4,7 +4,7 @@ public class Wish {
     private final Room[] rooms;
     private final Student[] mates;
 
-    Wish(Room[] r, Student[] m) {
+    Wish(final Room[] r, final Student[] m) {
         this.rooms = r;
         this.mates = m;
     }

@@ -3,12 +3,12 @@ package zimmerzuteilung.objekte;
 import gurobi.GRBVar;
 
 public class Allocation {
-    GRBVar grbVar;
-    Student student;
-    Room room;
-    double score = 1;
+    private GRBVar grbVar;
+    private Student student;
+    private Room room;
+    private double score = 0;
 
-    public Allocation(Room r, Student s, GRBVar g) {
+    public Allocation(final Room r, final Student s, final GRBVar g) {
         this.grbVar = g;
         this.room = r;
         this.student = s;
@@ -26,7 +26,7 @@ public class Allocation {
         return this.room;
     }
 
-    public void setScore(double s) {
+    public void setScore(final double s) {
         this.score = s;
     }
 

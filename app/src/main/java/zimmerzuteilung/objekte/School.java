@@ -53,12 +53,12 @@ public class School {
     public String toString() {
         String string = "School{grades: [";
 
-        for(Grade grade : this.grades.values()){
+        for (Grade grade : this.grades.values()) {
             string += grade.toString() + ", ";
         }
         string += "], buildings: [";
 
-        for(Building building : this.buildings.values()){
+        for (Building building : this.buildings.values()) {
             string += building.toString() + ", ";
         }
         string += "]}";
@@ -122,7 +122,7 @@ public class School {
         }
     }
 
-    Class findClass(Class.SPECIALIZATION special, int grade) {
+    Class findClass(final Class.SPECIALIZATION special, final int grade) {
         for (var entry : this.grades.entrySet()) {
             if (entry.getValue().getGrade() == grade) {
                 return entry.getValue().findClass(special);
@@ -131,10 +131,12 @@ public class School {
         return null;
     }
 
-    private void initRandomBuildingsWithRandomRooms(int nBuildings,
-            int minNRooms, int maxNRooms, int minCap, int maxCap) {
+    private void initRandomBuildingsWithRandomRooms(final int nBuildings,
+            final int minNRooms, final int maxNRooms, final int minCap,
+            final int maxCap) {
         for (int i = 0; i < nBuildings; ++i) {
-            int nRoom = ThreadLocalRandom.current().nextInt(minNRooms, maxNRooms + 1);
+            int nRoom = ThreadLocalRandom.current().nextInt(minNRooms,
+                    maxNRooms + 1);
             Building b = new Building();
             b.addRandomRooms(nRoom, minCap, maxCap);
             this.buildings.put(b.getId(), b);
@@ -159,7 +161,8 @@ public class School {
                 break;
             default:
                 special = Class.SPECIALIZATION.MUSIK;
-                System.out.println("Something went wrong: School get Random Class randSpecial");
+                System.out.println("Something went wrong: "
+                        + "School get Random Class randSpecial");
                 break;
         }
 
@@ -178,15 +181,17 @@ public class School {
                 break;
             default:
                 clas = this.findClass(special, 9);
-                System.out.println("Something went wrong: School get Random Class randGrade");
+                System.out.println("Something went wrong: "
+                        + "School get Random Class randGrade");
                 break;
         }
 
         return clas;
     }
 
-    public void createRandomSchool(int nStudents, int nBuildings,
-            int minNRooms, int maxNRooms, int minCap, int maxCap) {
+    public void createRandomSchool(final int nStudents, final int nBuildings,
+            final int minNRooms, final int maxNRooms, final int minCap,
+            final int maxCap) {
         for (int i = 0; i < nStudents; ++i) {
             Student student = new Student();
             Class clas = this.findRandomClass();
