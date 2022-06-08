@@ -59,7 +59,7 @@ public class Room {
         this.number = n;
     }
 
-    public int getId() {
+    public int id() {
         return this.id;
     }
 

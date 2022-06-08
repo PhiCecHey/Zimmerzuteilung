@@ -10,7 +10,7 @@ public class Gurobi {
         // constraints
         oneRoomPerStudent, maxStudentsPerRoom, onlySameSex,
         // other rules
-        respectRoomWishes, respectMateWish;
+        respectRoomWishes, respectMateWishes;
     }
 
     public static void calculate(List<Gurobi.RULES> constraints, School school) {
@@ -41,7 +41,8 @@ public class Gurobi {
 
             List<Gurobi.RULES> rules = new ArrayList<Gurobi.RULES>();
 
-            double[][] scoreMatrix = Gurobi.calculateScores(allocations, rules, 9, 8, 6, 10);
+            double[][] scoreMatrix = Gurobi.calculateScores(allocations, rules, new float[] { 9, 8, 6 },
+                    new float[] { 10, 10, 10 });
 
             GRBLinExpr objective = Gurobi.calculateObjectiveLinExpr(allocations, scoreMatrix);
 
@@ -204,51 +205,53 @@ public class Gurobi {
     }
 
     private static double[][] calculateScores(Allocations allocations,
-            List<Gurobi.RULES> rules, float scoreFirstRoom, float scoreSecondRoom, float scoreThirdRoom,
-            float scoreMate) {
+            List<Gurobi.RULES> rules, float[] roomScores, float[] mateScores) {
 
         if (rules.contains(Gurobi.RULES.respectRoomWishes)) {
-            Gurobi.respectRoomWishes(allocations,
-                    scoreFirstRoom, scoreSecondRoom, scoreThirdRoom);
+            Gurobi.respectRoomWishes(allocations, roomScores);
         }
-        if (rules.contains(Gurobi.RULES.respectMateWish)) {
-            Gurobi.respectMateWishe(allocations, scoreMate);
+        if (rules.contains(Gurobi.RULES.respectMateWishes)) {
+            Gurobi.respectMateWishes(allocations, mateScores);
         }
 
         return Gurobi.getScoreMatrix(allocations);
     }
 
-    private static void respectRoomWishes(Allocations allocations,
-            float scoreFirstRoom, float scoreSecondRoom, float scoreThirdRoom) {
+    private static void respectRoomWishes(Allocations allocations, float[] roomScores)
+            throws ArrayIndexOutOfBoundsException {
         for (int r = 0; r < allocations.nRooms(); ++r) {
             for (int s = 0; s < allocations.nStudents(); ++s) {
                 Room room = allocations.get(r, s).room();
                 Student student = allocations.get(r, s).student();
                 Wish wish = student.getWish();
 
-                if (wish.getFirstRoom().getId() == room.getId()) {
-                    allocations.get(r, s).setScore(scoreFirstRoom);
-                } else if (wish.getSecondRoom().getId() == room.getId()) {
-                    allocations.get(r, s).setScore(scoreSecondRoom);
-                } else if (wish.getThirdRoom().getId() == room.getId()) {
-                    allocations.get(r, s).setScore(scoreThirdRoom);
+                if (roomScores.length != wish.rooms().length) {
+                    throw new ArrayIndexOutOfBoundsException("respectRoomWishes");
+                }
+
+                for (int i = 0; i < roomScores.length; ++i) {
+                    if (wish.rooms()[i].id() == room.id()) {
+                        allocations.get(r, s).setScore(roomScores[i]);
+                    }
                 }
             }
         }
     }
 
-    private static void respectMateWishe(Allocations allocations,
-            float scoreMate) {
+    private static void respectMateWishes(Allocations allocations,
+            float[] mateScores) throws ArrayIndexOutOfBoundsException {
         for (int r = 0; r < allocations.nRooms(); ++r) {
             for (int s1 = 0; s1 < allocations.nStudents(); ++s1) {
-                Room room1 = allocations.get(r, s1).room();
                 Student student1 = allocations.get(r, s1).student();
                 Wish wish = student1.getWish();
 
+                if (mateScores.length != wish.mates().length) {
+                    throw new ArrayIndexOutOfBoundsException("respectMateWishes");
+                }
+
                 for (int s2 = 0; s2 < allocations.nStudents(); ++s2) {
-                    Student student2 = allocations.get(r, s2).student();
-                    if (wish.getRoomMate().getId() == student2.getId()) {
-                        allocations.get(r, s1).setScore(scoreMate);
+                    for (int i = 0; i < mateScores.length; ++i) {
+                        allocations.get(r, s1).setScore(mateScores[i]);
                     }
                 }
             }

@@ -37,12 +37,12 @@ class Building {
 
     boolean addRoom(Room room) {
         for (Map.Entry<Integer, Room> entry : this.rooms.entrySet()) {
-            if (entry.getKey() == room.getId()) {
+            if (entry.getKey() == room.id()) {
                 return false;
             }
         }
 
-        this.rooms.put(room.getId(), room);
+        this.rooms.put(room.id(), room);
         return true;
     }
 

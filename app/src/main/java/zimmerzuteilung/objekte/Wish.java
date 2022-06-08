@@ -1,31 +1,19 @@
 package zimmerzuteilung.objekte;
 
 public class Wish {
-    private final Room firstRoom;
-    private final Room secondRoom;
-    private final Room thirdRoom;
-    private final Student roomMate;
+    private final Room[] rooms;
+    private final Student[] mates;
 
-    Wish(Room firstR, Room secondR, Room thirdR, Student mate) {
-        this.firstRoom = firstR;
-        this.secondRoom = secondR;
-        this.thirdRoom = thirdR;
-        this.roomMate = mate;
+    Wish(Room[] r, Student[] m) {
+        this.rooms = r;
+        this.mates = m;
     }
 
-    public Room getFirstRoom() {
-        return this.firstRoom;
+    public Room[] rooms() {
+        return this.rooms;
     }
 
-    public Room getSecondRoom() {
-        return this.secondRoom;
-    }
-
-    public Room getThirdRoom() {
-        return this.thirdRoom;
-    }
-
-    public Student getRoomMate() {
-        return this.roomMate;
+    public Student[] mates() {
+        return this.mates;
     }
 }
