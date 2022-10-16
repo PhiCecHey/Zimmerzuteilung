@@ -11,35 +11,36 @@ public class Room {
     private int capacity;
     private Map<Integer, Student> roomMates = new HashMap<>();
 
-    Room(final Building building, final int c) throws IllegalArgumentException {
+    public Room(final Building building, final int c) throws IllegalArgumentException {
+        ++Room.count;
         this.id = Room.count;
         this.number = Integer.toString(this.id);
-        if (c < 1) {
-            throw new IllegalArgumentException("Capacity may not be < 1");
+        if (c < 0) {
+            throw new IllegalArgumentException("Die maximale " +
+                    "Schülerkapazität eines Zimmers darf nicht negativ sein.");
         }
         this.capacity = c;
-
         building.addRoom(this);
-        ++Room.count;
     }
 
-    Room(final int c) throws IllegalArgumentException {
+    public Room(final int c) throws IllegalArgumentException {
         this.id = Room.count;
         this.number = Integer.toString(this.id);
-        if (c < 1) {
-            throw new IllegalArgumentException("Capacity may not be < 1");
+        if (c < 0) {
+            throw new IllegalArgumentException("Die maximale " +
+                    "Schülerkapazität eines Zimmers darf nicht negativ sein.");
         }
         this.capacity = c;
-
         ++Room.count;
     }
 
-    Room(final Building building, final String n, final int c)
+    public Room(final Building building, final String n, final int c)
             throws IllegalArgumentException {
         ++Room.count;
         this.id = Room.count;
-        if (c < 1) {
-            throw new IllegalArgumentException("Capacity may not be < 1");
+        if (c < 0) {
+            throw new IllegalArgumentException("Die maximale " +
+                    "Schülerkapazität eines Zimmers darf nicht negativ sein.");
         }
         this.capacity = c;
 
@@ -47,15 +48,15 @@ public class Room {
         this.number = n;
     }
 
-    Room(final String n, final int c)
+    public Room(final String n, final int c)
             throws IllegalArgumentException {
         ++Room.count;
         this.id = Room.count;
-        if (c < 1) {
-            throw new IllegalArgumentException("Capacity may not be < 1");
+        if (c < 0) {
+            throw new IllegalArgumentException("Die maximale " +
+                    "Schülerkapazität eines Zimmers darf nicht negativ sein.");
         }
         this.capacity = c;
-
         this.number = n;
     }
 

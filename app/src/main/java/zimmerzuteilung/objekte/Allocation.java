@@ -4,36 +4,34 @@ import gurobi.GRBVar;
 
 public class Allocation {
     private GRBVar grbVar;
-    private Student suspect;
-    private Student roomMate;
     private Room room;
-    // How important is it that suspect is in room with roomMate?
-    private double score = 0;
+    private Team team;
+    private float score = 1; // importance of this team getting this room
 
-    public Allocation(final Room r, final Student s, final GRBVar g) {
+    public Allocation(final Room r, final Team t, final GRBVar g) {
         this.grbVar = g;
         this.room = r;
-        this.suspect = s;
+        this.team = t;
     }
 
     public GRBVar grbVar() {
         return this.grbVar;
     }
 
-    public Student suspect() {
-        return this.suspect;
-    }
-
-    public Student roomMate() {
-        return this.roomMate;
+    public Team team() {
+        return this.team;
     }
 
     public Room room() {
         return this.room;
     }
 
-    public void setScore(final double s) {
+    public void setScore(final float s) {
         this.score = s;
+    }
+
+    public void addToScore(final float s) {
+        this.score += s;
     }
 
     public double getScore() {

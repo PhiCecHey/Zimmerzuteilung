@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
-class Building {
+public class Building {
 
     /*
      * public enum BEZEICHNUNG{
@@ -22,17 +22,16 @@ class Building {
     private String name;
     private Map<Integer, Room> rooms = new HashMap<>();
 
-    Building(final String n) {
+    public Building(final String n) {
         this.name = n;
-
-        this.id = Building.count;
         ++Building.count;
+        this.id = Building.count;
     }
 
-    Building() {
+    public Building() {
+        ++Building.count;
         this.id = Building.count;
         this.name = Integer.toString(this.id);
-        ++Building.count;
     }
 
     boolean addRoom(final Room room) {
@@ -55,11 +54,11 @@ class Building {
         }
     }
 
-    public int getId() {
+    public int id() {
         return this.id;
     }
 
-    Map<Integer, Room> getRooms() {
+    public Map<Integer, Room> rooms() {
         return this.rooms;
     }
 
@@ -73,8 +72,16 @@ class Building {
         return string += "]}";
     }
 
+    // TODO
     public void initRooms() {
         // von config file lesen
         // zimmer neu erstellen und zur map hinzufügen
+    }
+
+    public boolean hasRoom(Room room) {
+        if (this.rooms.containsKey(room.id())) {
+            return true;
+        } else
+            return false;
     }
 }

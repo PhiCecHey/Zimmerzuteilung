@@ -9,6 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class School {
     private Map<Integer, Grade> grades = new HashMap<>();
     private Map<Integer, Building> buildings = new HashMap<>();
+    private Map<Integer, Team> teams = new HashMap<>();
 
     public School() {
         this.initGrades();
@@ -18,7 +19,7 @@ public class School {
     public Student[] getStudents() {
         List<Student> lStudents = new LinkedList<>();
         for (Grade grade : this.grades.values()) {
-            for (Class clas : grade.getClasses().values()) {
+            for (Clas clas : grade.getClasses().values()) {
                 for (Student student : clas.getStudents().values()) {
                     lStudents.add(student);
                 }
@@ -33,10 +34,10 @@ public class School {
         return aStudents;
     }
 
-    public Room[] getRooms() {
+    public Room[] rooms() {
         List<Room> lRooms = new LinkedList<>();
         for (Building building : this.buildings.values()) {
-            for (Room room : building.getRooms().values()) {
+            for (Room room : building.rooms().values()) {
                 lRooms.add(room);
             }
         }
@@ -74,24 +75,24 @@ public class School {
 
     private void initClasses() {
         // 9:
-        Class m9 = new Class(Class.SPECIALIZATION.MUSIK);
-        Class s9 = new Class(Class.SPECIALIZATION.SPRACHEN);
-        Class n9 = new Class(Class.SPECIALIZATION.NAWI);
+        Clas m9 = new Clas(Clas.SPECIALIZATION.MUSIK);
+        Clas s9 = new Clas(Clas.SPECIALIZATION.SPRACHEN);
+        Clas n9 = new Clas(Clas.SPECIALIZATION.NAWI);
 
         // 10:
-        Class m10 = new Class(Class.SPECIALIZATION.MUSIK);
-        Class s10 = new Class(Class.SPECIALIZATION.SPRACHEN);
-        Class n10 = new Class(Class.SPECIALIZATION.NAWI);
+        Clas m10 = new Clas(Clas.SPECIALIZATION.MUSIK);
+        Clas s10 = new Clas(Clas.SPECIALIZATION.SPRACHEN);
+        Clas n10 = new Clas(Clas.SPECIALIZATION.NAWI);
 
         // 11:
-        Class m11 = new Class(Class.SPECIALIZATION.MUSIK);
-        Class s11 = new Class(Class.SPECIALIZATION.SPRACHEN);
-        Class n11 = new Class(Class.SPECIALIZATION.NAWI);
+        Clas m11 = new Clas(Clas.SPECIALIZATION.MUSIK);
+        Clas s11 = new Clas(Clas.SPECIALIZATION.SPRACHEN);
+        Clas n11 = new Clas(Clas.SPECIALIZATION.NAWI);
 
         // 12:
-        Class m12 = new Class(Class.SPECIALIZATION.MUSIK);
-        Class s12 = new Class(Class.SPECIALIZATION.SPRACHEN);
-        Class n12 = new Class(Class.SPECIALIZATION.NAWI);
+        Clas m12 = new Clas(Clas.SPECIALIZATION.MUSIK);
+        Clas s12 = new Clas(Clas.SPECIALIZATION.SPRACHEN);
+        Clas n12 = new Clas(Clas.SPECIALIZATION.NAWI);
 
         // stufen:
         for (var entry : this.grades.entrySet()) {
@@ -122,7 +123,7 @@ public class School {
         }
     }
 
-    Class findClass(final Class.SPECIALIZATION special, final int grade) {
+    Clas findClass(final Clas.SPECIALIZATION special, final int grade) {
         for (var entry : this.grades.entrySet()) {
             if (entry.getValue().getGrade() == grade) {
                 return entry.getValue().findClass(special);
@@ -139,28 +140,28 @@ public class School {
                     maxNRooms + 1);
             Building b = new Building();
             b.addRandomRooms(nRoom, minCap, maxCap);
-            this.buildings.put(b.getId(), b);
+            this.buildings.put(b.id(), b);
         }
     }
 
-    private Class findRandomClass() {
-        Class clas;
+    private Clas findRandomClass() {
+        Clas clas;
         int randGrade = ThreadLocalRandom.current().nextInt(9, 13);
         int randSpecial = ThreadLocalRandom.current().nextInt(0, 3);
-        Class.SPECIALIZATION special;
+        Clas.SPECIALIZATION special;
 
         switch (randSpecial) {
             case 0:
-                special = Class.SPECIALIZATION.MUSIK;
+                special = Clas.SPECIALIZATION.MUSIK;
                 break;
             case 1:
-                special = Class.SPECIALIZATION.SPRACHEN;
+                special = Clas.SPECIALIZATION.SPRACHEN;
                 break;
             case 2:
-                special = Class.SPECIALIZATION.NAWI;
+                special = Clas.SPECIALIZATION.NAWI;
                 break;
             default:
-                special = Class.SPECIALIZATION.MUSIK;
+                special = Clas.SPECIALIZATION.MUSIK;
                 System.out.println("Something went wrong: "
                         + "School get Random Class randSpecial");
                 break;
@@ -193,8 +194,9 @@ public class School {
             final int minNRooms, final int maxNRooms, final int minCap,
             final int maxCap) {
         for (int i = 0; i < nStudents; ++i) {
+            Team team;
             Student student = new Student();
-            Class clas = this.findRandomClass();
+            Clas clas = this.findRandomClass();
             clas.addStudent(student);
         }
 
@@ -207,7 +209,7 @@ public class School {
     public int countStudents() {
         int count = 0;
         for (Grade grade : this.grades.values()) {
-            for (Class clas : grade.getClasses().values()) {
+            for (Clas clas : grade.getClasses().values()) {
                 for (Student student : clas.getStudents().values()) {
                     ++count;
                 }
@@ -219,7 +221,7 @@ public class School {
     public int countRooms() {
         int count = 0;
         for (Building building : this.buildings.values()) {
-            for (Room room : building.getRooms().values()) {
+            for (Room room : building.rooms().values()) {
                 ++count;
             }
         }

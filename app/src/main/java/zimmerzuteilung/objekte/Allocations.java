@@ -3,27 +3,27 @@ package zimmerzuteilung.objekte;
 public class Allocations {
     private final Allocation[][] allocations;
     private final int nRooms;
-    private final int nStudents;
+    private final int nTeams;
 
-    public Allocations(final int r, final int s) {
-        this.allocations = new Allocation[r][s];
-        this.nStudents = s;
+    public Allocations(final int r, final int t) {
+        this.allocations = new Allocation[r][t];
+        this.nTeams = t;
         this.nRooms = r;
     }
 
-    public Allocation get(final int r, final int s) {
-        return this.allocations[r][s];
+    public Allocation get(final int r, final int t) {
+        return this.allocations[r][t];
     }
 
-    public void set(final int r, final int s, final Allocation allocation) {
-        this.allocations[r][s] = allocation;
+    public void set(final int r, final int t, final Allocation allocation) {
+        this.allocations[r][t] = allocation;
     }
 
     public int nRooms() {
         return this.nRooms;
     }
 
-    public int nStudents() {
-        return this.nStudents;
+    public int nTeams() {
+        return this.nTeams;
     }
 }

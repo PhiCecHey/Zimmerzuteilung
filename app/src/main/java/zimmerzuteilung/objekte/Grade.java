@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 class Grade {
     private int grade;
-    private Map<Integer, Class> classes = new HashMap<>();
+    private Map<Integer, Clas> classes = new HashMap<>();
 
     Grade(final int g) throws IllegalArgumentException {
         if (g < 9 || g > 12) {
@@ -15,7 +15,7 @@ class Grade {
         this.grade = g;
     }
 
-    Map<Integer, Class> getClasses() {
+    Map<Integer, Clas> getClasses() {
         return this.classes;
     }
 
@@ -27,7 +27,7 @@ class Grade {
     public String toString() {
         String string = "Grade{grade: " + this.grade + ", classes: [";
 
-        for (Class clas : this.classes.values()) {
+        for (Clas clas : this.classes.values()) {
             string += clas.toString() + ", ";
         }
 
@@ -35,8 +35,8 @@ class Grade {
         return string;
     }
 
-    boolean addClass(final Class clas) {
-        for (Map.Entry<Integer, Class> entry : this.classes.entrySet()) {
+    boolean addClass(final Clas clas) {
+        for (Map.Entry<Integer, Clas> entry : this.classes.entrySet()) {
             if (entry.getKey() == clas.getId()) {
                 System.out.println("Class already in Grade!");
                 return false;
@@ -46,7 +46,7 @@ class Grade {
         return true;
     }
 
-    Class findClass(final Class.SPECIALIZATION special) {
+    Clas findClass(final Clas.SPECIALIZATION special) {
         for (var entry : this.classes.entrySet()) {
             if (entry.getValue().getSpecialization() == special) {
                 return entry.getValue();

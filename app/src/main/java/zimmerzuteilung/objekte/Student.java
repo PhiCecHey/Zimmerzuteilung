@@ -7,6 +7,10 @@ public class Student {
         m, f, d
     }
 
+    public enum SPECIALIZATION {
+        NAWI, MUSIK, SPRACHEN;
+    }
+
     /*
      * Die Schueler werden der Reihe nach durchgezaehlt und erhalten
      * somit ihre ID. Vorteil zur randomID: verbraucht weniger Platz
@@ -17,19 +21,31 @@ public class Student {
     private final String name;
     private final SEX sex;
     private final int id;
+    private int grade;
+    private SPECIALIZATION special;
 
-    private Wish wish;
+    public Student(final String n, final SEX s, final int g,
+            final SPECIALIZATION sp) {
+        this.name = n;
+        this.sex = s;
+        this.grade = g;
+        this.special = sp;
+
+        ++Student.count;
+        this.id = Student.count;
+    }
 
     public Student(final String n, final SEX s) {
         this.name = n;
         this.sex = s;
 
-        ++Student.count; // der erste Schueler kriegt also Nr. 1
+        ++Student.count;
         this.id = Student.count;
     }
 
     public Student() {
-        int randomNum = ThreadLocalRandom.current().nextInt(0, 3);
+        // int randomNum = ThreadLocalRandom.current().nextInt(0, 3);
+        int randomNum = ThreadLocalRandom.current().nextInt(0, 2);
         if (randomNum == 0) {
             this.sex = Student.SEX.f;
         } else if (randomNum == 1) {
@@ -43,20 +59,16 @@ public class Student {
         this.name = Integer.toString(this.id);
     }
 
+    public String getName() {
+        return this.name;
+    }
+
     public int getId() {
         return this.id;
     }
 
     public SEX getSex() {
         return this.sex;
-    }
-
-    void setWish(final Wish w) {
-        this.wish = w;
-    }
-
-    public Wish getWish() {
-        return this.wish;
     }
 
     @Override
