@@ -40,15 +40,12 @@ public class Gurobi {
 
             // ========================== CONSTRAINTS ==========================
 
-            Gurobi.addConstraints(rules, model, allocations,
-                    rooms, teams);
+            Gurobi.addConstraints(rules, model, allocations, rooms, teams);
 
             // =========================== OBJECTIVE ===========================
 
-            double[][] scoreMatrix = Gurobi.getScoreMatrix(allocations);
-
             GRBLinExpr objective = Gurobi.calculateObjectiveLinExpr(
-                    allocations, scoreMatrix);
+                    allocations);
 
             model.setObjective(objective, GRB.MAXIMIZE);
 
@@ -76,7 +73,7 @@ public class Gurobi {
             for (int r = 0; r < rooms.size(); ++r) {
                 String str = "";
                 for (int s = 0; s < teams.size(); ++s) {
-                    str += scoreMatrix[r][s] + " ";
+                    str += allocations.get(r, s).getScore() + " ";
                 }
                 System.out.println(str);
             }
@@ -186,26 +183,12 @@ public class Gurobi {
                     }
                 } else if (wish.building2().hasRoom(allocation.room())) {
                     allocation.addToScore(b2);
-                } else {
-                    int a = 1;
                 }
             }
         }
     }
 
     // =============================== OBJECTIVE ===============================
-
-    private static double[][] getScoreMatrix(final Allocations allocations) {
-        int nRooms = allocations.nRooms();
-        int nTeams = allocations.nTeams();
-        double[][] scoreMatrix = new double[nRooms][nTeams];
-        for (int r = 0; r < nRooms; ++r) {
-            for (int t = 0; t < nTeams; ++t) {
-                scoreMatrix[r][t] = allocations.get(r, t).getScore();
-            }
-        }
-        return scoreMatrix;
-    }
 
     private static GRBVar[][] getGRBVars(final Allocations allocations) {
         int nRooms = allocations.nRooms();
@@ -220,11 +203,11 @@ public class Gurobi {
     }
 
     private static GRBLinExpr calculateObjectiveLinExpr(
-            final Allocations allocations, final double[][] scoreMatrix) {
+            final Allocations allocations) {
         GRBLinExpr objective = new GRBLinExpr();
         for (int r = 0; r < allocations.nRooms(); ++r) {
             for (int t = 0; t < allocations.nTeams(); ++t) {
-                objective.addTerm(scoreMatrix[r][t],
+                objective.addTerm(allocations.get(r, t).getScore(),
                         allocations.get(r, t).grbVar());
             }
         }
