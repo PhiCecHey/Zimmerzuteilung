@@ -1,6 +1,8 @@
 package zimmerzuteilung.algorithmen;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
+
 import zimmerzuteilung.objekte.*;
 import gurobi.*;
 
@@ -45,7 +47,7 @@ public class Gurobi {
             // =========================== OBJECTIVE ===========================
 
             GRBLinExpr objective = Gurobi.calculateObjectiveLinExpr(
-                    allocations);
+                    allocations, 0.1, 1);
 
             model.setObjective(objective, GRB.MAXIMIZE);
 
@@ -63,17 +65,44 @@ public class Gurobi {
             for (int r = 0; r < rooms.size(); r++) {
                 String str = "";
                 for (int t = 0; t < teams.size(); t++) {
-                    str += x[r][t] + "   ";
+                    str += x[r][t] + "\t";
                 }
                 System.out.println(str);
             }
 
             System.out.println(
                     "\n==================== SCORE MATRIX ====================");
+
+            // maximum score:
+            double max = 0;
+            for (int t = 0; t < teams.size(); ++t) {
+                double m = 0;
+                for (int r = 0; r < rooms.size(); ++r) {
+                    if (m < allocations.get(r, t).getScore()) {
+                        m = allocations.get(r, t).getScore();
+                    }
+                }
+                max += m;
+            }
+            System.out.println("Maximum score: " + max);
+
+            // current score:
+            double cur = 0;
+            for (int r = 0; r < rooms.size(); r++) {
+                for (int t = 0; t < teams.size(); t++) {
+                    if (x[r][t] == 1) {
+                        cur += allocations.get(r, t).getScore();
+                    }
+                }
+            }
+            System.out.println("Current score: " + cur);
+
+            // score matrix:
+            System.out.println("Score matrix:");
             for (int r = 0; r < rooms.size(); ++r) {
                 String str = "";
                 for (int s = 0; s < teams.size(); ++s) {
-                    str += allocations.get(r, s).getScore() + " ";
+                    str += allocations.get(r, s).getScore() + "\t";
                 }
                 System.out.println(str);
             }
@@ -203,10 +232,14 @@ public class Gurobi {
     }
 
     private static GRBLinExpr calculateObjectiveLinExpr(
-            final Allocations allocations) {
+            final Allocations allocations, final double min, final double max) {
         GRBLinExpr objective = new GRBLinExpr();
         for (int r = 0; r < allocations.nRooms(); ++r) {
             for (int t = 0; t < allocations.nTeams(); ++t) {
+                double random = ThreadLocalRandom.current()
+                        .nextDouble(min, max);
+                allocations.get(r, t).setScore(
+                        allocations.get(r, t).getScore() + random);
                 objective.addTerm(allocations.get(r, t).getScore(),
                         allocations.get(r, t).grbVar());
             }

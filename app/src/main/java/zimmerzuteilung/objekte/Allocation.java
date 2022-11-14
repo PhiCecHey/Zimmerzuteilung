@@ -6,7 +6,7 @@ public class Allocation {
     private GRBVar grbVar;
     private Room room;
     private Team team;
-    private float score = 1; // importance of this team getting this room
+    private double score = 1; // importance of this team getting this room
 
     public Allocation(final Room r, final Team t, final GRBVar g) {
         this.grbVar = g;
@@ -26,11 +26,11 @@ public class Allocation {
         return this.room;
     }
 
-    public void setScore(final float s) {
+    public void setScore(final double s) {
         this.score = s;
     }
 
-    public void addToScore(final float s) {
+    public void addToScore(final double s) {
         this.score += s;
     }
 
