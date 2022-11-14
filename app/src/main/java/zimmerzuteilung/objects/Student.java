@@ -1,4 +1,4 @@
-package zimmerzuteilung.objekte;
+package zimmerzuteilung.objects;
 
 import java.util.concurrent.ThreadLocalRandom;
 

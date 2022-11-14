@@ -4,8 +4,8 @@
 package zimmerzuteilung;
 
 import java.util.ArrayList;
-import zimmerzuteilung.algorithmen.*;
-import zimmerzuteilung.objekte.*;
+import zimmerzuteilung.algorithms.*;
+import zimmerzuteilung.objects.*;
 
 public class App {
     public String getGreeting() {

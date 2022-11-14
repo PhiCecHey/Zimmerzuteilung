@@ -1,4 +1,4 @@
-package zimmerzuteilung.objekte;
+package zimmerzuteilung.objects;
 
 public class Allocations {
     private final Allocation[][] allocations;

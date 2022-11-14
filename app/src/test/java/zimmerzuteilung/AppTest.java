@@ -3,7 +3,7 @@
  */
 package zimmerzuteilung;
 
-import zimmerzuteilung.objekte.*;
+import zimmerzuteilung.objects.*;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,9 +1,9 @@
-package zimmerzuteilung.algorithmen;
+package zimmerzuteilung.algorithms;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
-import zimmerzuteilung.objekte.*;
+import zimmerzuteilung.objects.*;
 import gurobi.*;
 
 public class Gurobi {

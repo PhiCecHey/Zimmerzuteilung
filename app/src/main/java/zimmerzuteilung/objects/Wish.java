@@ -1,4 +1,4 @@
-package zimmerzuteilung.objekte;
+package zimmerzuteilung.objects;
 
 import org.checkerframework.checker.units.qual.C;
 
