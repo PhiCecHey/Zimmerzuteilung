@@ -1,7 +1,5 @@
 package zimmerzuteilung.objects;
 
-import org.checkerframework.checker.units.qual.C;
-
 public class Wish {
     private class RoomNotInBuildingException extends Exception {
         private RoomNotInBuildingException(String str) {
