@@ -32,12 +32,10 @@ public class ImportFiles {
         return fileList;
     }
 
-    public static String trimLine(String line) {
+    public static String editLine(String line) {
         // remove double quotes and comma
         if (line != null) {
-            if (line.length() < 3) {
-                return "";
-            } else {
+            if (line.length() > 2) {
                 if (line.equals("null,") || line.equals("\"\",")) {
                     // no information in survey
                     return "";
@@ -107,18 +105,23 @@ public class ImportFiles {
                 // end of wish
                 teams.add(team);
                 counter = -1;
+                continue;
             }
             if (line.length() > 2 && line.charAt(2) == '[') {
                 // start of wish
                 counter = 0;
+                continue;
+            } else if (counter > 0) {
+                line = ImportFiles.editLine(line);
+                if (line == null)
+                    continue;
             }
             // ---------------------- get time of survey -----------------------
-            else if (counter == 2) {
-                team.time(ImportFiles.trimLine(line));
+            if (counter == 2) {
+                team.time(line);
             }
             // ------------------------- get team name -------------------------
             else if (counter == 6) {
-                line = ImportFiles.trimLine(line);
                 for (Team t : teams) {
                     if (team.name().equals(t.name())) {
                         if (ImportFiles.compareTime(t.time(), team.time())) {
@@ -134,7 +137,6 @@ public class ImportFiles {
             }
             // ------------------------ get team gender ------------------------
             else if (counter == 11) {
-                line = ImportFiles.trimLine(line);
                 if (line.equals("mädchenzimmer")) {
                     team.gender(GENDER.f);
                 } else if (line.contains("jung") && line.contains("zimmer")) {
@@ -146,7 +148,6 @@ public class ImportFiles {
             // --------------------------- get grade ---------------------------
             else if (counter == 12) {
                 // TODO is this a good idea? do individual surveys instead?
-                line = ImportFiles.trimLine(line);
                 if (line.contains("9.")) {
 
                 } else if (line.contains("10.")) {
@@ -160,7 +161,6 @@ public class ImportFiles {
             // ---------------------- get specialization -----------------------
             else if (counter == 13) {
                 // TODO is this a good idea? do individual surveys instead?
-                line = ImportFiles.trimLine(line);
                 if (line.contains("musik")) {
 
                 } else if (line.contains("sprachen")) {
@@ -172,7 +172,6 @@ public class ImportFiles {
             }
             // ------------------------- get building1 -------------------------
             else if (counter == 14) {
-                line = ImportFiles.trimLine(line);
                 for (Building b : buildings) {
                     if (b.name().toLowerCase().contains(line)) {
                         team.wish().building1(b);
@@ -182,11 +181,10 @@ public class ImportFiles {
             }
             // --------------------------- get room1 ---------------------------
             else if (counter == 19) {
-                line = ImportFiles.trimLine(line);
                 String roomNumber = ""; // TODO
                 for (Building b : buildings) {
                     for (Room r : b.rooms()) {
-                        if (r.number().equals(roomNumber)) {
+                        if (r.officialRoomNumber().equals(roomNumber)) {
                             team.wish().room1(r);
                         }
                     }
@@ -194,11 +192,10 @@ public class ImportFiles {
             }
             // --------------------------- get room2 ---------------------------
             else if (counter == 26) {
-                line = ImportFiles.trimLine(line);
                 String roomNumber = ""; // TODO
                 for (Building b : buildings) {
                     for (Room r : b.rooms()) {
-                        if (r.number().equals(roomNumber)) {
+                        if (r.officialRoomNumber().equals(roomNumber)) {
                             team.wish().room2(r);
                         }
                     }
@@ -206,7 +203,6 @@ public class ImportFiles {
             }
             // ------------------------- get building2 -------------------------
             else if (counter == 33) {
-                line = ImportFiles.trimLine(line);
                 for (Building b : buildings) {
                     if (b.name().toLowerCase().contains(line)) {
                         team.wish().building2(b);
@@ -219,4 +215,46 @@ public class ImportFiles {
 
     }
 
+    public static void importBuildings(File csv) throws IOException,
+            NumberFormatException {
+        BufferedReader reader = new BufferedReader(new FileReader(csv));
+        String line = reader.readLine(); // skip heading
+        while ((line = reader.readLine().strip()) != null) {
+            String[] entry = line.strip().toLowerCase().split(",");
+
+            // ------------------------- get building --------------------------
+            Building building = new Building(entry[0]);
+            for (Building b : ImportFiles.buildings) {
+                if (b.name().toLowerCase().equals(entry[0])) {
+                    building = b;
+                } else {
+                    buildings.add(building);
+                }
+            }
+            // --------------------------- get room ----------------------------
+            Room room = new Room();
+            for (Room r : building.rooms()) {
+                if (r.officialRoomNumber().equals(entry[2])) {
+                    // room already exists
+                    System.out.println("Raum " + r.officialRoomNumber() +
+                            " in " + building.name() + " existiert bereits!");
+                    continue;
+                }
+            }
+            // -------------------------- get gender ---------------------------
+            GENDER gender;
+            if (entry[4].contains("w")) {
+                gender = GENDER.f;
+            } else if (entry[3].contains("m")) {
+                gender = GENDER.m;
+            } else {
+                gender = GENDER.d;
+            }
+            // ------------------------- get capacity --------------------------
+            int capacity = Integer.valueOf(entry[5]);
+            // ------------------------- compare room --------------------------
+            room = new Room(entry[1], entry[2], gender, capacity);
+            building.addRoom(room);
+        }
+    }
 }
