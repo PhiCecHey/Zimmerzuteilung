@@ -37,7 +37,7 @@ public class School {
     public Room[] rooms() {
         List<Room> lRooms = new LinkedList<>();
         for (Building building : this.buildings.values()) {
-            for (Room room : building.rooms().values()) {
+            for (Room room : building.rooms()) {
                 lRooms.add(room);
             }
         }
@@ -221,7 +221,7 @@ public class School {
     public int countRooms() {
         int count = 0;
         for (Building building : this.buildings.values()) {
-            for (Room room : building.rooms().values()) {
+            for (Room room : building.rooms()) {
                 ++count;
             }
         }
