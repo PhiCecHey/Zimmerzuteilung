@@ -221,7 +221,6 @@ public class ImportFiles {
         String line = reader.readLine(); // skip heading
         while ((line = reader.readLine().strip()) != null) {
             String[] entry = line.strip().toLowerCase().split(",");
-
             // ------------------------- get building --------------------------
             Building building = new Building(entry[0]);
             for (Building b : ImportFiles.buildings) {
@@ -256,5 +255,6 @@ public class ImportFiles {
             room = new Room(entry[1], entry[2], gender, capacity);
             building.addRoom(room);
         }
+        reader.close();
     }
 }
