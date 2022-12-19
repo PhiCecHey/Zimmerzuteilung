@@ -103,7 +103,7 @@ public class ImportFiles {
             counter++;
             if (line.startsWith("]")) {
                 // end of wish
-                teams.add(team);
+                ImportFiles.teams.add(team);
                 counter = -1;
                 continue;
             }
