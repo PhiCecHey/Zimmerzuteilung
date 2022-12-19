@@ -10,6 +10,7 @@ public class Room {
     private String number;
     private int capacity;
     private Map<Integer, Student> roomMates = new HashMap<>();
+    private GENDER gender;
 
     public Room(final Building building, final int c) throws IllegalArgumentException {
         ++Room.count;
@@ -48,7 +49,7 @@ public class Room {
         this.number = n;
     }
 
-    public Room(final String n, final int c)
+    public Room(final String n, final int c, final GENDER s)
             throws IllegalArgumentException {
         ++Room.count;
         this.id = Room.count;
@@ -58,6 +59,7 @@ public class Room {
         }
         this.capacity = c;
         this.number = n;
+        this.gender = s;
     }
 
     public int id() {
@@ -66,6 +68,14 @@ public class Room {
 
     public int getCapacity() {
         return this.capacity;
+    }
+
+    public String number() {
+        return this.number;
+    }
+
+    public void number(String n) {
+        this.number = n;
     }
 
     @Override
@@ -87,12 +97,12 @@ public class Room {
         }
 
         for (Map.Entry<Integer, Student> entry : this.roomMates.entrySet()) {
-            if (entry.getKey() == student.getId()) {
+            if (entry.getKey() == student.id()) {
                 return false;
             }
         }
 
-        this.roomMates.put(student.getId(), student);
+        this.roomMates.put(student.id(), student);
         return true;
     }
 }

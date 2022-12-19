@@ -47,7 +47,7 @@ public class Clas {
 
     Student findStudent(final Student student) {
         for (var entry : this.students.entrySet()) {
-            if (entry.getKey() == student.getId()) {
+            if (entry.getKey() == student.id()) {
                 return entry.getValue();
             }
         }
@@ -56,7 +56,7 @@ public class Clas {
 
     boolean containsStudent(final Student student) {
         for (var entry : this.students.entrySet()) {
-            if (entry.getKey() == student.getId()) {
+            if (entry.getKey() == student.id()) {
                 return true;
             }
         }
@@ -65,7 +65,7 @@ public class Clas {
 
     boolean addStudent(final Student student) {
         if (this.findStudent(student) == null) {
-            this.students.put(student.getId(), student);
+            this.students.put(student.id(), student);
             return true;
         }
         System.out.println("student already in class");

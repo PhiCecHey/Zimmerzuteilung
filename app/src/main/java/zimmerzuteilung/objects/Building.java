@@ -1,6 +1,7 @@
 package zimmerzuteilung.objects;
 
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -20,7 +21,8 @@ public class Building {
 
     private int id;
     private String name;
-    private Map<Integer, Room> rooms = new HashMap<>();
+    // private Map<Integer, Room> rooms = new HashMap<>();
+    private ArrayList<Room> rooms = new ArrayList<>();
 
     public Building(final String n) {
         this.name = n;
@@ -34,14 +36,11 @@ public class Building {
         this.name = Integer.toString(this.id);
     }
 
-    boolean addRoom(final Room room) {
-        for (Map.Entry<Integer, Room> entry : this.rooms.entrySet()) {
-            if (entry.getKey() == room.id()) {
-                return false;
-            }
+    public boolean addRoom(final Room room) {
+        if (this.containsRoom(room)) {
+            return false;
         }
-
-        this.rooms.put(room.id(), room);
+        this.rooms.add(room);
         return true;
     }
 
@@ -58,7 +57,15 @@ public class Building {
         return this.id;
     }
 
-    public Map<Integer, Room> rooms() {
+    public String name() {
+        return this.name;
+    }
+
+    public void name(String n) {
+        this.name = n;
+    }
+
+    public ArrayList<Room> rooms() {
         return this.rooms;
     }
 
@@ -66,7 +73,7 @@ public class Building {
     public String toString() {
         String string = "Building{id: " + this.id + ", name: " + this.name
                 + ", rooms: [";
-        for (Room room : this.rooms.values()) {
+        for (Room room : this.rooms) {
             string += room.toString() + ", ";
         }
         return string += "]}";
@@ -78,10 +85,12 @@ public class Building {
         // zimmer neu erstellen und zur map hinzufügen
     }
 
-    public boolean hasRoom(Room room) {
-        if (this.rooms.containsKey(room.id())) {
-            return true;
-        } else
-            return false;
+    public boolean containsRoom(Room room) {
+        for (Room r : this.rooms) {
+            if (r.id() == room.id()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

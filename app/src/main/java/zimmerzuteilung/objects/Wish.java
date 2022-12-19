@@ -19,6 +19,11 @@ public class Wish {
     private static int count = 0;
     private int id;
 
+    public Wish() {
+        Wish.count++;
+        this.id = Wish.count;
+    }
+
     public Wish(final Building fB, final Room fR, final Room sR,
             final Building sB) throws RoomNotInBuildingException,
             SameLocationException {
@@ -30,11 +35,11 @@ public class Wish {
             throw new SameLocationException("Das Erstwunschzimmer " +
                     "darf nicht dem Zweitwunschzimmer entsprechen.");
         }
-        if (!fB.rooms().containsKey(fR.id())) { // fR in fB?
+        if (!fB.containsRoom(fR)) { // fR in fB?
             throw new RoomNotInBuildingException("Das Erstwunschzimmer " +
                     "muss sich im Erstwunschinternat befinden.");
         }
-        if (!fB.rooms().containsKey(sR.id())) { // sR in fB?
+        if (!fB.containsRoom(sR)) { // sR in fB?
             throw new RoomNotInBuildingException("Das Zweitwunschzimmer " +
                     "muss sich im Erstwunschinternat befinden.");
         }
@@ -52,6 +57,10 @@ public class Wish {
         return this.id;
     }
 
+    public void building1(Building b) {
+        this.building1 = b;
+    }
+
     public Building building1() {
         return this.building1;
     }
@@ -60,18 +69,30 @@ public class Wish {
         return this.room1;
     }
 
+    public void room1(Room r) {
+        this.room1 = r;
+    }
+
     public Room room2() {
         return this.room2;
+    }
+
+    public void room2(Room r) {
+        this.room2 = r;
     }
 
     public Building building2() {
         return this.building2;
     }
 
+    public void building2(Building b) {
+        this.building2 = b;
+    }
+
     @Override
     public String toString() {
         String res = "Wish{id: " + this.id + ", building1: "
-                + this.building1.toString() + ", room1: " + 
+                + this.building1.toString() + ", room1: " +
                 this.room1.toString() + ", room2: " + this.room2.toString() +
                 ", building2: " + this.building2.toString() + "}";
 

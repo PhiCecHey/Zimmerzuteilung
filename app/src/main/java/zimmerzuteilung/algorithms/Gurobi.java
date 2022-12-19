@@ -203,14 +203,14 @@ public class Gurobi {
                 Allocation allocation = allocations.get(r, t);
                 Wish wish = allocations.get(r, t).team().wish();
 
-                if (wish.building1().hasRoom(allocation.room())) {
+                if (wish.building1().containsRoom(allocation.room())) {
                     allocation.addToScore(b1);
                     if (wish.room1().id() == allocation.room().id()) {
                         allocation.addToScore(r1);
                     } else if (wish.room2().id() == allocation.room().id()) {
                         allocation.addToScore(r2);
                     }
-                } else if (wish.building2().hasRoom(allocation.room())) {
+                } else if (wish.building2().containsRoom(allocation.room())) {
                     allocation.addToScore(b2);
                 }
             }
