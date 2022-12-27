@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class ImportFiles {
 
@@ -221,8 +220,10 @@ public class ImportFiles {
     public static ArrayList<Building> importBuildings(File csv)
             throws IOException, NumberFormatException {
         BufferedReader reader = new BufferedReader(new FileReader(csv));
+        int lineNum = 1;
         String line = reader.readLine(); // skip heading
         while ((line = reader.readLine()) != null) {
+            lineNum++;
             line = line.strip();
             if (line.equals(""))
                 continue; // skip empty lines
@@ -254,13 +255,16 @@ public class ImportFiles {
                 if (r.officialRoomNumber().equals(entry[2])) {
                     // room already exists
                     System.out.println("Raum " + r.officialRoomNumber() +
-                            " in " + building.name() + " existiert bereits!");
-                    continue;
+                            " in " + building.name() + " existiert bereits "
+                            + "und wird nicht erneut eingelesen! " +
+                            "Siehe " + csv.getAbsolutePath() + " in Zeile "
+                            + lineNum);
+                    continue; // ignore duplicate room
                 }
             }
             // -------------------------- get gender ---------------------------
             GENDER gender;
-            if (entry[4].contains("w")) {
+            if (entry[3].contains("w")) {
                 gender = GENDER.f;
             } else if (entry[3].contains("m")) {
                 gender = GENDER.m;
@@ -268,9 +272,27 @@ public class ImportFiles {
                 gender = GENDER.d;
             }
             // ------------------------- get capacity --------------------------
-            int capacity = Integer.valueOf(entry[5]);
-            // ------------------------- compare room --------------------------
-            room = new Room(entry[1], entry[2], gender, capacity);
+            int capacity = 0;
+            try {
+                capacity = Integer.valueOf(entry[4]);
+            } catch (NumberFormatException e) {
+                System.out.println("Fehler: In " + csv.getAbsolutePath()
+                        + " Zeile " + lineNum + " muss für die Kapazität eine "
+                        + " Zahl angegeben werden! Statt dessen gefunden: "
+                        + entry[4]);
+            }
+            // ------------------------ check reserved--------------------------
+            boolean reserved = false;
+            if (entry[5].equals("ja")) {
+                reserved = true;
+            } else if (!(entry[5].equals("nein") || entry[5].equals(""))) {
+                // if invalid argument
+                throw new IllegalArgumentException("\"ja\" or \"nein\" expected"
+                        + " but got " + entry[5] + "\n"
+                        + csv.getAbsolutePath() + ":" + lineNum);
+            }
+            // --------------------------- add room ----------------------------
+            room = new Room(entry[1], entry[2], gender, capacity, reserved);
             building.addRoom(room);
         }
         reader.close();

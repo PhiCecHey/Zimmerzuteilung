@@ -12,6 +12,7 @@ public class Room {
     private int capacity;
     private Map<Integer, Student> roomMates = new HashMap<>();
     private GENDER gender;
+    private boolean reserved = false;
 
     public Room() {
         Room.count++;
@@ -57,7 +58,7 @@ public class Room {
     }
 
     public Room(final String unoffName, final String offNum, final GENDER s,
-            final int c) throws IllegalArgumentException {
+            final int c, boolean res) throws IllegalArgumentException {
         ++Room.count;
         this.id = Room.count;
         if (c < 0) {
@@ -68,6 +69,7 @@ public class Room {
         this.officialRoomNumber = offNum;
         this.unofficialName = unoffName;
         this.gender = s;
+        this.reserved = res;
     }
 
     public int id() {
@@ -84,6 +86,14 @@ public class Room {
 
     public void officialRoomNumber(String n) {
         this.officialRoomNumber = n;
+    }
+
+    public boolean reserved() {
+        return this.reserved;
+    }
+
+    public void reserved(boolean r) {
+        this.reserved = r;
     }
 
     @Override
