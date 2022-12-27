@@ -15,18 +15,14 @@ public class App {
     }
 
     public static void main(String[] args) {
-
-        String hallo = "h,a,ll,,o";
-        String[] split = hallo.split(",");
-
-        for (String s : split) {
-            System.out.println(">" + s + "<");
-        }
+        File file = new File("app/files/alle.csv");
         try {
-            // Gurobi.calculate(constraints, rooms, teams);
-
+            ArrayList<Building> b = ImportFiles.importBuildings(file);
+            int a = 3;
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Working Directory = " + System.getProperty("user.dir"));
+            System.out.println(file.getAbsolutePath());
+            e.printStackTrace();
         }
     }
 }

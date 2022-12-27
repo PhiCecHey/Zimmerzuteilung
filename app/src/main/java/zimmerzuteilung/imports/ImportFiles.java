@@ -7,12 +7,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class ImportFiles {
 
-    private static ArrayList<Building> buildings;
-    private static ArrayList<Student> students;
-    private static ArrayList<Team> teams;
+    private static ArrayList<Building> buildings = new ArrayList<>();
+    private static ArrayList<Student> students = new ArrayList<>();
+    private static ArrayList<Team> teams = new ArrayList<>();
 
     public static File[] getFilesFromFolder(String pathToFolder) {
         File[] fileList = new File[0];
@@ -91,6 +92,7 @@ public class ImportFiles {
         return true;
     }
 
+    // not finished
     public static void importWishes(File json) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(json));
         String line;
@@ -215,19 +217,35 @@ public class ImportFiles {
 
     }
 
-    public static void importBuildings(File csv) throws IOException,
-            NumberFormatException {
+    // tested, works
+    public static ArrayList<Building> importBuildings(File csv)
+            throws IOException, NumberFormatException {
         BufferedReader reader = new BufferedReader(new FileReader(csv));
         String line = reader.readLine(); // skip heading
-        while ((line = reader.readLine().strip()) != null) {
+        while ((line = reader.readLine()) != null) {
+            line = line.strip();
+            if (line.equals(""))
+                continue; // skip empty lines
+
             String[] entry = line.strip().toLowerCase().split(",");
             // ------------------------- get building --------------------------
             Building building = new Building(entry[0]);
-            for (Building b : ImportFiles.buildings) {
-                if (b.name().toLowerCase().equals(entry[0])) {
-                    building = b;
-                } else {
-                    buildings.add(building);
+            if (ImportFiles.buildings.isEmpty()) {
+                // add first building to list
+                ImportFiles.buildings.add(building);
+            } else {
+                boolean found = false;
+                for (Building b : ImportFiles.buildings) {
+                    if (b.name().toLowerCase().equals(entry[0])) {
+                        // avoid duplicates
+                        building = b;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    // no building with same name found
+                    ImportFiles.buildings.add(building);
                 }
             }
             // --------------------------- get room ----------------------------
@@ -256,5 +274,6 @@ public class ImportFiles {
             building.addRoom(room);
         }
         reader.close();
+        return ImportFiles.buildings;
     }
 }
