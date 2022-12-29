@@ -11,7 +11,7 @@ public class Gurobi {
         // constraints
         oneRoomPerTeam, oneTeamPerRoom, maxStudentsPerRoom,
         // other rules
-        respectWish;
+        respectWish, respectReservations;
     }
 
     public static void calculate(final ArrayList<Gurobi.RULES> rules,
@@ -124,19 +124,30 @@ public class Gurobi {
             final GRBModel model, final Allocations allocations,
             ArrayList<Room> rooms, ArrayList<Team> teams) {
         if (rules.contains(Gurobi.RULES.maxStudentsPerRoom)) {
-            maxStudentsPerRoom(model, allocations, rooms, teams);
+            Gurobi.maxStudentsPerRoom(model, allocations, rooms, teams);
         }
         if (rules.contains(Gurobi.RULES.oneRoomPerTeam)) {
-            oneRoomPerTeam(model, allocations, rooms, teams);
+            Gurobi.oneRoomPerTeam(model, allocations, rooms, teams);
         }
         if (rules.contains(Gurobi.RULES.oneTeamPerRoom)) {
-            oneTeamPerRoom(model, allocations, rooms, teams);
+            Gurobi.oneTeamPerRoom(model, allocations, rooms, teams);
         }
         if (rules.contains(Gurobi.RULES.respectWish)) {
-            respectWish(allocations, 10, 5, 3, 5);
+            Gurobi.respectWish(allocations, 10, 5, 3, 5);
+        }
+        if (rules.contains(Gurobi.RULES.respectReservations)) {
+            Gurobi.respectReservations(allocations, 50);
         }
     }
 
+    /**
+     * Garanties max one room per team.
+     * 
+     * @param model
+     * @param allocations
+     * @param rooms
+     * @param teams
+     */
     private static void oneRoomPerTeam(final GRBModel model,
             final Allocations allocations, ArrayList<Room> rooms,
             ArrayList<Team> teams) {
@@ -156,6 +167,14 @@ public class Gurobi {
         }
     }
 
+    /**
+     * Garanties max one team per room.
+     * 
+     * @param model:       GRBModel object
+     * @param allocations: Allocations object
+     * @param rooms:       list of rooms
+     * @param teams:       list of teams
+     */
     private static void oneTeamPerRoom(final GRBModel model,
             final Allocations allocations, ArrayList<Room> rooms,
             ArrayList<Team> teams) {
@@ -175,6 +194,14 @@ public class Gurobi {
         }
     }
 
+    /**
+     * Garanties no more students per room than the respective room capacity.
+     * 
+     * @param model:       GRBModel object
+     * @param allocations: Allocations object
+     * @param rooms:       list of rooms
+     * @param teams:       list of teams
+     */
     private static void maxStudentsPerRoom(final GRBModel model,
             final Allocations allocations,
             ArrayList<Room> rooms, ArrayList<Team> teams) {
@@ -196,6 +223,19 @@ public class Gurobi {
         }
     }
 
+    /**
+     * Respects the wishes of the students regarding their rooms.
+     * 
+     * @param allocations
+     * @param b1:         importance of assigning the team to a room in their
+     *                    first wish building
+     * @param r1:         importance of assigning the team to their first wish
+     *                    room
+     * @param r2:         importance of assigning the team to their second wish
+     *                    room
+     * @param b2:         importance of assigning the team to a room in their
+     *                    second wish building
+     */
     private static void respectWish(final Allocations allocations,
             final float b1, final float r1, final float r2, final float b2) {
         for (int r = 0; r < allocations.nRooms(); ++r) {
@@ -217,8 +257,33 @@ public class Gurobi {
         }
     }
 
+    /**
+     * Subtracts res from the allocation score so that the respective room is
+     * reserved for ninth graders.
+     * 
+     * @param allocations: Allocations object
+     * @param res:         importance of the reservation, higher value represents
+     *                     higher
+     *                     importance
+     */
+    private static void respectReservations(final Allocations allocations,
+            final float res) {
+        for (int r = 0; r < allocations.nRooms(); ++r) {
+            for (int t = 0; t < allocations.nTeams(); ++t) {
+                Allocation allocation = allocations.get(r, t);
+                allocation.addToScore(-res);
+            }
+        }
+    }
+
     // =============================== OBJECTIVE ===============================
 
+    /**
+     * Calculates the objective with respect to the allocations
+     * 
+     * @param allocations: Allocations object
+     * @return gurobi objective
+     */
     private static GRBVar[][] getGRBVars(final Allocations allocations) {
         int nRooms = allocations.nRooms();
         int nTeams = allocations.nTeams();
@@ -231,6 +296,13 @@ public class Gurobi {
         return grbvars;
     }
 
+    /**
+     * TODO
+     * @param allocations
+     * @param min
+     * @param max
+     * @return
+     */
     private static GRBLinExpr calculateObjectiveLinExpr(
             final Allocations allocations, final double min, final double max) {
         GRBLinExpr objective = new GRBLinExpr();
