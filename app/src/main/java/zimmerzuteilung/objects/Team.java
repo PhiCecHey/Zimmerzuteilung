@@ -2,16 +2,15 @@ package zimmerzuteilung.objects;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
-import zimmerzuteilung.objects.GENDER;
 
 public class Team {
-    private class DifferentgenderException extends Exception {
-        private DifferentgenderException(String str) {
+    private class DifferentGenderException extends Exception {
+        private DifferentGenderException(String str) {
             super(str);
         }
     }
 
-    public ArrayList<Student> members;
+    private ArrayList<Student> members;
     private Wish wish;
     private int id;
     private GENDER gender;
@@ -20,11 +19,13 @@ public class Team {
     private static int count = 0;
 
     public Team() {
+        this.members = new ArrayList<>();
+        this.wish = new Wish();
         Team.count++;
         this.id = Team.count;
     }
 
-    public Team(ArrayList<Student> students) throws DifferentgenderException {
+    public Team(ArrayList<Student> students) throws DifferentGenderException {
         // check for same gender
         ListIterator<Student> it = students.listIterator();
         while (it.hasNext()) {
@@ -32,9 +33,8 @@ public class Team {
             while (it.hasNext()) {
                 Student second = it.next();
                 if (first.gender() != second.gender()) {
-                    throw new DifferentgenderException("Die Schüler eines " +
-                            "Teams müssen vom gleichen Geschlecht sein (" +
-                            first.name() + ", " + second.name() + ").");
+                    throw new DifferentGenderException(
+                            "Die Schüler eines " + "Teams müssen vom gleichen Geschlecht sein (" + first.name() + ", " + second.name() + ").");
                 }
             }
         }
@@ -43,7 +43,7 @@ public class Team {
         this.id = Team.count;
     }
 
-    public Team(ArrayList<Student> students, Wish w) throws DifferentgenderException {
+    public Team(ArrayList<Student> students, Wish w) throws DifferentGenderException {
         // check for same gender
         ListIterator<Student> it = students.listIterator();
         while (it.hasNext()) {
@@ -51,9 +51,9 @@ public class Team {
             while (it.hasNext()) {
                 Student second = it.next();
                 if (first.gender() != second.gender()) {
-                    throw new DifferentgenderException("Die Schüler eines " +
-                            "Teams müssen vom gleichen Geschlecht sein (" +
-                            first.name() + ", " + second.name() + ").");
+                    throw new DifferentGenderException(
+                            "Die Schüler eines " + "Teams müssen vom gleichen eschlecht sein (" + first.name() + ", "
+                                    + second.name() + ").");
                 }
             }
         }
@@ -97,6 +97,32 @@ public class Team {
 
     public void gender(GENDER s) {
         this.gender = s;
+    }
+
+    public void addStudent(Student student) {
+        this.members.add(student);
+    }
+
+    public ArrayList<Student> members() {
+        return this.members;
+    }
+
+    public Student getStudent(String userName) {
+        for (Student student : this.members) {
+            if (student.userName().equals(userName)) {
+                return student;
+            }
+        }
+        return null;
+    }
+
+    public boolean hasStudent(String userName) {
+        for (Student student : this.members) {
+            if (student.userName().equals(userName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

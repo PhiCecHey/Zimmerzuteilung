@@ -24,9 +24,8 @@ public class Wish {
         this.id = Wish.count;
     }
 
-    public Wish(final Building fB, final Room fR, final Room sR,
-            final Building sB) throws RoomNotInBuildingException,
-            SameLocationException {
+    public Wish(final Building fB, final Room fR, final Room sR, final Building sB)
+            throws RoomNotInBuildingException, SameLocationException {
         if (fB.id() == sB.id()) { // fB != sB?
             throw new SameLocationException("Das Erstwunschinternat " +
                     "nicht dem Zweitwunschinternat entsprechen.");

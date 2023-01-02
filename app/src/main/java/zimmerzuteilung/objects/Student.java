@@ -15,10 +15,35 @@ public class Student {
     private static int count = 0;
 
     private final String name;
-    private final GENDER gender;
+    private GENDER gender;
+    private String userName;
     private final int id;
     private int grade;
     private SPECIALIZATION special;
+
+    public Student() {
+        // int randomNum = ThreadLocalRandom.current().nextInt(0, 3);
+        int randomNum = ThreadLocalRandom.current().nextInt(0, 2);
+        if (randomNum == 0) {
+            this.gender = GENDER.f;
+        } else if (randomNum == 1) {
+            this.gender = GENDER.m;
+        } else {
+            this.gender = GENDER.d;
+        }
+
+        ++Student.count; // der erste Schueler kriegt also Nr. 1
+        this.id = Student.count;
+        this.name = Integer.toString(this.id);
+    }
+
+    public Student(final String n, final String u) {
+        this.name = n;
+        this.userName = u;
+
+        ++Student.count;
+        this.id = Student.count;
+    }
 
     public Student(final String n, final GENDER s, final int g,
             final SPECIALIZATION sp) {
@@ -39,22 +64,6 @@ public class Student {
         this.id = Student.count;
     }
 
-    public Student() {
-        // int randomNum = ThreadLocalRandom.current().nextInt(0, 3);
-        int randomNum = ThreadLocalRandom.current().nextInt(0, 2);
-        if (randomNum == 0) {
-            this.gender = GENDER.f;
-        } else if (randomNum == 1) {
-            this.gender = GENDER.m;
-        } else {
-            this.gender = GENDER.d;
-        }
-
-        ++Student.count; // der erste Schueler kriegt also Nr. 1
-        this.id = Student.count;
-        this.name = Integer.toString(this.id);
-    }
-
     public String name() {
         return this.name;
     }
@@ -65,6 +74,14 @@ public class Student {
 
     public GENDER gender() {
         return this.gender;
+    }
+
+    public String userName() {
+        return this.userName;
+    }
+
+    public void userName(String un) {
+        this.userName = un;
     }
 
     @Override
