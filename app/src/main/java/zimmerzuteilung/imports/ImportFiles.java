@@ -12,7 +12,6 @@ import zimmerzuteilung.objects.GENDER;
 import zimmerzuteilung.objects.Room;
 import zimmerzuteilung.objects.Student;
 import zimmerzuteilung.objects.Team;
-import zimmerzuteilung.objects.Wish;
 
 public class ImportFiles {
 
@@ -189,14 +188,15 @@ public class ImportFiles {
     }
 
     // TODO: test
-    public static ArrayList<Wish> importWishesCsv(File csv)
+    public static ArrayList<Team> importWishes(File csv)
             throws IOException, IllegalArgumentException, BuildingDoesNotExist, RoomDoesNotExist {
         try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
             int lineNum = 1;
-            String line = reader.readLine(); // skip heading
+            String line = reader.readLine();
             while ((line = reader.readLine()) != null) {
                 lineNum++;
                 line = line.strip();
+                line = line.replace("\"", "");
                 if (line.equals("")) {
                     continue; // skip empty lines
                 }
@@ -238,25 +238,25 @@ public class ImportFiles {
                  * }
                  */
                 // --------------------------------- get wish ----------------------------------
-                String nameBuilding1 = null;
-                String nameRoom1 = null;
-                String nameRoom2 = null;
-                String nameBuilding2 = null;
+                String nameBuilding1 = "";
+                String nameRoom1 = "";
+                String nameRoom2 = "";
+                String nameBuilding2 = "";
                 for (int i = 13; i < entry.length; i++) {
                     if (entry[i] != "") {
-                        if (nameBuilding1 == null) {
+                        if (nameBuilding1.equals("")) {
                             nameBuilding1 = entry[i];
-                        } else if (nameRoom1 == null) {
+                        } else if (nameRoom1.equals("")) {
                             nameRoom1 = entry[i];
-                        } else if (nameRoom2 == null) {
+                        } else if (nameRoom2.equals("")) {
                             nameRoom2 = entry[i];
-                        } else if (nameBuilding2 == null) {
+                        } else if (nameBuilding2.equals("")) {
                             nameBuilding2 = entry[i];
                         }
                     }
                 }
-                Boolean building1 = false, building2 = false, room1 = false, room2 = false;
 
+                Boolean building1 = false, building2 = false, room1 = false, room2 = false;
                 for (Building building : ImportFiles.buildings) {
                     if (building.name().equals(nameBuilding1)) {
                         building1 = true;
@@ -266,12 +266,18 @@ public class ImportFiles {
                         building2 = true;
                         team.wish().building2(building);
                     }
+
+                    if (building1 && building2) {
+                        break;
+                    }
                 }
                 if (!building1) {
+                    int a = 3;
                     throw new BuildingDoesNotExist("Das Internat " + nameBuilding1
                             + " existiert nicht! Wurde es vorher korrekt eingelesen?");
                 }
                 if (!building2) {
+                    int a = 3;
                     throw new BuildingDoesNotExist("Das Internat " + nameBuilding2
                             + " existiert nicht! Wurde es vorher korrekt eingelesen?");
                 }
@@ -280,10 +286,21 @@ public class ImportFiles {
                     if (room.officialRoomNumber().equals(nameRoom1)) {
                         room1 = true;
                         team.wish().room1(room);
+                    } else if (nameRoom1.contains(room.officialRoomNumber())) {
+                        room1 = true;
+                        team.wish().room1(room);
                     }
+
                     if (room.officialRoomNumber().equals(nameRoom2)) {
                         room2 = true;
                         team.wish().room2(room);
+                    } else if (nameRoom2.contains(room.officialRoomNumber())) {
+                        room2 = true;
+                        team.wish().room2(room);
+                    }
+
+                    if (room1 && room2) {
+                        break;
                     }
                 }
                 if (!room1) {
@@ -294,22 +311,23 @@ public class ImportFiles {
                     throw new RoomDoesNotExist("Das Zimmer " + nameRoom2
                             + " existiert nicht! Wurde es vorher korrekt eingelesen?");
                 }
+                ImportFiles.teams.add(team);
             }
             reader.close();
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
-        return null;
+        return ImportFiles.teams;
     }
 
     // TODO: test
-    public static ArrayList<Wish> imporTeams(File csv) throws IOException, IllegalArgumentException {
+    public static ArrayList<Team> importTeams(File csv) throws IOException, IllegalArgumentException {
         try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
             int lineNum = 2;
             String line = reader.readLine();
             String sep = ",";
             if (line.contains("sep=")) {
-                sep = Character.toString(line.charAt(5));
+                sep = Character.toString(line.charAt(4));
             }
             line = reader.readLine(); // skip heading
 
@@ -319,6 +337,7 @@ public class ImportFiles {
                 if (line.equals("")) {
                     continue; // skip empty lines
                 }
+                line = line.replace("\"", "");
                 String[] entry = line.strip().toLowerCase().split(",");
                 // ------------------------------- get team size -------------------------------
                 int teamSize = Integer.valueOf(entry[2]);
@@ -349,6 +368,7 @@ public class ImportFiles {
                 ImportFiles.teams.add(team);
             }
             reader.close();
+            return ImportFiles.teams;
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }

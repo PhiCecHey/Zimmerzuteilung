@@ -2,12 +2,12 @@ package zimmerzuteilung;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import zimmerzuteilung.algorithms.*;
-import zimmerzuteilung.imports.*;
-import zimmerzuteilung.objects.*;
+import zimmerzuteilung.algorithms.Gurobi;
+import zimmerzuteilung.imports.ImportFiles;
+import zimmerzuteilung.objects.Building;
+import zimmerzuteilung.objects.Room;
+import zimmerzuteilung.objects.Team;
 
 public class App {
     public String getGreeting() {
@@ -15,13 +15,37 @@ public class App {
     }
 
     public static void main(String[] args) {
-        File file = new File("app/files/alle.csv");
+        File alle = new File("app/files/alle.csv");
+        File gruppen = new File("app/files/gruppen.csv");
+        File zimmerwahl = new File("app/files/Zimmerwahl.csv");
         try {
-            ArrayList<Building> b = ImportFiles.importBuildings(file);
+            ArrayList<Building> b = ImportFiles.importBuildings(alle);
+            ImportFiles.importTeams(gruppen);
+
+            ArrayList<Room> r = new ArrayList<>();
+            for (Building building : b) {
+                for (Room room : building.rooms()) {
+                    r.add(room);
+                }
+            }
+
+            ArrayList<Team> t = ImportFiles.importWishes(zimmerwahl);
+
+            ArrayList<Gurobi.RULES> rules = new ArrayList<>();
+            rules.add(Gurobi.RULES.maxStudentsPerRoom);
+            rules.add(Gurobi.RULES.oneRoomPerTeam);
+            rules.add(Gurobi.RULES.oneTeamPerRoom);
+            rules.add(Gurobi.RULES.respectReservations);
+            rules.add(Gurobi.RULES.respectWish);
+
+            Gurobi.calculate(rules, r, t);
+
             int a = 3;
         } catch (Exception e) {
+            System.out.println(alle.getAbsolutePath());
+            System.out.println(gruppen.getAbsolutePath());
+            System.out.print(zimmerwahl.getAbsolutePath());
             System.out.println("Working Directory = " + System.getProperty("user.dir"));
-            System.out.println(file.getAbsolutePath());
             e.printStackTrace();
         }
     }

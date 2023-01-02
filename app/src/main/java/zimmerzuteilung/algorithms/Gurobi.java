@@ -3,8 +3,17 @@ package zimmerzuteilung.algorithms;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
-import zimmerzuteilung.objects.*;
-import gurobi.*;
+import gurobi.GRB;
+import gurobi.GRBEnv;
+import gurobi.GRBException;
+import gurobi.GRBLinExpr;
+import gurobi.GRBModel;
+import gurobi.GRBVar;
+import zimmerzuteilung.objects.Allocation;
+import zimmerzuteilung.objects.Allocations;
+import zimmerzuteilung.objects.Room;
+import zimmerzuteilung.objects.Team;
+import zimmerzuteilung.objects.Wish;
 
 public class Gurobi {
     public enum RULES {
@@ -16,6 +25,8 @@ public class Gurobi {
 
     public static void calculate(final ArrayList<Gurobi.RULES> rules,
             final ArrayList<Room> rooms, final ArrayList<Team> teams) {
+
+                int a = 3;
 
         try {
             // ============================= MODEL =============================
@@ -210,7 +221,7 @@ public class Gurobi {
             for (int r = 0; r < rooms.size(); ++r) {
                 expr = new GRBLinExpr();
                 for (int t = 0; t < teams.size(); ++t) {
-                    expr.addTerm(allocations.get(r, t).team().members.size(),
+                    expr.addTerm(allocations.get(r, t).team().members().size(),
                             allocations.get(r, t).grbVar());
                 }
                 String st = "maxStudentsPerRoom_" + String.valueOf(r);
@@ -236,13 +247,16 @@ public class Gurobi {
      * @param b2:         importance of assigning the team to a room in their
      *                    second wish building
      */
-    private static void respectWish(final Allocations allocations,
-            final float b1, final float r1, final float r2, final float b2) {
+    private static void respectWish(final Allocations allocations, final float b1, final float r1, final float r2,
+            final float b2) {
         for (int r = 0; r < allocations.nRooms(); ++r) {
             for (int t = 0; t < allocations.nTeams(); ++t) {
                 Allocation allocation = allocations.get(r, t);
                 Wish wish = allocations.get(r, t).team().wish();
 
+                if (wish.building1() == null) {
+                    int a = 3;
+                }
                 if (wish.building1().containsRoom(allocation.room())) {
                     allocation.addToScore(b1);
                     if (wish.room1().id() == allocation.room().id()) {
@@ -298,6 +312,7 @@ public class Gurobi {
 
     /**
      * TODO
+     * 
      * @param allocations
      * @param min
      * @param max
