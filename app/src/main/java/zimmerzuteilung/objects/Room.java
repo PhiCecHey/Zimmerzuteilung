@@ -1,8 +1,5 @@
 package zimmerzuteilung.objects;
 
-import java.util.Map;
-import java.util.HashMap;
-
 public class Room {
     private static int count = 0;
 
@@ -10,7 +7,6 @@ public class Room {
     private String officialRoomNumber;
     private String unofficialName;
     private int capacity;
-    private Map<Integer, Student> roomMates = new HashMap<>();
     private GENDER gender;
     private boolean reserved = false;
 
@@ -99,28 +95,8 @@ public class Room {
     @Override
     public String toString() {
         String string = "Room{id: " + this.id + ", number: " + this.officialRoomNumber
-                + ", capacity: " + this.capacity + ", roomMates: [";
-
-        for (Student student : this.roomMates.values()) {
-            string += student.toString();
-        }
-        string += "]}";
+                + ", capacity: " + this.capacity + "}";
 
         return string;
-    }
-
-    boolean addStudent(final Student student) {
-        if (this.capacity <= this.roomMates.size()) {
-            return false;
-        }
-
-        for (Map.Entry<Integer, Student> entry : this.roomMates.entrySet()) {
-            if (entry.getKey() == student.id()) {
-                return false;
-            }
-        }
-
-        this.roomMates.put(student.id(), student);
-        return true;
     }
 }
