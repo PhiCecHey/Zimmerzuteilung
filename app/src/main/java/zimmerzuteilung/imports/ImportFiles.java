@@ -389,4 +389,13 @@ public class ImportFiles {
         }
         return null;
     }
+
+    public static ArrayList<Building> buildings() {
+        return ImportFiles.buildings;
+    }
+
+    public static ArrayList<Team> teams() {
+        return ImportFiles.teams();
+    }
+
 }

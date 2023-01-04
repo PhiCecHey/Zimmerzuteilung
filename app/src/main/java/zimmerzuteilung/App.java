@@ -5,9 +5,6 @@ import java.util.ArrayList;
 
 import zimmerzuteilung.algorithms.Gurobi;
 import zimmerzuteilung.imports.ImportFiles;
-import zimmerzuteilung.objects.Building;
-import zimmerzuteilung.objects.Room;
-import zimmerzuteilung.objects.Team;
 
 public class App {
     public String getGreeting() {
@@ -19,17 +16,9 @@ public class App {
         File gruppen = new File("app/files/gruppen.csv");
         File zimmerwahl = new File("app/files/Zimmerwahl.csv");
         try {
-            ArrayList<Building> b = ImportFiles.importBuildings(alle);
+            ImportFiles.importBuildings(alle);
             ImportFiles.importTeams(gruppen);
-
-            ArrayList<Room> r = new ArrayList<>();
-            for (Building building : b) {
-                for (Room room : building.rooms()) {
-                    r.add(room);
-                }
-            }
-
-            ArrayList<Team> t = ImportFiles.importWishes(zimmerwahl);
+            ImportFiles.importWishes(zimmerwahl);
 
             ArrayList<Gurobi.RULES> rules = new ArrayList<>();
             rules.add(Gurobi.RULES.maxStudentsPerRoom);
@@ -38,7 +27,8 @@ public class App {
             rules.add(Gurobi.RULES.respectReservations);
             rules.add(Gurobi.RULES.respectWish);
 
-            Gurobi.calculate(rules, r, t);
+            Gurobi g = new Gurobi(rules, ImportFiles.buildings(), ImportFiles.teams());
+            g.calculate();
 
             int a = 3;
         } catch (Exception e) {
