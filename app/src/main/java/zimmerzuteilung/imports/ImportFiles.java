@@ -395,7 +395,7 @@ public class ImportFiles {
     }
 
     public static ArrayList<Team> teams() {
-        return ImportFiles.teams();
+        return ImportFiles.teams;
     }
 
 }

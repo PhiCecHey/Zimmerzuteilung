@@ -29,7 +29,7 @@ public class Gurobi {
 
     private static ArrayList<Team> teams = new ArrayList<>();
     private static ArrayList<Student> students = new ArrayList<>();
-    //private static ArrayList<Building> buildings = new ArrayList<>();
+    // private static ArrayList<Building> buildings = new ArrayList<>();
     private static ArrayList<Room> rooms = new ArrayList<>();
 
     private static Allocations allocations;
@@ -42,7 +42,7 @@ public class Gurobi {
     public Gurobi(final ArrayList<Gurobi.RULES> r, final ArrayList<Building> b, final ArrayList<Team> t) {
         Gurobi.rules = r;
         Gurobi.teams = t;
-        //Gurobi.buildings = b;
+        // Gurobi.buildings = b;
         for (Building building : b) {
             for (Room room : building.rooms()) {
                 Gurobi.rooms.add(room);
@@ -55,6 +55,16 @@ public class Gurobi {
         }
 
         Gurobi.allocations = new Allocations(rooms.size(), Gurobi.teams.size());
+
+        try {
+            this.env = new GRBEnv();
+            this.model = new GRBModel(env);
+            this.model.set(GRB.StringAttr.ModelName, "zimmerzuteilung");
+        } catch (GRBException e) {
+            System.out.println("Error code: " + e.getErrorCode() + ". "
+                    + e.getMessage());
+        }
+
     }
 
     public void calculate() {
@@ -62,12 +72,6 @@ public class Gurobi {
         int debug = 3;
 
         try {
-            // --------------------------------------------------MODEL--------------------------------------------------
-
-            this.env = new GRBEnv();
-            this.model = new GRBModel(env);
-            this.model.set(GRB.StringAttr.ModelName, "zimmerzuteilung");
-
             // ------------------------------------------------VARIABLES------------------------------------------------
 
             // zuordnung

@@ -15,6 +15,9 @@ public class App {
         File alle = new File("app/files/alle.csv");
         File gruppen = new File("app/files/gruppen.csv");
         File zimmerwahl = new File("app/files/Zimmerwahl.csv");
+        System.out.println(alle.getAbsolutePath());
+        System.out.println(gruppen.getAbsolutePath());
+        System.out.print(zimmerwahl.getAbsolutePath());
         try {
             ImportFiles.importBuildings(alle);
             ImportFiles.importTeams(gruppen);
