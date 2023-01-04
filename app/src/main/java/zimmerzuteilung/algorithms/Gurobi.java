@@ -11,7 +11,9 @@ import gurobi.GRBModel;
 import gurobi.GRBVar;
 import zimmerzuteilung.objects.Allocation;
 import zimmerzuteilung.objects.Allocations;
+import zimmerzuteilung.objects.Building;
 import zimmerzuteilung.objects.Room;
+import zimmerzuteilung.objects.Student;
 import zimmerzuteilung.objects.Team;
 import zimmerzuteilung.objects.Wish;
 
@@ -23,74 +25,98 @@ public class Gurobi {
         respectWish, respectReservations;
     }
 
-    public static void calculate(final ArrayList<Gurobi.RULES> rules,
-            final ArrayList<Room> rooms, final ArrayList<Team> teams) {
+    private static ArrayList<Gurobi.RULES> rules = new ArrayList<>();
 
-                int a = 3;
+    private static ArrayList<Team> teams = new ArrayList<>();
+    private static ArrayList<Student> students = new ArrayList<>();
+    //private static ArrayList<Building> buildings = new ArrayList<>();
+    private static ArrayList<Room> rooms = new ArrayList<>();
+
+    private static Allocations allocations;
+
+    private GRBModel model;
+    private GRBEnv env;
+    private GRBLinExpr objective;
+    private GRBVar[][] grbVars;
+
+    public Gurobi(final ArrayList<Gurobi.RULES> r, final ArrayList<Building> b, final ArrayList<Team> t) {
+        Gurobi.rules = r;
+        Gurobi.teams = t;
+        //Gurobi.buildings = b;
+        for (Building building : b) {
+            for (Room room : building.rooms()) {
+                Gurobi.rooms.add(room);
+            }
+        }
+        for (Team team : t) {
+            for (Student s : team.members()) {
+                Gurobi.students.add(s);
+            }
+        }
+
+        Gurobi.allocations = new Allocations(rooms.size(), Gurobi.teams.size());
+    }
+
+    public void calculate() {
+
+        int debug = 3;
 
         try {
-            // ============================= MODEL =============================
+            // --------------------------------------------------MODEL--------------------------------------------------
 
-            GRBEnv env = new GRBEnv();
-            GRBModel model = new GRBModel(env);
-            model.set(GRB.StringAttr.ModelName, "zimmerzuteilung");
+            this.env = new GRBEnv();
+            this.model = new GRBModel(env);
+            this.model.set(GRB.StringAttr.ModelName, "zimmerzuteilung");
 
-            // =========================== VARIABLES ===========================
+            // ------------------------------------------------VARIABLES------------------------------------------------
 
             // zuordnung
-            Allocations allocations = new Allocations(rooms.size(),
-                    teams.size());
-
-            for (int r = 0; r < rooms.size(); ++r) {
-                for (int t = 0; t < teams.size(); ++t) {
-                    String st = "zuteilung_" + rooms.get(r).id()
-                            + "_" + teams.get(t).id();
-                    allocations.set(r, t, new Allocation(
-                            rooms.get(r), teams.get(t),
-                            model.addVar(0.0, 1.0, 0.0, GRB.BINARY, st)));
+            for (int r = 0; r < Gurobi.rooms.size(); ++r) {
+                for (int t = 0; t < Gurobi.teams.size(); ++t) {
+                    String st = "zuteilung_" + Gurobi.rooms.get(r).id() + "_" + Gurobi.teams.get(t).id();
+                    Gurobi.allocations.set(r, t, new Allocation(Gurobi.rooms.get(r), Gurobi.teams.get(t),
+                            this.model.addVar(0.0, 1.0, 0.0, GRB.BINARY, st)));
                 }
             }
 
-            // ========================== CONSTRAINTS ==========================
+            // -----------------------------------------------CONSTRAINTS-----------------------------------------------
 
-            Gurobi.addConstraints(rules, model, allocations, rooms, teams);
+            this.addConstraints();
 
-            // =========================== OBJECTIVE ===========================
+            // ------------------------------------------------OBJECTIVE------------------------------------------------
 
-            GRBLinExpr objective = Gurobi.calculateObjectiveLinExpr(
-                    allocations, 0.1, 1);
+            this.objective = Gurobi.calculateObjectiveLinExpr(0.1, 1);
+            this.model.setObjective(this.objective, GRB.MAXIMIZE);
 
-            model.setObjective(objective, GRB.MAXIMIZE);
+            // -------------------------------------------------OPTIMIZE------------------------------------------------
 
-            // ============================ OPTIMIZE ===========================
+            this.model.optimize();
 
-            model.optimize();
+            // --------------------------------------------------PRINT--------------------------------------------------
 
-            // ============================= PRINT =============================
-
-            GRBVar[][] grbVars = Gurobi.getGRBVars(allocations);
-            double[][] x = model.get(GRB.DoubleAttr.X, grbVars);
+            this.grbVars = Gurobi.getGRBVars();
+            double[][] x = this.model.get(GRB.DoubleAttr.X, grbVars);
 
             System.out.println(
-                    "\n===================== ALLOCATION =====================");
-            for (int r = 0; r < rooms.size(); r++) {
+                    "\n--------------------- ALLOCATION ---------------------");
+            for (int r = 0; r < Gurobi.rooms.size(); r++) {
                 String str = "";
-                for (int t = 0; t < teams.size(); t++) {
+                for (int t = 0; t < Gurobi.teams.size(); t++) {
                     str += x[r][t] + "\t";
                 }
                 System.out.println(str);
             }
 
             System.out.println(
-                    "\n==================== SCORE MATRIX ====================");
+                    "\n-------------------- SCORE MATRIX --------------------");
 
             // maximum score:
             double max = 0;
-            for (int t = 0; t < teams.size(); ++t) {
+            for (int t = 0; t < Gurobi.teams.size(); ++t) {
                 double m = 0;
-                for (int r = 0; r < rooms.size(); ++r) {
-                    if (m < allocations.get(r, t).getScore()) {
-                        m = allocations.get(r, t).getScore();
+                for (int r = 0; r < Gurobi.rooms.size(); ++r) {
+                    if (m < Gurobi.allocations.get(r, t).getScore()) {
+                        m = Gurobi.allocations.get(r, t).getScore();
                     }
                 }
                 max += m;
@@ -99,10 +125,10 @@ public class Gurobi {
 
             // current score:
             double cur = 0;
-            for (int r = 0; r < rooms.size(); r++) {
-                for (int t = 0; t < teams.size(); t++) {
+            for (int r = 0; r < Gurobi.rooms.size(); r++) {
+                for (int t = 0; t < Gurobi.teams.size(); t++) {
                     if (x[r][t] == 1) {
-                        cur += allocations.get(r, t).getScore();
+                        cur += Gurobi.allocations.get(r, t).getScore();
                     }
                 }
             }
@@ -110,15 +136,15 @@ public class Gurobi {
 
             // score matrix:
             System.out.println("Score matrix:");
-            for (int r = 0; r < rooms.size(); ++r) {
+            for (int r = 0; r < Gurobi.rooms.size(); ++r) {
                 String str = "";
-                for (int s = 0; s < teams.size(); ++s) {
-                    str += allocations.get(r, s).getScore() + "\t";
+                for (int s = 0; s < Gurobi.teams.size(); ++s) {
+                    str += Gurobi.allocations.get(r, s).getScore() + "\t";
                 }
                 System.out.println(str);
             }
 
-            // ============================= CLEAN =============================
+            // --------------------------------------------------CLEAN--------------------------------------------------
 
             model.dispose();
             env.dispose();
@@ -129,25 +155,23 @@ public class Gurobi {
         }
     }
 
-    // ============================== CONSTRAINTS ==============================
+    // ---------------------------------------------------CONSTRAINTS---------------------------------------------------
 
-    private static void addConstraints(final ArrayList<Gurobi.RULES> rules,
-            final GRBModel model, final Allocations allocations,
-            ArrayList<Room> rooms, ArrayList<Team> teams) {
+    private void addConstraints() {
         if (rules.contains(Gurobi.RULES.maxStudentsPerRoom)) {
-            Gurobi.maxStudentsPerRoom(model, allocations, rooms, teams);
+            this.maxStudentsPerRoom();
         }
         if (rules.contains(Gurobi.RULES.oneRoomPerTeam)) {
-            Gurobi.oneRoomPerTeam(model, allocations, rooms, teams);
+            this.oneRoomPerTeam();
         }
         if (rules.contains(Gurobi.RULES.oneTeamPerRoom)) {
-            Gurobi.oneTeamPerRoom(model, allocations, rooms, teams);
+            this.oneTeamPerRoom();
         }
         if (rules.contains(Gurobi.RULES.respectWish)) {
-            Gurobi.respectWish(allocations, 10, 5, 3, 5);
+            Gurobi.respectWish(10, 5, 3, 5);
         }
         if (rules.contains(Gurobi.RULES.respectReservations)) {
-            Gurobi.respectReservations(allocations, 50);
+            Gurobi.respectReservations(50);
         }
     }
 
@@ -159,22 +183,19 @@ public class Gurobi {
      * @param rooms
      * @param teams
      */
-    private static void oneRoomPerTeam(final GRBModel model,
-            final Allocations allocations, ArrayList<Room> rooms,
-            ArrayList<Team> teams) {
+    private void oneRoomPerTeam() {
         try {
             GRBLinExpr expr;
-            for (int t = 0; t < teams.size(); ++t) {
+            for (int t = 0; t < Gurobi.teams.size(); ++t) {
                 expr = new GRBLinExpr();
-                for (int r = 0; r < rooms.size(); ++r) {
-                    expr.addTerm(1.0, allocations.get(r, t).grbVar());
+                for (int r = 0; r < Gurobi.rooms.size(); ++r) {
+                    expr.addTerm(1.0, Gurobi.allocations.get(r, t).grbVar());
                 }
                 String st = "oneRoomPerTeam_" + String.valueOf(t);
-                model.addConstr(expr, GRB.EQUAL, 1.0, st);
+                this.model.addConstr(expr, GRB.EQUAL, 1.0, st);
             }
         } catch (GRBException e) {
-            System.out.println("Error code: " + e.getErrorCode() + ". "
-                    + e.getMessage());
+            System.out.println("Error code: " + e.getErrorCode() + ". " + e.getMessage());
         }
     }
 
@@ -186,76 +207,62 @@ public class Gurobi {
      * @param rooms:       list of rooms
      * @param teams:       list of teams
      */
-    private static void oneTeamPerRoom(final GRBModel model,
-            final Allocations allocations, ArrayList<Room> rooms,
-            ArrayList<Team> teams) {
+    private void oneTeamPerRoom() {
         try {
             GRBLinExpr expr;
-            for (int r = 0; r < rooms.size(); ++r) {
+            for (int r = 0; r < Gurobi.rooms.size(); ++r) {
                 expr = new GRBLinExpr();
-                for (int t = 0; t < teams.size(); ++t) {
-                    expr.addTerm(1.0, allocations.get(r, t).grbVar());
+                for (int t = 0; t < Gurobi.teams.size(); ++t) {
+                    expr.addTerm(1.0, Gurobi.allocations.get(r, t).grbVar());
                 }
                 String st = "oneTeamPerRoom_" + String.valueOf(r);
-                model.addConstr(expr, GRB.LESS_EQUAL, 1.0, st);
+                this.model.addConstr(expr, GRB.LESS_EQUAL, 1.0, st);
             }
         } catch (GRBException e) {
-            System.out.println("Error code: " + e.getErrorCode() + ". "
-                    + e.getMessage());
+            System.out.println("Error code: " + e.getErrorCode() + ". " + e.getMessage());
         }
     }
 
     /**
      * Garanties no more students per room than the respective room capacity.
-     * 
-     * @param model:       GRBModel object
-     * @param allocations: Allocations object
-     * @param rooms:       list of rooms
-     * @param teams:       list of teams
      */
-    private static void maxStudentsPerRoom(final GRBModel model,
-            final Allocations allocations,
-            ArrayList<Room> rooms, ArrayList<Team> teams) {
+    private void maxStudentsPerRoom() {
         try {
             GRBLinExpr expr;
-            for (int r = 0; r < rooms.size(); ++r) {
+            for (int r = 0; r < Gurobi.rooms.size(); ++r) {
                 expr = new GRBLinExpr();
-                for (int t = 0; t < teams.size(); ++t) {
+                for (int t = 0; t < Gurobi.teams.size(); ++t) {
                     expr.addTerm(allocations.get(r, t).team().members().size(),
-                            allocations.get(r, t).grbVar());
+                            Gurobi.allocations.get(r, t).grbVar());
                 }
                 String st = "maxStudentsPerRoom_" + String.valueOf(r);
-                model.addConstr(
-                        expr, GRB.LESS_EQUAL, rooms.get(r).getCapacity(), st);
+                this.model.addConstr(expr, GRB.LESS_EQUAL, Gurobi.rooms.get(r).getCapacity(), st);
             }
         } catch (GRBException e) {
-            System.out.println("Error code: " + e.getErrorCode() + ". "
-                    + e.getMessage());
+            System.out.println("Error code: " + e.getErrorCode() + ". " + e.getMessage());
         }
     }
 
     /**
      * Respects the wishes of the students regarding their rooms.
      * 
-     * @param allocations
-     * @param b1:         importance of assigning the team to a room in their
-     *                    first wish building
-     * @param r1:         importance of assigning the team to their first wish
-     *                    room
-     * @param r2:         importance of assigning the team to their second wish
-     *                    room
-     * @param b2:         importance of assigning the team to a room in their
-     *                    second wish building
+     * @param b1: importance of assigning the team to a room in their
+     *            first wish building
+     * @param r1: importance of assigning the team to their first wish
+     *            room
+     * @param r2: importance of assigning the team to their second wish
+     *            room
+     * @param b2: importance of assigning the team to a room in their
+     *            second wish building
      */
-    private static void respectWish(final Allocations allocations, final float b1, final float r1, final float r2,
-            final float b2) {
-        for (int r = 0; r < allocations.nRooms(); ++r) {
-            for (int t = 0; t < allocations.nTeams(); ++t) {
-                Allocation allocation = allocations.get(r, t);
-                Wish wish = allocations.get(r, t).team().wish();
+    private static void respectWish(final float b1, final float r1, final float r2, final float b2) {
+        for (int r = 0; r < Gurobi.allocations.nRooms(); ++r) {
+            for (int t = 0; t < Gurobi.allocations.nTeams(); ++t) {
+                Allocation allocation = Gurobi.allocations.get(r, t);
+                Wish wish = Gurobi.allocations.get(r, t).team().wish();
 
                 if (wish.building1() == null) {
-                    int a = 3;
+                    int debug = 3;
                 }
                 if (wish.building1().containsRoom(allocation.room())) {
                     allocation.addToScore(b1);
@@ -275,36 +282,33 @@ public class Gurobi {
      * Subtracts res from the allocation score so that the respective room is
      * reserved for ninth graders.
      * 
-     * @param allocations: Allocations object
-     * @param res:         importance of the reservation, higher value represents
-     *                     higher
-     *                     importance
+     * @param res: importance of the reservation, higher value represents
+     *             higher
+     *             importance
      */
-    private static void respectReservations(final Allocations allocations,
-            final float res) {
-        for (int r = 0; r < allocations.nRooms(); ++r) {
-            for (int t = 0; t < allocations.nTeams(); ++t) {
-                Allocation allocation = allocations.get(r, t);
+    private static void respectReservations(final float res) {
+        for (int r = 0; r < Gurobi.allocations.nRooms(); ++r) {
+            for (int t = 0; t < Gurobi.allocations.nTeams(); ++t) {
+                Allocation allocation = Gurobi.allocations.get(r, t);
                 allocation.addToScore(-res);
             }
         }
     }
 
-    // =============================== OBJECTIVE ===============================
+    // ----------------------------------------------------OBJECTIVE----------------------------------------------------
 
     /**
      * Calculates the objective with respect to the allocations
      * 
-     * @param allocations: Allocations object
      * @return gurobi objective
      */
-    private static GRBVar[][] getGRBVars(final Allocations allocations) {
-        int nRooms = allocations.nRooms();
-        int nTeams = allocations.nTeams();
+    private static GRBVar[][] getGRBVars() {
+        int nRooms = Gurobi.allocations.nRooms();
+        int nTeams = Gurobi.allocations.nTeams();
         GRBVar[][] grbvars = new GRBVar[nRooms][nTeams];
         for (int r = 0; r < nRooms; ++r) {
             for (int t = 0; t < nTeams; ++t) {
-                grbvars[r][t] = allocations.get(r, t).grbVar();
+                grbvars[r][t] = Gurobi.allocations.get(r, t).grbVar();
             }
         }
         return grbvars;
@@ -313,22 +317,17 @@ public class Gurobi {
     /**
      * TODO
      * 
-     * @param allocations
      * @param min
      * @param max
      * @return
      */
-    private static GRBLinExpr calculateObjectiveLinExpr(
-            final Allocations allocations, final double min, final double max) {
+    private static GRBLinExpr calculateObjectiveLinExpr(final double min, final double max) {
         GRBLinExpr objective = new GRBLinExpr();
-        for (int r = 0; r < allocations.nRooms(); ++r) {
-            for (int t = 0; t < allocations.nTeams(); ++t) {
-                double random = ThreadLocalRandom.current()
-                        .nextDouble(min, max);
-                allocations.get(r, t).setScore(
-                        allocations.get(r, t).getScore() + random);
-                objective.addTerm(allocations.get(r, t).getScore(),
-                        allocations.get(r, t).grbVar());
+        for (int r = 0; r < Gurobi.allocations.nRooms(); ++r) {
+            for (int t = 0; t < Gurobi.allocations.nTeams(); ++t) {
+                double random = ThreadLocalRandom.current().nextDouble(min, max);
+                Gurobi.allocations.get(r, t).setScore(Gurobi.allocations.get(r, t).getScore() + random);
+                objective.addTerm(allocations.get(r, t).getScore(), Gurobi.allocations.get(r, t).grbVar());
             }
         }
         return objective;
