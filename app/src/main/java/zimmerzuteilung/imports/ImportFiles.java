@@ -27,6 +27,12 @@ public class ImportFiles {
         }
     }
 
+    private static class TeamDoesNotExist extends Exception {
+        private TeamDoesNotExist(String str) {
+            super(str);
+        }
+    }
+
     private static ArrayList<Building> buildings = new ArrayList<>();
     private static ArrayList<Student> students = new ArrayList<>();
     private static ArrayList<Team> teams = new ArrayList<>();
@@ -117,7 +123,7 @@ public class ImportFiles {
                     continue; // skip empty lines
 
                 String[] entry = line.strip().toLowerCase().split(",");
-                // ------------------------------- get building --------------------------------
+                // --------------------------------------------get_building---------------------------------------------
                 Building building = new Building(entry[0]);
                 if (ImportFiles.buildings.isEmpty()) {
                     // add first building to list
@@ -137,7 +143,7 @@ public class ImportFiles {
                         ImportFiles.buildings.add(building);
                     }
                 }
-                // --------------------------------- get room ----------------------------------
+                // ----------------------------------------------get_room-----------------------------------------------
                 Room room = new Room();
                 for (Room r : building.rooms()) {
                     if (r.officialRoomNumber().equals(entry[2])) {
@@ -149,7 +155,7 @@ public class ImportFiles {
                         continue; // ignore duplicate room
                     }
                 }
-                // -------------------------------- get gender ---------------------------------
+                // ---------------------------------------------get_gender----------------------------------------------
                 GENDER gender;
                 if (entry[3].contains("w")) {
                     gender = GENDER.f;
@@ -158,7 +164,7 @@ public class ImportFiles {
                 } else {
                     gender = GENDER.d;
                 }
-                // ------------------------------- get capacity --------------------------------
+                // --------------------------------------------get_capacity---------------------------------------------
                 int capacity = 0;
                 try {
                     capacity = Integer.valueOf(entry[4]);
@@ -167,7 +173,7 @@ public class ImportFiles {
                             "Fehler: In " + csv.getAbsolutePath() + " Zeile " + lineNum + " muss für die Kapazität "
                                     + "eine Zahl angegeben werden! Statt dessen " + "gefunden: " + entry[4]);
                 }
-                // ------------------------------ check reserved -------------------------------
+                // -------------------------------------------check_reserved--------------------------------------------
                 boolean reserved = false;
                 if (entry[5].equals("ja")) {
                     reserved = true;
@@ -176,7 +182,7 @@ public class ImportFiles {
                     System.err.println("\"ja\" or \"nein\" expected" + " but got " + entry[5] + "\n"
                             + csv.getAbsolutePath() + ":" + lineNum);
                 }
-                // --------------------------------- add room ----------------------------------
+                // ----------------------------------------------add_room-----------------------------------------------
                 room = new Room(entry[1], entry[2], gender, capacity, reserved);
                 building.addRoom(room);
             }
@@ -189,8 +195,9 @@ public class ImportFiles {
 
     // TODO: test
     public static ArrayList<Team> importWishes(File csv)
-            throws IOException, IllegalArgumentException, BuildingDoesNotExist, RoomDoesNotExist {
+            throws IOException, IllegalArgumentException, BuildingDoesNotExist, RoomDoesNotExist, TeamDoesNotExist {
         try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
+            ArrayList<Team> list = ImportFiles.teams;
             int lineNum = 1;
             String line = reader.readLine();
             while ((line = reader.readLine()) != null) {
@@ -201,10 +208,20 @@ public class ImportFiles {
                     continue; // skip empty lines
                 }
                 String[] entry = line.strip().toLowerCase().split(",");
-                // --------------------------------- get team ----------------------------------
+                // ----------------------------------------------get_team-----------------------------------------------
                 Team team = new Team();
-                team.name(entry[5]);
-                // ---------------------------- get specialization -----------------------------
+                for (Team t : ImportFiles.teams) {
+                    if (t.name().equals(entry[5])) {
+                        team = t;
+                        break;
+                    }
+                }
+                if (team.name() == null) {
+                    throw new TeamDoesNotExist("Die Zimmerwahl von Team \"" + entry[5] + "\" kann nicht angenommen "
+                            + "werden, da das Team noch nicht angelegt wurde. Haben sich die entsprechenden "
+                            + "Schüler:innen in eine Gruppe im Moodleraum eingetragen?");
+                }
+                // -----------------------------------------get_specialization------------------------------------------
                 /*
                  * SPECIALIZATION specialization;
                  * if (entry[3].equals("Naturwissenschaften")) {
@@ -215,7 +232,7 @@ public class ImportFiles {
                  * specialization = SPECIALIZATION.MUSIK;
                  * }
                  */
-                // -------------------------------- get gender ---------------------------------
+                // ---------------------------------------------get_gender----------------------------------------------
                 team.gender(GENDER.d);
                 if (entry[10].contains("zimmer")) {
                     if (entry[10].contains("Jung")) {
@@ -224,7 +241,7 @@ public class ImportFiles {
                         team.gender(GENDER.f);
                     }
                 }
-                // --------------------------------- get grade ---------------------------------
+                // ----------------------------------------------get_grade----------------------------------------------
                 /*
                  * int grade;
                  * if (entry[11].contains("Klasse")) {
@@ -237,7 +254,7 @@ public class ImportFiles {
                  * }
                  * }
                  */
-                // --------------------------------- get wish ----------------------------------
+                // ----------------------------------------------get_wish-----------------------------------------------
                 String nameBuilding1 = "";
                 String nameRoom1 = "";
                 String nameRoom2 = "";
@@ -272,12 +289,10 @@ public class ImportFiles {
                     }
                 }
                 if (!building1) {
-                    int a = 3;
                     throw new BuildingDoesNotExist("Das Internat " + nameBuilding1
                             + " existiert nicht! Wurde es vorher korrekt eingelesen?");
                 }
                 if (!building2) {
-                    int a = 3;
                     throw new BuildingDoesNotExist("Das Internat " + nameBuilding2
                             + " existiert nicht! Wurde es vorher korrekt eingelesen?");
                 }
@@ -311,7 +326,6 @@ public class ImportFiles {
                     throw new RoomDoesNotExist("Das Zimmer " + nameRoom2
                             + " existiert nicht! Wurde es vorher korrekt eingelesen?");
                 }
-                ImportFiles.teams.add(team);
             }
             reader.close();
         } catch (IllegalArgumentException e) {
@@ -339,19 +353,20 @@ public class ImportFiles {
                 }
                 line = line.replace("\"", "");
                 String[] entry = line.strip().toLowerCase().split(",");
-                // ------------------------------- get team size -------------------------------
+                // --------------------------------------------get_team_size--------------------------------------------
                 int teamSize = Integer.valueOf(entry[2]);
                 if (teamSize == 0) {
                     continue; // team is empty
                 }
-                // ------------------------------- get teamname --------------------------------
+                // --------------------------------------------get_teamname---------------------------------------------
                 Team team = new Team();
                 team.name(entry[1]); // moodle team name
-                // --------------------------- get students of team ----------------------------
+                // ----------------------------------------get_students_of_team-----------------------------------------
                 for (int i = 8; i <= 7 + teamSize * 5; i += 5) {
                     String userName = entry[i];
                     String name = entry[i + 2] + " " + entry[i + 3]; // FirstName LastName
 
+                    Student student = new Student(name, userName);
                     // check for duplicates:
                     for (Team t : ImportFiles.teams) {
                         Student duplicate = t.getStudent(userName);
@@ -359,11 +374,11 @@ public class ImportFiles {
                             System.err.println("Schüler:in befindet sich in " + "meheren Moodlegruppen!\n"
                                     + duplicate.userName() + ": " + team.name() + ", " + t.name());
 
-                            team.addStudent(duplicate); // add student anyways
-                        } else {
-                            team.addStudent(new Student(name, userName)); // create new student and add to team
+                            student = duplicate; // add student anyways
+                            break;
                         }
                     }
+                    team.addStudent(student); // create new student and add to team
                 }
                 ImportFiles.teams.add(team);
             }
