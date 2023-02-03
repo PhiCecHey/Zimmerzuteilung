@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import zimmerzuteilung.objects.Building;
 import zimmerzuteilung.objects.GENDER;
 import zimmerzuteilung.objects.Room;
+import zimmerzuteilung.objects.SPECIALIZATION;
 import zimmerzuteilung.objects.Student;
 import zimmerzuteilung.objects.Team;
 
@@ -87,7 +88,12 @@ public class ImportFiles {
         String date1 = str1.split(" ")[0]; // d m y
         String date2 = str2.split(" ")[0]; // d m y
         String time1 = str1.split(" ")[1]; // h m s
-        String time2 = str2.split(" ")[1]; // h m s
+        String time2 = str2.split(" ")[1]; // h m 
+        //String test = date1.split(".")[2];
+        String[] date1Split = date1.split(".");
+        if(!date1.contains(".")){
+            System.out.println("wtf");
+        }
         dateTime1[0] = date1.split(".")[2]; // y
         dateTime2[0] = date2.split(".")[2]; // y
         dateTime1[1] = date1.split(".")[1]; // m
@@ -119,10 +125,11 @@ public class ImportFiles {
             while ((line = reader.readLine()) != null) {
                 lineNum++;
                 line = line.strip();
-                if (line.equals(""))
-                    continue; // skip empty lines
-
                 String[] entry = line.strip().toLowerCase().split(",");
+                if (line.equals("") || entry.length == 0) {
+                    continue; // skip empty lines
+                }
+
                 // --------------------------------------------get_building---------------------------------------------
                 Building building = new Building(entry[0]);
                 if (ImportFiles.buildings.isEmpty()) {
@@ -193,7 +200,7 @@ public class ImportFiles {
         return ImportFiles.buildings;
     }
 
-    // TODO: test
+    // tested, works
     public static ArrayList<Team> importWishes(File csv)
             throws IOException, IllegalArgumentException, BuildingDoesNotExist, RoomDoesNotExist, TeamDoesNotExist {
         try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
@@ -221,45 +228,12 @@ public class ImportFiles {
                             + "werden, da das Team noch nicht angelegt wurde. Haben sich die entsprechenden "
                             + "Schüler:innen in eine Gruppe im Moodleraum eingetragen?");
                 }
-                // -----------------------------------------get_specialization------------------------------------------
-                /*
-                 * SPECIALIZATION specialization;
-                 * if (entry[3].equals("Naturwissenschaften")) {
-                 * specialization = SPECIALIZATION.NAWI;
-                 * } else if (entry[3].equals("Sprachen")) {
-                 * specialization = SPECIALIZATION.SPRACHEN;
-                 * } else if (entry[3].equals("Musik")) {
-                 * specialization = SPECIALIZATION.MUSIK;
-                 * }
-                 */
-                // ---------------------------------------------get_gender----------------------------------------------
-                team.gender(GENDER.d);
-                if (entry[10].contains("zimmer")) {
-                    if (entry[10].contains("Jung")) {
-                        team.gender(GENDER.m);
-                    } else if (entry[10].contains("Mädchen")) {
-                        team.gender(GENDER.f);
-                    }
-                }
-                // ----------------------------------------------get_grade----------------------------------------------
-                /*
-                 * int grade;
-                 * if (entry[11].contains("Klasse")) {
-                 * if (entry[11].contains("10")) {
-                 * grade = 10;
-                 * } else if (entry[11].contains("11")) {
-                 * grade = 11;
-                 * } else if (entry[11].contains("12")) {
-                 * grade = 12;
-                 * }
-                 * }
-                 */
                 // ----------------------------------------------get_wish-----------------------------------------------
                 String nameBuilding1 = "";
                 String nameRoom1 = "";
                 String nameRoom2 = "";
                 String nameBuilding2 = "";
-                for (int i = 13; i < entry.length; i++) {
+                for (int i = 9; i < entry.length; i++) {
                     if (entry[i] != "") {
                         if (nameBuilding1.equals("")) {
                             nameBuilding1 = entry[i];
@@ -334,7 +308,7 @@ public class ImportFiles {
         return ImportFiles.teams;
     }
 
-    // TODO: test
+    // tested, works
     public static ArrayList<Team> importTeams(File csv) throws IOException, IllegalArgumentException {
         try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
             int lineNum = 2;
@@ -366,12 +340,23 @@ public class ImportFiles {
                     String userName = entry[i];
                     String name = entry[i + 2] + " " + entry[i + 3]; // FirstName LastName
 
-                    Student student = new Student(name, userName);
+                    Student student = null;
+                    for (Student s : ImportFiles.students) {
+                        if (s.userName().equals(userName)) {
+                            student = s;
+                        }
+                    }
+                    if (student == null) {
+                        student = new Student(name, userName);
+                        System.err.println("Schüler:in " + name + " hat die Umfrage zu den persönlichen Daten nicht "
+                                + "(vollständig) ausgefüllt!");
+                    }
+
                     // check for duplicates:
                     for (Team t : ImportFiles.teams) {
                         Student duplicate = t.getStudent(userName);
                         if (duplicate != null) {
-                            System.err.println("Schüler:in befindet sich in " + "meheren Moodlegruppen!\n"
+                            System.err.println("Schüler:in befindet sich in mehreren Moodlegruppen!\n"
                                     + duplicate.userName() + ": " + team.name() + ", " + t.name());
 
                             student = duplicate; // add student anyways
@@ -384,6 +369,88 @@ public class ImportFiles {
             }
             reader.close();
             return ImportFiles.teams;
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // TODO: test
+    public static ArrayList<Student> importStudents(File csv) throws FileNotFoundException, IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
+            int lineNum = 1;
+            String line = reader.readLine(); // skip heading
+            while ((line = reader.readLine()) != null) {
+                lineNum++;
+                line = line.strip();
+                line = line.replace("\"", "");
+                if (line.equals("")) {
+                    continue; // skip empty lines
+                }
+                String[] entry = line.strip().toLowerCase().split(",");
+                if (entry.length == 0) {
+                    continue;
+                }
+                // ----------------------------------------------get_name-----------------------------------------------
+                String name = entry[7];
+                String username = entry[8];
+                Student student = new Student(name, username);
+                student.moodleDate(entry[1]);
+                // -------------------------------------------check_duplicate-------------------------------------------
+                ArrayList<Student> a = ImportFiles.students;
+                boolean skip = false;
+                for (Student s : ImportFiles.students) {
+                    if (s.userName().equals(username)) {
+                        if (ImportFiles.compareTime(s.moodleDate(), student.moodleDate())) {
+                            // overwrite instead of skip
+                            student = s;
+                        } else {
+                            // ignore and skip instead of overwrite
+                            skip = true;
+                        }
+                        break;
+                    }
+                }
+                if (skip) {
+                    continue; // read next line
+                }
+                // ----------------------------------------------get_grade----------------------------------------------
+                if (entry[9].contains("9")) {
+                    student.grade(9);
+                } else if (entry[9].contains("10")) {
+                    student.grade(10);
+                } else if (entry[9].contains("11")) {
+                    student.grade(11);
+                } else if (entry[9].contains("12")) {
+                    student.grade(12);
+                } else {
+                    System.err.println("Schüler:in " + name + " hat keine gültige Klassenstufe!");
+                }
+                // -----------------------------------------get_specialization------------------------------------------
+                if (entry[10].equals("naturwissenschaften")) {
+                    student.special(SPECIALIZATION.NAWI);
+                } else if (entry[10].equals("musik")) {
+                    student.special(SPECIALIZATION.MUSIK);
+                } else if (entry[10].equals("sprachen")) {
+                    student.special(SPECIALIZATION.SPRACHEN);
+                } else {
+                    System.err.println("Schüler:in " + name + " hat keinen gültigen Zweig!");
+                }
+                // ---------------------------------------------get_gender----------------------------------------------
+                if (entry[11].equals("weiblich")) {
+                    student.gender(GENDER.f);
+                } else if (entry[11].contains("m") && entry[11].contains("nnlich")) {
+                    student.gender(GENDER.m);
+                } else if (entry[11].equals("divers")) {
+                    student.gender(GENDER.d);
+                } else {
+                    System.err.println("Schüler:in " + name + " hat ein ungültiges Geschlecht!");
+                }
+
+                ImportFiles.students.add(student);
+            }
+            ArrayList<Student> s = ImportFiles.students;
+            return ImportFiles.students;
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }

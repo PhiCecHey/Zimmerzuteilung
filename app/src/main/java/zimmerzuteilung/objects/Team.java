@@ -107,6 +107,11 @@ public class Team {
         return this.members;
     }
 
+    /**
+     * Returns the student with the specified username in case they are part of the team.
+     * @param userName
+     * @return the student if found, else null
+     */
     public Student getStudent(String userName) {
         for (Student student : this.members) {
             if (student.userName().equals(userName)) {

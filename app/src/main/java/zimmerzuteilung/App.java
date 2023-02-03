@@ -1,6 +1,7 @@
 package zimmerzuteilung;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import zimmerzuteilung.algorithms.Gurobi;
@@ -12,16 +13,15 @@ public class App {
     }
 
     public static void main(String[] args) {
-        File alle = new File("app/files/alle.csv");
+        File zimmer = new File("app/files/Internatszimmer.csv");
         File gruppen = new File("app/files/gruppen.csv");
         File zimmerwahl = new File("app/files/Zimmerwahl.csv");
-        System.out.println(alle.getAbsolutePath());
-        System.out.println(gruppen.getAbsolutePath());
-        System.out.print(zimmerwahl.getAbsolutePath());
+        File persDaten = new File("app/files/persDaten.csv");
         try {
-            ImportFiles.importBuildings(alle);
+            ImportFiles.importBuildings(zimmer);
+            ImportFiles.importStudents(persDaten);
             ImportFiles.importTeams(gruppen);
-            ImportFiles.importWishes(zimmerwahl);
+            var debug = ImportFiles.importWishes(zimmerwahl);
 
             ArrayList<Gurobi.RULES> rules = new ArrayList<>();
             rules.add(Gurobi.RULES.maxStudentsPerRoom);
@@ -34,11 +34,14 @@ public class App {
             g.calculate();
 
             int a = 3;
-        } catch (Exception e) {
-            System.out.println(alle.getAbsolutePath());
+        } catch (FileNotFoundException e) {
+            System.out.println(zimmer.getAbsolutePath());
             System.out.println(gruppen.getAbsolutePath());
-            System.out.print(zimmerwahl.getAbsolutePath());
+            System.out.println(zimmerwahl.getAbsolutePath());
             System.out.println("Working Directory = " + System.getProperty("user.dir"));
+            System.out.println();
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -1,7 +1,7 @@
 package zimmerzuteilung.objects;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 class Grade {
     private int grade;
@@ -46,7 +46,7 @@ class Grade {
         return true;
     }
 
-    Clas findClass(final Clas.SPECIALIZATION special) {
+    Clas findClass(final SPECIALIZATION special) {
         for (var entry : this.classes.entrySet()) {
             if (entry.getValue().getSpecialization() == special) {
                 return entry.getValue();

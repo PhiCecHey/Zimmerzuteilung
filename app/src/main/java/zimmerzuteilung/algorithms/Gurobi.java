@@ -28,6 +28,7 @@ public class Gurobi {
     private static ArrayList<Gurobi.RULES> rules = new ArrayList<>();
 
     private static ArrayList<Team> teams = new ArrayList<>();
+    private static ArrayList<Team> invalidTeam = new ArrayList<>();
     private static ArrayList<Student> students = new ArrayList<>();
     // private static ArrayList<Building> buildings = new ArrayList<>();
     private static ArrayList<Room> rooms = new ArrayList<>();
@@ -262,13 +263,20 @@ public class Gurobi {
     private static void respectWish(final float b1, final float r1, final float r2, final float b2) {
         for (int r = 0; r < Gurobi.allocations.nRooms(); ++r) {
             for (int t = 0; t < Gurobi.allocations.nTeams(); ++t) {
+                Allocations a = Gurobi.allocations;
                 Allocation allocation = Gurobi.allocations.get(r, t);
                 Wish wish = Gurobi.allocations.get(r, t).team().wish();
 
-                if (wish.building1() == null) {
-                    int debug = 3;
+                if (wish.building1() == null || wish.building2() == null || wish.room1() == null
+                        || wish.room2() == null) {
+                    if (!Gurobi.invalidTeam.contains(allocation.team())) {
+                        System.err.println("Das Team " + allocation.team().name()
+                                + " hat keinen (vollständigen) Zimmerwunsch abgegeben!");
+                        Gurobi.invalidTeam.add(allocation.team());
+                    }
                 }
-                if (wish.building1().containsRoom(allocation.room())) {
+
+                else if (wish.building1().containsRoom(allocation.room())) {
                     allocation.addToScore(b1);
                     if (wish.room1().id() == allocation.room().id()) {
                         allocation.addToScore(r1);

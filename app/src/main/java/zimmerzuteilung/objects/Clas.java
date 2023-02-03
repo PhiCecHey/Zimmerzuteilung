@@ -1,13 +1,9 @@
 package zimmerzuteilung.objects;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Clas {
-    public enum SPECIALIZATION {
-        NAWI, MUSIK, SPRACHEN;
-    }
-
     private static int count = 0;
 
     private SPECIALIZATION specialization;

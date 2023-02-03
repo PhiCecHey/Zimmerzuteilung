@@ -1,9 +1,9 @@
 package zimmerzuteilung.objects;
 
-import java.util.Map;
 import java.util.HashMap;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class School {
@@ -75,24 +75,24 @@ public class School {
 
     private void initClasses() {
         // 9:
-        Clas m9 = new Clas(Clas.SPECIALIZATION.MUSIK);
-        Clas s9 = new Clas(Clas.SPECIALIZATION.SPRACHEN);
-        Clas n9 = new Clas(Clas.SPECIALIZATION.NAWI);
+        Clas m9 = new Clas(SPECIALIZATION.MUSIK);
+        Clas s9 = new Clas(SPECIALIZATION.SPRACHEN);
+        Clas n9 = new Clas(SPECIALIZATION.NAWI);
 
         // 10:
-        Clas m10 = new Clas(Clas.SPECIALIZATION.MUSIK);
-        Clas s10 = new Clas(Clas.SPECIALIZATION.SPRACHEN);
-        Clas n10 = new Clas(Clas.SPECIALIZATION.NAWI);
+        Clas m10 = new Clas(SPECIALIZATION.MUSIK);
+        Clas s10 = new Clas(SPECIALIZATION.SPRACHEN);
+        Clas n10 = new Clas(SPECIALIZATION.NAWI);
 
         // 11:
-        Clas m11 = new Clas(Clas.SPECIALIZATION.MUSIK);
-        Clas s11 = new Clas(Clas.SPECIALIZATION.SPRACHEN);
-        Clas n11 = new Clas(Clas.SPECIALIZATION.NAWI);
+        Clas m11 = new Clas(SPECIALIZATION.MUSIK);
+        Clas s11 = new Clas(SPECIALIZATION.SPRACHEN);
+        Clas n11 = new Clas(SPECIALIZATION.NAWI);
 
         // 12:
-        Clas m12 = new Clas(Clas.SPECIALIZATION.MUSIK);
-        Clas s12 = new Clas(Clas.SPECIALIZATION.SPRACHEN);
-        Clas n12 = new Clas(Clas.SPECIALIZATION.NAWI);
+        Clas m12 = new Clas(SPECIALIZATION.MUSIK);
+        Clas s12 = new Clas(SPECIALIZATION.SPRACHEN);
+        Clas n12 = new Clas(SPECIALIZATION.NAWI);
 
         // stufen:
         for (var entry : this.grades.entrySet()) {
@@ -123,7 +123,7 @@ public class School {
         }
     }
 
-    Clas findClass(final Clas.SPECIALIZATION special, final int grade) {
+    Clas findClass(final SPECIALIZATION special, final int grade) {
         for (var entry : this.grades.entrySet()) {
             if (entry.getValue().getGrade() == grade) {
                 return entry.getValue().findClass(special);
@@ -148,20 +148,20 @@ public class School {
         Clas clas;
         int randGrade = ThreadLocalRandom.current().nextInt(9, 13);
         int randSpecial = ThreadLocalRandom.current().nextInt(0, 3);
-        Clas.SPECIALIZATION special;
+        SPECIALIZATION special;
 
         switch (randSpecial) {
             case 0:
-                special = Clas.SPECIALIZATION.MUSIK;
+                special = SPECIALIZATION.MUSIK;
                 break;
             case 1:
-                special = Clas.SPECIALIZATION.SPRACHEN;
+                special = SPECIALIZATION.SPRACHEN;
                 break;
             case 2:
-                special = Clas.SPECIALIZATION.NAWI;
+                special = SPECIALIZATION.NAWI;
                 break;
             default:
-                special = Clas.SPECIALIZATION.MUSIK;
+                special = SPECIALIZATION.MUSIK;
                 System.out.println("Something went wrong: "
                         + "School get Random Class randSpecial");
                 break;
