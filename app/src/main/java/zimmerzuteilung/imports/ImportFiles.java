@@ -78,42 +78,41 @@ public class ImportFiles {
     /**
      * Compares two moodle time stamps.
      * 
-     * @param str1 first moodle time stamp
-     * @param str2 second moodle time stamp
-     * @return true, if str1 is <= str2
+     * @param date1 first moodle time stamp
+     * @param date2 second moodle time stamp
+     * @return returns true, if date1 is earlier or equal to date2
      */
-    public static boolean compareTime(String str1, String str2) {
-        String[] dateTime1 = new String[6]; // y m d h m s
-        String[] dateTime2 = new String[6]; // y m d h m s
-        String date1 = str1.split(" ")[0]; // d m y
-        String date2 = str2.split(" ")[0]; // d m y
-        String time1 = str1.split(" ")[1]; // h m s
-        String time2 = str2.split(" ")[1]; // h m 
-        //String test = date1.split(".")[2];
-        String[] date1Split = date1.split(".");
-        if(!date1.contains(".")){
-            System.out.println("wtf");
+    public static boolean compareDate(String date1, String date2) {
+        int year1, year2, month1, month2, day1, day2;
+        try {
+            year1 = Integer.valueOf(date1.substring(6, 10));
+            year2 = Integer.valueOf(date2.substring(6, 10));
+            month1 = Integer.valueOf(date1.substring(3, 5));
+            month2 = Integer.valueOf(date2.substring(3, 5));
+            day1 = Integer.valueOf(date1.substring(0, 2));
+            day2 = Integer.valueOf(date2.substring(0, 2));
+        } catch (NumberFormatException e) {
+            System.err.println(date1 + " und " + date2 + " sind keine validen Moodletimestamps.");
+            throw e;
         }
-        dateTime1[0] = date1.split(".")[2]; // y
-        dateTime2[0] = date2.split(".")[2]; // y
-        dateTime1[1] = date1.split(".")[1]; // m
-        dateTime2[1] = date2.split(".")[1]; // m
-        dateTime1[2] = date1.split(".")[0]; // d
-        dateTime2[2] = date2.split(".")[0]; // d
-        dateTime1[3] = time1.split(":")[0]; // h
-        dateTime2[3] = time2.split(":")[0]; // h
-        dateTime1[4] = time1.split(":")[1]; // m
-        dateTime2[4] = time2.split(":")[1]; // m
-        dateTime1[5] = time1.split(":")[2]; // s
-        dateTime2[5] = time2.split(":")[2]; // s
+        if (year1 < year2) {
+            return true;
+        } else if (year1 > year2) {
+            return false;
+        }
 
-        for (int i = 0; i < 6; i++) {
-            if (Integer.valueOf(dateTime1[i]) != Integer.valueOf(dateTime2[i])) {
-                if (Integer.valueOf(dateTime1[i]) > Integer.valueOf(dateTime2[i])) {
-                    return false;
-                }
-            }
+        if (month1 < month2) {
+            return true;
+        } else if (month1 > month2) {
+            return false;
         }
+
+        if (day1 < day2) {
+            return true;
+        } else if (day1 > day2) {
+            return false;
+        }
+
         return true;
     }
 
@@ -401,7 +400,7 @@ public class ImportFiles {
                 boolean skip = false;
                 for (Student s : ImportFiles.students) {
                     if (s.userName().equals(username)) {
-                        if (ImportFiles.compareTime(s.moodleDate(), student.moodleDate())) {
+                        if (ImportFiles.compareDate(s.moodleDate(), student.moodleDate())) {
                             // overwrite instead of skip
                             student = s;
                         } else {
