@@ -75,6 +75,7 @@ public class ImportFiles {
         return null;
     }
 
+    // tested, works
     /**
      * Compares two moodle time stamps.
      * 

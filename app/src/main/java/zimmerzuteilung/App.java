@@ -29,6 +29,7 @@ public class App {
             rules.add(Gurobi.RULES.oneTeamPerRoom);
             rules.add(Gurobi.RULES.respectReservations);
             rules.add(Gurobi.RULES.respectWish);
+            rules.add(Gurobi.RULES.respectGradePrivilege);
 
             Gurobi g = new Gurobi(rules, ImportFiles.buildings(), ImportFiles.teams());
             g.calculate();
