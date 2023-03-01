@@ -120,8 +120,8 @@ public class Gurobi {
             for (int t = 0; t < Gurobi.teams.size(); ++t) {
                 double m = 0;
                 for (int r = 0; r < Gurobi.rooms.size(); ++r) {
-                    if (m < Gurobi.allocations.get(r, t).getScore()) {
-                        m = Gurobi.allocations.get(r, t).getScore();
+                    if (m < Gurobi.allocations.get(r, t).score()) {
+                        m = Gurobi.allocations.get(r, t).score();
                     }
                 }
                 max += m;
@@ -133,7 +133,7 @@ public class Gurobi {
             for (int r = 0; r < Gurobi.rooms.size(); r++) {
                 for (int t = 0; t < Gurobi.teams.size(); t++) {
                     if (x[r][t] == 1) {
-                        cur += Gurobi.allocations.get(r, t).getScore();
+                        cur += Gurobi.allocations.get(r, t).score();
                     }
                 }
             }
@@ -144,7 +144,7 @@ public class Gurobi {
             for (int r = 0; r < Gurobi.rooms.size(); ++r) {
                 String str = "";
                 for (int s = 0; s < Gurobi.teams.size(); ++s) {
-                    str += Gurobi.allocations.get(r, s).getScore() + "\t";
+                    str += Gurobi.allocations.get(r, s).score() + "\t";
                 }
                 System.out.println(str);
             }
@@ -278,13 +278,21 @@ public class Gurobi {
 
                 else if (wish.building1().containsRoom(allocation.room())) {
                     allocation.addToScore(b1);
+                    int debug = 3;
                     if (wish.room1().id() == allocation.room().id()) {
                         allocation.addToScore(r1);
+                        debug = 3;
                     } else if (wish.room2().id() == allocation.room().id()) {
                         allocation.addToScore(r2);
+                        debug = 3;
                     }
                 } else if (wish.building2().containsRoom(allocation.room())) {
                     allocation.addToScore(b2);
+                    int debug = 3;
+                }
+
+                if (allocation.score() < 0) {
+                    int debug = 3;
                 }
             }
         }
@@ -302,7 +310,10 @@ public class Gurobi {
         for (int r = 0; r < Gurobi.allocations.nRooms(); ++r) {
             for (int t = 0; t < Gurobi.allocations.nTeams(); ++t) {
                 Allocation allocation = Gurobi.allocations.get(r, t);
-                allocation.addToScore(-res);
+                if (allocation.room().reserved()) {
+                    allocation.addToScore(-res);
+                    int debug = 3;
+                }
             }
         }
     }
@@ -338,8 +349,9 @@ public class Gurobi {
         for (int r = 0; r < Gurobi.allocations.nRooms(); ++r) {
             for (int t = 0; t < Gurobi.allocations.nTeams(); ++t) {
                 double random = ThreadLocalRandom.current().nextDouble(min, max);
-                Gurobi.allocations.get(r, t).setScore(Gurobi.allocations.get(r, t).getScore() + random);
-                objective.addTerm(allocations.get(r, t).getScore(), Gurobi.allocations.get(r, t).grbVar());
+                Allocation currentAlloc = Gurobi.allocations.get(r, t);
+                Gurobi.allocations.get(r, t).score(currentAlloc.score() + random);
+                objective.addTerm(currentAlloc.score(), currentAlloc.grbVar());
             }
         }
         return objective;

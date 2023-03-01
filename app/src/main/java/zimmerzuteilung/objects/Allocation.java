@@ -26,7 +26,7 @@ public class Allocation {
         return this.room;
     }
 
-    public void setScore(final double s) {
+    public void score(final double s) {
         this.score = s;
     }
 
@@ -34,7 +34,7 @@ public class Allocation {
         this.score += s;
     }
 
-    public double getScore() {
+    public double score() {
         return this.score;
     }
 
