@@ -448,7 +448,7 @@ public class ImportFiles {
 
                 ImportFiles.students.add(student);
             }
-            ArrayList<Student> s = ImportFiles.students;
+            ArrayList<Student> debug = ImportFiles.students;
             return ImportFiles.students;
         } catch (IllegalArgumentException e) {
             e.printStackTrace();

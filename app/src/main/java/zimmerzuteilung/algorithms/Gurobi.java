@@ -69,9 +69,6 @@ public class Gurobi {
     }
 
     public void calculate() {
-
-        int debug = 3;
-
         try {
             // ------------------------------------------------VARIABLES------------------------------------------------
 
@@ -278,21 +275,16 @@ public class Gurobi {
 
                 else if (wish.building1().containsRoom(allocation.room())) {
                     allocation.addToScore(b1);
-                    int debug = 3;
                     if (wish.room1().id() == allocation.room().id()) {
                         allocation.addToScore(r1);
-                        debug = 3;
                     } else if (wish.room2().id() == allocation.room().id()) {
                         allocation.addToScore(r2);
-                        debug = 3;
                     }
                 } else if (wish.building2().containsRoom(allocation.room())) {
                     allocation.addToScore(b2);
-                    int debug = 3;
                 }
 
                 if (allocation.score() < 0) {
-                    int debug = 3;
                 }
             }
         }
@@ -312,7 +304,6 @@ public class Gurobi {
                 Allocation allocation = Gurobi.allocations.get(r, t);
                 if (allocation.room().reserved()) {
                     allocation.addToScore(-res);
-                    int debug = 3;
                 }
             }
         }
