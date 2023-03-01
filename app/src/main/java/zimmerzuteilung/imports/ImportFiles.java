@@ -374,7 +374,7 @@ public class ImportFiles {
         return null;
     }
 
-    // TODO: test
+    // tested, works
     public static ArrayList<Student> importStudents(File csv) throws FileNotFoundException, IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
             int lineNum = 1;
@@ -396,13 +396,14 @@ public class ImportFiles {
                 Student student = new Student(name, username);
                 student.moodleDate(entry[1]);
                 // -------------------------------------------check_duplicate-------------------------------------------
-                ArrayList<Student> a = ImportFiles.students;
+                boolean duplicate = false;
                 boolean skip = false;
                 for (Student s : ImportFiles.students) {
                     if (s.userName().equals(username)) {
                         if (ImportFiles.compareDate(s.moodleDate(), student.moodleDate())) {
                             // overwrite instead of skip
                             student = s;
+                            duplicate = true;
                         } else {
                             // ignore and skip instead of overwrite
                             skip = true;
@@ -445,10 +446,11 @@ public class ImportFiles {
                 } else {
                     System.err.println("Schüler:in " + name + " hat ein ungültiges Geschlecht!");
                 }
-
-                ImportFiles.students.add(student);
+                
+                if (!duplicate) {
+                    ImportFiles.students.add(student);
+                }
             }
-            ArrayList<Student> debug = ImportFiles.students;
             return ImportFiles.students;
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
