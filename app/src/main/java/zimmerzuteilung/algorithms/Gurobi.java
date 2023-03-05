@@ -2,7 +2,6 @@ package zimmerzuteilung.algorithms;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
-import org.decimal4j.api.Decimal;
 import org.decimal4j.util.DoubleRounder;
 
 import gurobi.GRB;

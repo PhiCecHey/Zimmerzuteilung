@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import zimmerzuteilung.algorithms.Gurobi;
 import zimmerzuteilung.imports.ImportFiles;
+import zimmerzuteilung.GUI.*;
 
 public class App {
     public String getGreeting() {
@@ -13,6 +14,12 @@ public class App {
     }
 
     public static void main(String[] args) {
+        //Gui.gui();
+        programm();
+
+    }
+
+    public static void programm() {
         File zimmer = new File("app/files/Internatszimmer.csv");
         File gruppen = new File("app/files/gruppen.csv");
         File zimmerwahl = new File("app/files/Zimmerwahl.csv");
