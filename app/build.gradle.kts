@@ -31,6 +31,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     implementation("com.fasterxml.jackson.core:jackson-databind:2.0.1")
 
+    //https://github.com/tools4j/decimal4j
+    implementation("org.decimal4j:decimal4j:1.0.3")
 }
 
 application {

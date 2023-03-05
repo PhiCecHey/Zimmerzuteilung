@@ -2,6 +2,8 @@ package zimmerzuteilung.algorithms;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.util.DoubleRounder;
 
 import gurobi.GRB;
 import gurobi.GRBEnv;
@@ -98,18 +100,7 @@ public class Gurobi {
             this.grbVars = Gurobi.getGRBVars();
             double[][] x = this.model.get(GRB.DoubleAttr.X, grbVars);
 
-            System.out.println(
-                    "\n--------------------- ALLOCATION ---------------------");
-            for (int r = 0; r < Gurobi.rooms.size(); r++) {
-                String str = "";
-                for (int t = 0; t < Gurobi.teams.size(); t++) {
-                    str += x[r][t] + "\t";
-                }
-                System.out.println(str);
-            }
-
-            System.out.println(
-                    "\n-------------------- SCORE MATRIX --------------------");
+            System.out.println("\n-------------------- SCORE MATRIX --------------------");
 
             // maximum score:
             double max = 0;
@@ -140,9 +131,31 @@ public class Gurobi {
             for (int r = 0; r < Gurobi.rooms.size(); ++r) {
                 String str = "";
                 for (int s = 0; s < Gurobi.teams.size(); ++s) {
-                    str += Gurobi.allocations.get(r, s).score() + "\t";
+                    str += DoubleRounder.round(Gurobi.allocations.get(r, s).score(), 1) + "\t";
                 }
                 System.out.println(str);
+            }
+
+            System.out.println("\n--------------------- ALLOCATION ---------------------");
+
+            String teamNames = "";
+            for (int t = 0; t < Gurobi.teams.size(); t++) {
+                teamNames += Gurobi.teams.get(t).name() + "\t";
+            }
+            System.out.println(teamNames + "ZimmerNr");
+
+            for (int r = 0; r < Gurobi.rooms.size(); r++) {
+                String allocated = "";
+                for (int t = 0; t < Gurobi.teams.size(); t++) {
+                    if (x[r][t] == 0) {
+                        allocated += " - \t";
+                    } else {
+                        allocated += " # \t";
+                    }
+                }
+                if (allocated.contains("#")) {
+                    System.out.println(allocated + " " + Gurobi.rooms.get(r).officialRoomNumber());
+                }
             }
 
             // --------------------------------------------------CLEAN--------------------------------------------------
@@ -171,7 +184,7 @@ public class Gurobi {
         if (rules.contains(Gurobi.RULES.respectWish)) {
             Gurobi.respectWish(10, 5, 3, 5);
         }
-        if(rules.contains(Gurobi.RULES.respectGradePrivilege)){
+        if (rules.contains(Gurobi.RULES.respectGradePrivilege)) {
             Gurobi.respectGradePrivilege(10, 5, 3);
         }
         if (rules.contains(Gurobi.RULES.respectReservations)) {
