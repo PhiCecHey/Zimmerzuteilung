@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import zimmerzuteilung.GUI.Log.Log;
 import zimmerzuteilung.objects.Building;
 import zimmerzuteilung.objects.GENDER;
 import zimmerzuteilung.objects.Room;
@@ -94,6 +95,7 @@ public class ImportFiles {
             day2 = Integer.valueOf(date2.substring(0, 2));
         } catch (NumberFormatException e) {
             System.err.println(date1 + " und " + date2 + " sind keine validen Moodletimestamps.");
+            Log.append(date1 + " und " + date2 + " sind keine validen Moodletimestamps.");
             throw e;
         }
         if (year1 < year2) {
@@ -188,6 +190,8 @@ public class ImportFiles {
                     // if invalid argument
                     System.err.println("\"ja\" or \"nein\" expected" + " but got " + entry[5] + "\n"
                             + csv.getAbsolutePath() + ":" + lineNum);
+                    Log.append("\"ja\" or \"nein\" expected" + " but got " + entry[5] + "\n"
+                    + csv.getAbsolutePath() + ":" + lineNum);
                 }
                 // ----------------------------------------------add_room-----------------------------------------------
                 room = new Room(entry[1], entry[2], gender, capacity, reserved);
@@ -350,6 +354,8 @@ public class ImportFiles {
                         student = new Student(name, userName);
                         System.err.println("Schüler:in " + name + " hat die Umfrage zu den persönlichen Daten nicht "
                                 + "(vollständig) ausgefüllt!");
+                        Log.append("Schüler:in " + name + " hat die Umfrage zu den persönlichen Daten nicht "
+                        + "(vollständig) ausgefüllt!");
                     }
 
                     // check for duplicates:
@@ -358,6 +364,8 @@ public class ImportFiles {
                         if (duplicate != null) {
                             System.err.println("Schüler:in befindet sich in mehreren Moodlegruppen!\n"
                                     + duplicate.userName() + ": " + team.name() + ", " + t.name());
+                            Log.append("Schüler:in befindet sich in mehreren Moodlegruppen!\n"
+                            + duplicate.userName() + ": " + team.name() + ", " + t.name());
 
                             student = duplicate; // add student anyways
                             break;
@@ -426,6 +434,7 @@ public class ImportFiles {
                     student.grade(12);
                 } else {
                     System.err.println("Schüler:in " + name + " hat keine gültige Klassenstufe!");
+                    Log.append("Schüler:in " + name + " hat keine gültige Klassenstufe!");
                 }
                 // -----------------------------------------get_specialization------------------------------------------
                 if (entry[10].equals("naturwissenschaften")) {
@@ -436,6 +445,7 @@ public class ImportFiles {
                     student.special(SPECIALIZATION.SPRACHEN);
                 } else {
                     System.err.println("Schüler:in " + name + " hat keinen gültigen Zweig!");
+                    Log.append("Schüler:in " + name + " hat keinen gültigen Zweig!");
                 }
                 // ---------------------------------------------get_gender----------------------------------------------
                 if (entry[11].equals("weiblich")) {
@@ -446,6 +456,7 @@ public class ImportFiles {
                     student.gender(GENDER.d);
                 } else {
                     System.err.println("Schüler:in " + name + " hat ein ungültiges Geschlecht!");
+                    Log.append("Schüler:in " + name + " hat ein ungültiges Geschlecht!");
                 }
                 
                 if (!duplicate) {

@@ -33,6 +33,10 @@ dependencies {
 
     //https://github.com/tools4j/decimal4j
     implementation("org.decimal4j:decimal4j:1.0.3")
+
+    // https://github.com/JFormDesigner/FlatLaf
+    implementation("com.formdev:flatlaf:3.0")
+    implementation("com.formdev:flatlaf-intellij-themes:3.0")
 }
 
 application {

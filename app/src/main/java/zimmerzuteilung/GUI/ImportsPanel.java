@@ -1,8 +1,15 @@
 package zimmerzuteilung.GUI;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public class ImportsPanel extends JPanel {
     JLabel label;
@@ -25,6 +32,7 @@ public class ImportsPanel extends JPanel {
         b.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
+                Gui.changeFont(fileChooser, Gui.mainFrame.getFont().getSize());
                 int rueckgabeWert = fileChooser.showOpenDialog(null);
                 if (rueckgabeWert == JFileChooser.APPROVE_OPTION) {
                     f.setText(fileChooser.getSelectedFile().getAbsolutePath());

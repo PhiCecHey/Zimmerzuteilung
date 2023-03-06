@@ -2,6 +2,7 @@ package zimmerzuteilung.algorithms;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
+
 import org.decimal4j.util.DoubleRounder;
 
 import gurobi.GRB;
@@ -10,6 +11,8 @@ import gurobi.GRBException;
 import gurobi.GRBLinExpr;
 import gurobi.GRBModel;
 import gurobi.GRBVar;
+import zimmerzuteilung.GUI.Gui;
+import zimmerzuteilung.GUI.Log.Log;
 import zimmerzuteilung.objects.Allocation;
 import zimmerzuteilung.objects.Allocations;
 import zimmerzuteilung.objects.Building;
@@ -96,66 +99,10 @@ public class Gurobi {
 
             // --------------------------------------------------PRINT--------------------------------------------------
 
-            this.grbVars = Gurobi.getGRBVars();
-            double[][] x = this.model.get(GRB.DoubleAttr.X, grbVars);
-
-            System.out.println("\n-------------------- SCORE MATRIX --------------------");
-
-            // maximum score:
-            double max = 0;
-            for (int t = 0; t < Gurobi.teams.size(); ++t) {
-                double m = 0;
-                for (int r = 0; r < Gurobi.rooms.size(); ++r) {
-                    if (m < Gurobi.allocations.get(r, t).score()) {
-                        m = Gurobi.allocations.get(r, t).score();
-                    }
-                }
-                max += m;
-            }
-            System.out.println("Maximum score: " + max);
-
-            // current score:
-            double cur = 0;
-            for (int r = 0; r < Gurobi.rooms.size(); r++) {
-                for (int t = 0; t < Gurobi.teams.size(); t++) {
-                    if (x[r][t] == 1) {
-                        cur += Gurobi.allocations.get(r, t).score();
-                    }
-                }
-            }
-            System.out.println("Current score: " + cur);
-
-            // score matrix:
-            System.out.println("Score matrix:");
-            for (int r = 0; r < Gurobi.rooms.size(); ++r) {
-                String str = "";
-                for (int s = 0; s < Gurobi.teams.size(); ++s) {
-                    str += DoubleRounder.round(Gurobi.allocations.get(r, s).score(), 1) + "\t";
-                }
-                System.out.println(str);
-            }
-
-            System.out.println("\n--------------------- ALLOCATION ---------------------");
-
-            String teamNames = "";
-            for (int t = 0; t < Gurobi.teams.size(); t++) {
-                teamNames += Gurobi.teams.get(t).name() + "\t";
-            }
-            System.out.println(teamNames + "ZimmerNr");
-
-            for (int r = 0; r < Gurobi.rooms.size(); r++) {
-                String allocated = "";
-                for (int t = 0; t < Gurobi.teams.size(); t++) {
-                    if (x[r][t] == 0) {
-                        allocated += " - \t";
-                    } else {
-                        allocated += " # \t";
-                    }
-                }
-                if (allocated.contains("#")) {
-                    System.out.println(allocated + " " + Gurobi.rooms.get(r).officialRoomNumber());
-                }
-            }
+            String printGui = this.print(false);
+            String printConsole = this.print(true);
+            System.out.println(printConsole);
+            Gui.resultArea.setText(printGui);
 
             // --------------------------------------------------CLEAN--------------------------------------------------
 
@@ -169,6 +116,75 @@ public class Gurobi {
     }
 
     // ---------------------------------------------------CONSTRAINTS---------------------------------------------------
+    private String print(boolean all) throws GRBException {
+        String print = "";
+        this.grbVars = Gurobi.getGRBVars();
+        double[][] x = this.model.get(GRB.DoubleAttr.X, grbVars);
+
+        if (all) {
+            print += "\n-------------------- SCORE MATRIX --------------------";
+        }
+
+        // maximum score:
+        double max = 0;
+        for (int t = 0; t < Gurobi.teams.size(); ++t) {
+            double m = 0;
+            for (int r = 0; r < Gurobi.rooms.size(); ++r) {
+                if (m < Gurobi.allocations.get(r, t).score()) {
+                    m = Gurobi.allocations.get(r, t).score();
+                }
+            }
+            max += m;
+        }
+        print += "\nMaximum score: \t" + max;
+
+        // current score:
+        double cur = 0;
+        for (int r = 0; r < Gurobi.rooms.size(); r++) {
+            for (int t = 0; t < Gurobi.teams.size(); t++) {
+                if (x[r][t] == 1) {
+                    cur += Gurobi.allocations.get(r, t).score();
+                }
+            }
+        }
+        print += "\nCurrent score: \t\t" + cur + "\n";
+        print += "\n Difference: \t\t" + (max - cur) + "\n";
+
+        // score matrix:
+        if (all) {
+            print += "\nScore matrix:";
+            for (int r = 0; r < Gurobi.rooms.size(); ++r) {
+                String str = "";
+                for (int s = 0; s < Gurobi.teams.size(); ++s) {
+                    str += DoubleRounder.round(Gurobi.allocations.get(r, s).score(), 1) + "\t";
+                }
+                print += "\n" + str;
+            }
+
+            print += "\n\n--------------------- ALLOCATION ---------------------";
+        }
+
+        String teamNames = "";
+        for (int t = 0; t < Gurobi.teams.size(); t++) {
+            teamNames += Gurobi.teams.get(t).name() + "\t";
+        }
+        print += "\n" + teamNames + "ZimmerNr";
+
+        for (int r = 0; r < Gurobi.rooms.size(); r++) {
+            String allocated = "";
+            for (int t = 0; t < Gurobi.teams.size(); t++) {
+                if (x[r][t] == 0) {
+                    allocated += " - \t";
+                } else {
+                    allocated += " # \t";
+                }
+            }
+            if (allocated.contains("#")) {
+                print += "\n" + allocated + " " + Gurobi.rooms.get(r).officialRoomNumber();
+            }
+        }
+        return print;
+    }
 
     private void addConstraints() {
         if (rules.contains(Gurobi.RULES.maxStudentsPerRoom)) {
@@ -283,6 +299,8 @@ public class Gurobi {
                         System.err.println("Das Team " + allocation.team().name()
                                 + " hat keinen (vollständigen) Zimmerwunsch abgegeben!");
                         Gurobi.invalidTeam.add(allocation.team());
+                        Log.append("Das Team " + allocation.team().name()
+                                + " hat keinen (vollständigen) Zimmerwunsch abgegeben!");
                     }
                 }
 
