@@ -16,19 +16,19 @@ import zimmerzuteilung.objects.Team;
 
 public class ImportFiles {
 
-    private static class BuildingDoesNotExist extends Exception {
+    public static class BuildingDoesNotExist extends Exception {
         private BuildingDoesNotExist(String str) {
             super(str);
         }
     }
 
-    private static class RoomDoesNotExist extends Exception {
+    public static class RoomDoesNotExist extends Exception {
         private RoomDoesNotExist(String str) {
             super(str);
         }
     }
 
-    private static class TeamDoesNotExist extends Exception {
+    public static class TeamDoesNotExist extends Exception {
         private TeamDoesNotExist(String str) {
             super(str);
         }

@@ -4,12 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class Imports extends JPanel {
+public class ImportsPanel extends JPanel {
     JLabel label;
     JTextField field;
     JButton button;
 
-    public Imports(String labelText) {
+    public ImportsPanel(String labelText) {
         this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         this.setMaximumSize(new Dimension(2000, 50));
         this.label = new JLabel(labelText);
@@ -17,7 +17,7 @@ public class Imports extends JPanel {
         this.field = new JTextField();
         this.add(field);
         this.button = new JButton("...");
-        Imports.buttonFileChooser(button, field);
+        ImportsPanel.buttonFileChooser(button, field);
         this.add(button);
     }
 
