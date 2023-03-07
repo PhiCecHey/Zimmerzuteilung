@@ -191,7 +191,7 @@ public class ImportFiles {
                     System.err.println("\"ja\" or \"nein\" expected" + " but got " + entry[5] + "\n"
                             + csv.getAbsolutePath() + ":" + lineNum);
                     Log.append("\"ja\" or \"nein\" expected" + " but got " + entry[5] + "\n"
-                    + csv.getAbsolutePath() + ":" + lineNum);
+                            + csv.getAbsolutePath() + ":" + lineNum);
                 }
                 // ----------------------------------------------add_room-----------------------------------------------
                 room = new Room(entry[1], entry[2], gender, capacity, reserved);
@@ -339,6 +339,15 @@ public class ImportFiles {
                 // --------------------------------------------get_teamname---------------------------------------------
                 Team team = new Team();
                 team.name(entry[1]); // moodle team name
+
+                boolean duplicateTeam = false;
+                for (Team t : ImportFiles.teams) {
+                    if (team.name().equals(t.name())) {
+                        duplicateTeam = true;
+                        team = t; // team already added to list of teams
+                        break;
+                    }
+                }
                 // ----------------------------------------get_students_of_team-----------------------------------------
                 for (int i = 8; i <= 7 + teamSize * 5; i += 5) {
                     String userName = entry[i];
@@ -355,7 +364,7 @@ public class ImportFiles {
                         System.err.println("Schüler:in " + name + " hat die Umfrage zu den persönlichen Daten nicht "
                                 + "(vollständig) ausgefüllt!");
                         Log.append("Schüler:in " + name + " hat die Umfrage zu den persönlichen Daten nicht "
-                        + "(vollständig) ausgefüllt!");
+                                + "(vollständig) ausgefüllt!");
                     }
 
                     // check for duplicates:
@@ -365,15 +374,17 @@ public class ImportFiles {
                             System.err.println("Schüler:in befindet sich in mehreren Moodlegruppen!\n"
                                     + duplicate.userName() + ": " + team.name() + ", " + t.name());
                             Log.append("Schüler:in befindet sich in mehreren Moodlegruppen!\n"
-                            + duplicate.userName() + ": " + team.name() + ", " + t.name());
+                                    + duplicate.userName() + ": " + team.name() + ", " + t.name());
 
-                            student = duplicate; // add student anyways
+                            // student = duplicate; // add student anyways
                             break;
                         }
                     }
                     team.addStudent(student); // create new student and add to team
                 }
-                ImportFiles.teams.add(team);
+                if (!duplicateTeam) {
+                    ImportFiles.teams.add(team);
+                }
             }
             reader.close();
             return ImportFiles.teams;
@@ -458,7 +469,7 @@ public class ImportFiles {
                     System.err.println("Schüler:in " + name + " hat ein ungültiges Geschlecht!");
                     Log.append("Schüler:in " + name + " hat ein ungültiges Geschlecht!");
                 }
-                
+
                 if (!duplicate) {
                     ImportFiles.students.add(student);
                 }
@@ -476,6 +487,12 @@ public class ImportFiles {
 
     public static ArrayList<Team> teams() {
         return ImportFiles.teams;
+    }
+
+    public static void clear() {
+        ImportFiles.buildings.clear();
+        ImportFiles.students.clear();
+        ImportFiles.teams.clear();
     }
 
 }

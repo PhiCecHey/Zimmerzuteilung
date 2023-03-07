@@ -128,7 +128,11 @@ public class Gui {
 
         Gui.importsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
+                // clean
                 Gui.importsArea.setText("");
+                Log.clear();
+                ImportFiles.clear();
+
                 for (int i = 0; i < 4; i++) {
                     byte fileFound = 0;
                     try {

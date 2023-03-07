@@ -122,7 +122,7 @@ public class Gurobi {
         double[][] x = this.model.get(GRB.DoubleAttr.X, grbVars);
 
         if (all) {
-            print += "\n-------------------- SCORE MATRIX --------------------";
+            print += "\n-------------------- SCORE MATRIX --------------------\n";
         }
 
         // maximum score:
@@ -136,7 +136,7 @@ public class Gurobi {
             }
             max += m;
         }
-        print += "\nMaximum score: \t" + max;
+        print += "Maximum score: \t" + max;
 
         // current score:
         double cur = 0;
@@ -147,8 +147,8 @@ public class Gurobi {
                 }
             }
         }
-        print += "\nCurrent score: \t\t" + cur + "\n";
-        print += "\n Difference: \t\t" + (max - cur) + "\n";
+        print += "\nCurrent score: \t" + cur;
+        print += "\nDifference: \t\t" + Math.abs(max - cur) + "\n\n";
 
         // score matrix:
         if (all) {
