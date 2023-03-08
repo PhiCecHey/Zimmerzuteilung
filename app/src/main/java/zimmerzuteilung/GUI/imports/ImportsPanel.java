@@ -17,8 +17,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import zimmerzuteilung.GUI.Gui;
-import zimmerzuteilung.Log.Log;
 import zimmerzuteilung.imports.ImportFiles;
+import zimmerzuteilung.log.Log;
 
 public class ImportsPanel extends JPanel{
     class SubPanel extends JPanel {
@@ -58,12 +58,11 @@ public class ImportsPanel extends JPanel{
     private JScrollPane importsScroll = new JScrollPane(importsArea);
 
     public ImportsPanel(){
-        this.init();
         this.imports();
+        this.init();
     }
 
     private void init(){
-        this.imports();
         this.importsArea.setLineWrap(true);
         this.importsArea.setEditable(false);
         this.add(this.importsButton);

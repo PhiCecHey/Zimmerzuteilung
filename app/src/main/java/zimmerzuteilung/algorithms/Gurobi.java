@@ -12,7 +12,8 @@ import gurobi.GRBLinExpr;
 import gurobi.GRBModel;
 import gurobi.GRBVar;
 import zimmerzuteilung.GUI.Gui;
-import zimmerzuteilung.Log.Log;
+import zimmerzuteilung.algorithms.GurobiValues;
+import zimmerzuteilung.log.*;
 import zimmerzuteilung.objects.Allocation;
 import zimmerzuteilung.objects.Allocations;
 import zimmerzuteilung.objects.Building;
@@ -101,9 +102,9 @@ public class Gurobi {
 
             String printGui = this.print(false);
             if (printGui == null) {
-                Gui.resultArea.setText("Wurden die Dateien richtig eingelesen?");
+                Gui.result.resultArea.setText("Wurden die Dateien richtig eingelesen?");
             } else {
-                Gui.resultArea.setText(printGui);
+                Gui.result.resultArea.setText(printGui);
             }
             String printConsole = this.print(true);
             System.out.println(printConsole);
@@ -113,16 +114,16 @@ public class Gurobi {
             model.dispose();
             env.dispose();
             if (printGui != null) {
-                Gui.resultArea.append("\n\nBerechnung erfolgreich.");
+                Gui.result.resultArea.append("\n\nBerechnung erfolgreich.");
             }
 
         } catch (GRBException e) {
             System.out.println("Error code: " + e.getErrorCode() + ". "
                     + e.getMessage());
             Log.append("Ein Fehler ist während der Berechnung aufgetreten.");
-            Gui.resultArea.append("\n\nEin Fehler ist während der Berechnung aufgetreten.");
+            Gui.result.resultArea.append("\n\nEin Fehler ist während der Berechnung aufgetreten.");
         }
-        Gui.resultArea.append("\nBerechnung beendet.");
+        Gui.result.resultArea.append("\nBerechnung beendet.");
     }
 
     // ---------------------------------------------------CONSTRAINTS---------------------------------------------------
@@ -158,7 +159,7 @@ public class Gurobi {
                 }
             }
         }
-        print += "\nCurrent score: \t" + cur;
+        print += "\nCurrent score: \t\t" + cur;
         print += "\nDifference: \t\t" + Math.abs(max - cur) + "\n\n";
 
         if (max == 0 && cur == 0) {
