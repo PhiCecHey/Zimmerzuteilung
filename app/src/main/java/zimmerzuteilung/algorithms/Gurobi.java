@@ -12,7 +12,7 @@ import gurobi.GRBLinExpr;
 import gurobi.GRBModel;
 import gurobi.GRBVar;
 import zimmerzuteilung.GUI.Gui;
-import zimmerzuteilung.GUI.Log.Log;
+import zimmerzuteilung.Log.Log;
 import zimmerzuteilung.objects.Allocation;
 import zimmerzuteilung.objects.Allocations;
 import zimmerzuteilung.objects.Building;
@@ -100,19 +100,29 @@ public class Gurobi {
             // --------------------------------------------------PRINT--------------------------------------------------
 
             String printGui = this.print(false);
+            if (printGui == null) {
+                Gui.resultArea.setText("Wurden die Dateien richtig eingelesen?");
+            } else {
+                Gui.resultArea.setText(printGui);
+            }
             String printConsole = this.print(true);
             System.out.println(printConsole);
-            Gui.resultArea.setText(printGui);
 
             // --------------------------------------------------CLEAN--------------------------------------------------
 
             model.dispose();
             env.dispose();
+            if (printGui != null) {
+                Gui.resultArea.append("\n\nBerechnung erfolgreich.");
+            }
 
         } catch (GRBException e) {
             System.out.println("Error code: " + e.getErrorCode() + ". "
                     + e.getMessage());
+            Log.append("Ein Fehler ist während der Berechnung aufgetreten.");
+            Gui.resultArea.append("\n\nEin Fehler ist während der Berechnung aufgetreten.");
         }
+        Gui.resultArea.append("\nBerechnung beendet.");
     }
 
     // ---------------------------------------------------CONSTRAINTS---------------------------------------------------
@@ -136,6 +146,7 @@ public class Gurobi {
             }
             max += m;
         }
+
         print += "Maximum score: \t" + max;
 
         // current score:
@@ -150,24 +161,30 @@ public class Gurobi {
         print += "\nCurrent score: \t" + cur;
         print += "\nDifference: \t\t" + Math.abs(max - cur) + "\n\n";
 
-        // score matrix:
-        if (all) {
-            print += "\nScore matrix:";
-            for (int r = 0; r < Gurobi.rooms.size(); ++r) {
-                String str = "";
-                for (int s = 0; s < Gurobi.teams.size(); ++s) {
-                    str += DoubleRounder.round(Gurobi.allocations.get(r, s).score(), 1) + "\t";
-                }
-                print += "\n" + str;
-            }
-
-            print += "\n\n--------------------- ALLOCATION ---------------------";
+        if (max == 0 && cur == 0) {
+            return null;
         }
 
         String teamNames = "";
         for (int t = 0; t < Gurobi.teams.size(); t++) {
             teamNames += Gurobi.teams.get(t).name() + "\t";
         }
+
+        // score matrix:
+        if (all) {
+            print += "\n\n--------------------- Score matrix: ---------------------";
+            print += "\n" + teamNames + "ZimmerNr";
+            for (int r = 0; r < Gurobi.rooms.size(); ++r) {
+                String str = "";
+                for (int s = 0; s < Gurobi.teams.size(); ++s) {
+                    str += DoubleRounder.round(Gurobi.allocations.get(r, s).score(), 1) + "\t";
+                }
+                print += "\n" + str + Gurobi.rooms.get(r).officialRoomNumber();
+            }
+
+            print += "\n\n--------------------- ALLOCATION ---------------------";
+        }
+
         print += "\n" + teamNames + "ZimmerNr";
 
         for (int r = 0; r < Gurobi.rooms.size(); r++) {
@@ -197,13 +214,13 @@ public class Gurobi {
             this.oneTeamPerRoom();
         }
         if (rules.contains(Gurobi.RULES.respectWish)) {
-            Gurobi.respectWish(10, 5, 3, 5);
+            Gurobi.respectWish(GurobiValues.building1, GurobiValues.room1, GurobiValues.room2, GurobiValues.building2);
         }
         if (rules.contains(Gurobi.RULES.respectGradePrivilege)) {
-            Gurobi.respectGradePrivilege(10, 5, 3);
+            Gurobi.respectGradePrivilege(GurobiValues.twelve, GurobiValues.eleven, GurobiValues.ten);
         }
         if (rules.contains(Gurobi.RULES.respectReservations)) {
-            Gurobi.respectReservations(50);
+            Gurobi.respectReservations(GurobiValues.reservation);
         }
     }
 
@@ -314,9 +331,6 @@ public class Gurobi {
                 } else if (wish.building2().containsRoom(allocation.room())) {
                     allocation.addToScore(b2);
                 }
-
-                if (allocation.score() < 0) {
-                }
             }
         }
     }
@@ -363,13 +377,32 @@ public class Gurobi {
                         break;
                     }
                 }
+                if (grade == 0) {
+                    continue;
+                }
 
+                if (wish.building1() == null || wish.building2() == null || wish.room1() == null
+                        || wish.room2() == null) {
+                    if (!Gurobi.invalidTeam.contains(allocation.team())) {
+                        System.err.println("Das Team " + allocation.team().name()
+                                + " hat keinen (vollständigen) Zimmerwunsch abgegeben!");
+                        Gurobi.invalidTeam.add(allocation.team());
+                        Log.append("Das Team " + allocation.team().name()
+                                + " hat keinen (vollständigen) Zimmerwunsch abgegeben!");
+                    }
+                }
+
+                float score = 0;
                 if (grade == 10) {
-                    allocation.score(allocation.score() + ten);
+                    score = ten;
                 } else if (grade == 11) {
-                    allocation.score(allocation.score() + eleven);
+                    score = eleven;
                 } else if (grade == 12) {
-                    allocation.score(allocation.score() + twelve);
+                    score = twelve;
+                }
+
+                if (wish.room1().id() == allocation.room().id() || wish.room2().id() == allocation.room().id()) {
+                    allocation.addToScore(score);
                 }
             }
         }
