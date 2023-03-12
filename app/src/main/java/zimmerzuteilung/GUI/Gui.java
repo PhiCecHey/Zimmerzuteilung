@@ -4,20 +4,15 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
-import zimmerzuteilung.GUI.gurobi.GurobiPanel;
-import zimmerzuteilung.GUI.help.HelpPanel;
-import zimmerzuteilung.GUI.imports.ImportsPanel;
-import zimmerzuteilung.GUI.results.ResultsPanel;
-
-public class Gui {
-    private static Dimension window = new Dimension(1800, 900);
-    public static Dimension row = new Dimension(1800, 50);
+public class Gui {    
+    private static Dimension window = new Dimension(1920, 1080);
+    public static Dimension row = new Dimension(1920, 40);
 
     public static JFrame mainFrame = new JFrame("Landesschule Pforte Zimmerzuteilung");
     public static JTabbedPane tabs = new JTabbedPane();
@@ -54,6 +49,6 @@ public class Gui {
         imports.setLayout(new BoxLayout(imports, BoxLayout.PAGE_AXIS));
         result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
 
-        Gui.changeFont(mainFrame, 24);
+        Gui.changeFont(mainFrame, 20);
     }
 }

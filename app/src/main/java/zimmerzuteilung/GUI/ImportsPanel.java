@@ -1,4 +1,4 @@
-package zimmerzuteilung.GUI.imports;
+package zimmerzuteilung.GUI;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,7 +16,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import zimmerzuteilung.GUI.Gui;
 import zimmerzuteilung.imports.ImportFiles;
 import zimmerzuteilung.log.Log;
 
