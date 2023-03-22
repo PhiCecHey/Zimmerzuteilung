@@ -5,12 +5,14 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
+import javax.swing.border.Border;
 
-public class Gui {    
+public class Gui {
     private static Dimension window = new Dimension(1920, 1080);
     public static Dimension row = new Dimension(1920, 40);
 
@@ -38,6 +40,8 @@ public class Gui {
         Gui.mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         Gui.mainFrame.setContentPane(tabs);
+        Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+        Gui.tabs.setBorder(padding);
         Gui.tabs.addTab("Informationen", Gui.help);
         Gui.tabs.addTab("Dateien einlesen", imports);
         Gui.tabs.addTab("Gurobi", gurobi);

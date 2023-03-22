@@ -16,6 +16,8 @@ public class Team {
     private GENDER gender;
     private String name; // for json
     private String time; // for json
+    private Room allocatedRoom;
+    private float score;
     private static int count = 0;
 
     public Team() {
@@ -34,7 +36,8 @@ public class Team {
                 Student second = it.next();
                 if (first.gender() != second.gender()) {
                     throw new DifferentGenderException(
-                            "Die Schüler eines " + "Teams müssen vom gleichen Geschlecht sein (" + first.name() + ", " + second.name() + ").");
+                            "Die Schüler eines " + "Teams müssen vom gleichen Geschlecht sein (" + first.name() + ", "
+                                    + second.name() + ").");
                 }
             }
         }
@@ -61,6 +64,26 @@ public class Team {
         this.wish = w;
         Team.count++;
         this.id = Team.count;
+    }
+
+    public boolean allocateRoom(Room r) {
+        if (this.allocatedRoom != null) {
+            return false;
+        }
+        this.allocatedRoom = r;
+        return true;
+    }
+
+    public Room allocatedRoom() {
+        return this.allocatedRoom;
+    }
+
+    public void score(float s) {
+        this.score = s;
+    }
+
+    public float score() {
+        return this.score;
     }
 
     public int id() {
@@ -108,7 +131,9 @@ public class Team {
     }
 
     /**
-     * Returns the student with the specified username in case they are part of the team.
+     * Returns the student with the specified username in case they are part of the
+     * team.
+     * 
      * @param userName
      * @return the student if found, else null
      */
@@ -128,6 +153,14 @@ public class Team {
             }
         }
         return false;
+    }
+
+    public String membersToCsv() {
+        String str = "";
+        for (Student s : this.members) {
+            str += s.userName() + " ";
+        }
+        return str;
     }
 
     @Override

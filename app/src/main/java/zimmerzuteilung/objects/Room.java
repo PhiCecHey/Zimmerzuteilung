@@ -9,6 +9,7 @@ public class Room {
     private int capacity;
     private GENDER gender;
     private boolean reserved = false;
+    private Team allocatedTeam;
 
     public Room() {
         Room.count++;
@@ -66,6 +67,14 @@ public class Room {
         this.unofficialName = unoffName;
         this.gender = s;
         this.reserved = res;
+    }
+
+    public boolean allocateTeam(Team t) {
+        if (this.allocatedTeam != null) {
+            return false;
+        }
+        this.allocatedTeam = t;
+        return true;
     }
 
     public int id() {

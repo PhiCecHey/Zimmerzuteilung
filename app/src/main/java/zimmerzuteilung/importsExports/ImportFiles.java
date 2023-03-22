@@ -1,4 +1,4 @@
-package zimmerzuteilung.imports;
+package zimmerzuteilung.importsExports;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,9 +35,9 @@ public class ImportFiles {
         }
     }
 
-    private static ArrayList<Building> buildings = new ArrayList<>();
-    private static ArrayList<Student> students = new ArrayList<>();
-    private static ArrayList<Team> teams = new ArrayList<>();
+    static ArrayList<Building> buildings = new ArrayList<>();
+    static ArrayList<Student> students = new ArrayList<>();
+    static ArrayList<Team> teams = new ArrayList<>();
 
     public static File[] getFilesFromFolder(String pathToFolder) {
         File[] fileList = new File[0];

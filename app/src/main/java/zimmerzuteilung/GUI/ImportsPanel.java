@@ -16,7 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import zimmerzuteilung.imports.ImportFiles;
+import zimmerzuteilung.importsExports.ImportFiles;
 import zimmerzuteilung.log.Log;
 
 public class ImportsPanel extends JPanel{
@@ -113,12 +113,12 @@ public class ImportsPanel extends JPanel{
                         }
                     } catch (Exception e) {
                         fileFound = -1;
-                        importsPanels.get(i).field.setBackground(Color.red);
+                        importsPanels.get(i).field.setBackground(new Color(1f, 0f, 0f, 0.2f));
                         e.printStackTrace();
                         importsArea.append("\n" + e.toString());
                     }
                     if (fileFound == 1) {
-                        importsPanels.get(i).field.setBackground(Color.green);
+                        importsPanels.get(i).field.setBackground(new Color(0f, 1f, 0f, 0.2f));
                     }
                 }
                 importsArea.append(Log.log());

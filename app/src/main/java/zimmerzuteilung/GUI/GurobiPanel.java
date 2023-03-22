@@ -38,8 +38,8 @@ public class GurobiPanel extends JPanel {
 
         WishPanel() {
             this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-            //this.setMaximumSize(dimPanel);
-            //this.add(new Filler(100, Gui.row.getHeight()));
+            // this.setMaximumSize(dimPanel);
+            // this.add(new Filler(100, Gui.row.getHeight()));
 
             this.b1Panel = new JPanel();
             this.b1Panel.setMaximumSize(dimPanel);
@@ -109,8 +109,8 @@ public class GurobiPanel extends JPanel {
 
         GradePanel() {
             this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-            //this.setMaximumSize(dimPanel);
-            
+            // this.setMaximumSize(dimPanel);
+
             this.twelvePanel = new JPanel();
             this.twelvePanel.setLayout(new BoxLayout(this.twelvePanel, BoxLayout.LINE_AXIS));
             this.twelvePanel.setMaximumSize(dimPanel);
@@ -120,7 +120,7 @@ public class GurobiPanel extends JPanel {
             this.twelvePanel.add(twelveField);
             this.twelveField.setMaximumSize(dimField);
             this.add(this.twelvePanel);
-            
+
             this.elevenPanel = new JPanel();
             this.elevenPanel.setLayout(new BoxLayout(elevenPanel, BoxLayout.LINE_AXIS));
             this.elevenPanel.setMaximumSize(dimPanel);
@@ -130,7 +130,7 @@ public class GurobiPanel extends JPanel {
             this.elevenField.setMaximumSize(dimField);
             this.elevenPanel.add(elevenField);
             this.add(this.elevenPanel);
-            
+
             this.tenPanel = new JPanel();
             this.tenPanel.setLayout(new BoxLayout(tenPanel, BoxLayout.LINE_AXIS));
             this.tenPanel.setMaximumSize(dimPanel);
@@ -180,7 +180,7 @@ public class GurobiPanel extends JPanel {
         this.respectWish = new CheckBoxPanel("Zimmerwünsche respektieren", true);
         this.add(this.respectWish);
         this.wishPanel = new WishPanel();
-         this.add(this.wishPanel);
+        this.add(this.wishPanel);
         this.add(new Filler(100, Gui.row.getHeight()));
 
         this.respectRes = new CheckBoxPanel("Zimmerreservierungen respektieren", true);
@@ -194,14 +194,15 @@ public class GurobiPanel extends JPanel {
         this.gradePanel = new GradePanel();
         this.add(this.gradePanel);
 
-        this.save = new JButton("speichern");
+        this.save = new JButton("anwenden");
         this.save.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 getRules();
             }
         });
-        this.add(new Filler(100, (3*Gui.row.getHeight())));
-        
+
+        this.add(new Filler(100, (3 * Gui.row.getHeight())));
+
         // TODO: why is save button not alligned left?
         this.buttonPanel = new JPanel();
         this.buttonPanel.setLayout(new BoxLayout(this.buttonPanel, BoxLayout.LINE_AXIS));
