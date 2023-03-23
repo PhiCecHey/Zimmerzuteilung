@@ -11,6 +11,7 @@ import gurobi.GRBException;
 import gurobi.GRBLinExpr;
 import gurobi.GRBModel;
 import gurobi.GRBVar;
+import zimmerzuteilung.Exceptions.*;
 import zimmerzuteilung.GUI.Gui;
 import zimmerzuteilung.log.*;
 import zimmerzuteilung.objects.Allocation;
@@ -27,12 +28,6 @@ public class Gurobi {
         oneRoomPerTeam, oneTeamPerRoom, maxStudentsPerRoom,
         // other rules
         respectWish, respectReservations, respectGradePrivilege;
-    }
-
-    public class RoomOccupied extends Exception {
-        RoomOccupied(String str) {
-            super(str);
-        }
     }
 
     private static ArrayList<Gurobi.RULES> rules = new ArrayList<>();
@@ -149,13 +144,13 @@ public class Gurobi {
             this.oneTeamPerRoom();
         }
         if (rules.contains(Gurobi.RULES.respectWish)) {
-            Gurobi.respectWish(GurobiValues.building1, GurobiValues.room1, GurobiValues.room2, GurobiValues.building2);
+            Gurobi.respectWish(Config.building1, Config.room1, Config.room2, Config.building2);
         }
         if (rules.contains(Gurobi.RULES.respectGradePrivilege)) {
-            Gurobi.respectGradePrivilege(GurobiValues.twelve, GurobiValues.eleven, GurobiValues.ten);
+            Gurobi.respectGradePrivilege(Config.twelve, Config.eleven, Config.ten);
         }
         if (rules.contains(Gurobi.RULES.respectReservations)) {
-            Gurobi.respectReservations(GurobiValues.reservation);
+            Gurobi.respectReservations(Config.reservation);
         }
     }
 
@@ -402,12 +397,12 @@ public class Gurobi {
                         boolean allocateRoom = team.allocateRoom(room);
                         boolean allocateTeam = room.allocateTeam(team);
                         if (allocateRoom == false) {
-                            throw new RoomOccupied("Team " + team.name() + " wurde bereits das Zimmer "
+                            throw new RoomOccupiedException("Team " + team.name() + " wurde bereits das Zimmer "
                                     + room.officialRoomNumber() + " zugeordnet.");
 
                         }
                         if (allocateTeam == false) {
-                            throw new RoomOccupied(
+                            throw new RoomOccupiedException(
                                     "Dem Zimmer " + room.officialRoomNumber() + " wurde bereits das Team "
                                             + team.name() + " zugeordnet.");
                         }
@@ -416,7 +411,7 @@ public class Gurobi {
                             score = DoubleRounder.round(score, 1);
                             team.score((float) score);
                         }
-                    } catch (RoomOccupied e) {
+                    } catch (RoomOccupiedException e) {
                         e.printStackTrace();
                     }
                 }

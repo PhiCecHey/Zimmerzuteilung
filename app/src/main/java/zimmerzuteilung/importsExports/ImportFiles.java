@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import zimmerzuteilung.Exceptions.*;
 import zimmerzuteilung.log.Log;
 import zimmerzuteilung.objects.Building;
 import zimmerzuteilung.objects.GENDER;
@@ -16,25 +17,6 @@ import zimmerzuteilung.objects.Student;
 import zimmerzuteilung.objects.Team;
 
 public class ImportFiles {
-
-    public static class BuildingDoesNotExist extends Exception {
-        private BuildingDoesNotExist(String str) {
-            super(str);
-        }
-    }
-
-    public static class RoomDoesNotExist extends Exception {
-        private RoomDoesNotExist(String str) {
-            super(str);
-        }
-    }
-
-    public static class TeamDoesNotExist extends Exception {
-        private TeamDoesNotExist(String str) {
-            super(str);
-        }
-    }
-
     static ArrayList<Building> buildings = new ArrayList<>();
     static ArrayList<Student> students = new ArrayList<>();
     static ArrayList<Team> teams = new ArrayList<>();

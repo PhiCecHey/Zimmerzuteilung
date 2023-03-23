@@ -1,20 +1,19 @@
 package zimmerzuteilung.GUI;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 public class HelpPanel extends JPanel{
-    private JTextArea helpText = new JTextArea();
-    private JScrollPane helpScroll = new JScrollPane(helpText);
-    private JPanel zoom = new JPanel();
-    private JButton plus = new JButton("+");
-    private JButton minus = new JButton("-");
+    private JTextArea helpText;
+    private JScrollPane helpScroll;
+    private JButton plus;
+    private JButton minus;
 
     public HelpPanel(){
         this.init();
@@ -22,12 +21,15 @@ public class HelpPanel extends JPanel{
     }
     
     private void init(){
+        this.helpText = new JTextArea();
         this.helpText.setEditable(false);
+
+        this.helpScroll = new JScrollPane(helpText);
         this.add(this.helpScroll);
-        this.zoom.setLayout(new BoxLayout(this.zoom, BoxLayout.LINE_AXIS));
-        this.add(this.zoom);
-        this.zoom.add(this.minus);
-        this.zoom.add(this.plus);
+
+        this.plus = new JButton("+");
+        this.minus = new JButton("-");
+        this.add(new GroupPanel(new Component[]{this.plus, this.minus}, "row"));
     }
 
     private void addActionListeners() {

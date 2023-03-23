@@ -2,14 +2,9 @@ package zimmerzuteilung.objects;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
+import zimmerzuteilung.Exceptions.*;
 
 public class Team {
-    private class DifferentGenderException extends Exception {
-        private DifferentGenderException(String str) {
-            super(str);
-        }
-    }
-
     private ArrayList<Student> members;
     private Wish wish;
     private int id;

@@ -1,18 +1,8 @@
 package zimmerzuteilung.objects;
 
+import zimmerzuteilung.Exceptions.*;
+
 public class Wish {
-    private class RoomNotInBuildingException extends Exception {
-        private RoomNotInBuildingException(String str) {
-            super(str);
-        }
-    }
-
-    private class SameLocationException extends Exception {
-        private SameLocationException(String str) {
-            super(str);
-        }
-    }
-
     private Building building1, building2;
     private Room room1, room2;
 

@@ -1,73 +1,41 @@
 package zimmerzuteilung.GUI;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-
 import zimmerzuteilung.importsExports.ImportFiles;
 import zimmerzuteilung.log.Log;
 
-public class ImportsPanel extends JPanel{
-    class SubPanel extends JPanel {
-        JLabel label;
-        JTextField field;
-        JButton button;
-    
-        public SubPanel(String labelText) {
-            this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-            this.setMaximumSize(new Dimension(2000, 50));
-            this.label = new JLabel(labelText);
-            this.add(label);
-            this.field = new JTextField();
-            this.add(field);
-            this.button = new JButton("...");
-            SubPanel.buttonFileChooser(button, field);
-            this.add(button);
-        }
-    
-        private static void buttonFileChooser(JButton b, JTextField f) {
-            b.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    JFileChooser fileChooser = new JFileChooser();
-                    Gui.changeFont(fileChooser, Gui.mainFrame.getFont().getSize());
-                    int rueckgabeWert = fileChooser.showOpenDialog(null);
-                    if (rueckgabeWert == JFileChooser.APPROVE_OPTION) {
-                        f.setText(fileChooser.getSelectedFile().getAbsolutePath());
-                    }
-                }
-            });
-        }
-    }
+public class ImportsPanel extends JPanel {
+    private ArrayList<ChooseFilePanel> importsPanels = new ArrayList<>();
+    private JButton importsButton;
+    public JTextArea importsArea;
+    private JScrollPane importsScroll;
 
-    private ArrayList<SubPanel> importsPanels = new ArrayList<>();
-    private JButton importsButton = new JButton("Dateien einlesen");
-    public JTextArea importsArea = new JTextArea();
-    private JScrollPane importsScroll = new JScrollPane(importsArea);
-
-    public ImportsPanel(){
+    public ImportsPanel() {
         this.imports();
         this.init();
+        this.importButton();
     }
 
-    private void init(){
+    private void init() {
+        this.importsArea = new JTextArea();
         this.importsArea.setLineWrap(true);
         this.importsArea.setEditable(false);
+
+        this.importsButton = new JButton("Dateien einlesen");
         this.add(this.importsButton);
-        JPanel filler = new JPanel();
-        filler.setMaximumSize(Gui.row);
-        this.add(filler);
+
+        this.add(new Filler(Gui.row.width, Gui.row.height));
+
+        this.importsScroll = new JScrollPane(importsArea);
         this.add(importsScroll);
     }
 
@@ -76,14 +44,14 @@ public class ImportsPanel extends JPanel{
                 "Gruppen: ", "Zimmerwünsche" };
 
         for (String s : importLabelStrings) {
-            SubPanel i = new SubPanel(s);
+            ChooseFilePanel i = new ChooseFilePanel(s, "file");
             this.importsPanels.add(i);
             this.add(i);
-            JPanel filler = new JPanel();
-            filler.setMaximumSize(Gui.row);
-            this.add(filler);
+            this.add(new Filler(Gui.row.width, Gui.row.height));
         }
+    }
 
+    private void importButton(){
         this.importsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 // clean
@@ -113,18 +81,16 @@ public class ImportsPanel extends JPanel{
                         }
                     } catch (Exception e) {
                         fileFound = -1;
-                        importsPanels.get(i).field.setBackground(new Color(1f, 0f, 0f, 0.2f));
+                        importsPanels.get(i).field.setBackground(Colors.redTransp);
                         e.printStackTrace();
                         importsArea.append("\n" + e.toString());
                     }
                     if (fileFound == 1) {
-                        importsPanels.get(i).field.setBackground(new Color(0f, 1f, 0f, 0.2f));
+                        importsPanels.get(i).field.setBackground(Colors.greenTransp);
                     }
                 }
                 importsArea.append(Log.log());
             }
         });
     }
-
 }
-
