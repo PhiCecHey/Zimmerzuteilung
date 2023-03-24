@@ -17,11 +17,11 @@ import zimmerzuteilung.objects.Student;
 import zimmerzuteilung.objects.Team;
 
 public class ImportFiles {
-    static ArrayList<Building> buildings = new ArrayList<>();
-    static ArrayList<Student> students = new ArrayList<>();
-    static ArrayList<Team> teams = new ArrayList<>();
+    private static ArrayList<Building> buildings = new ArrayList<>();
+    private static ArrayList<Student> students = new ArrayList<>();
+    private static ArrayList<Team> teams = new ArrayList<>();
 
-    public static File[] getFilesFromFolder(String pathToFolder) {
+    /*public static File[] getFilesFromFolder(String pathToFolder) {
         File[] fileList = new File[0];
         try {
             File folder = new File(pathToFolder);
@@ -36,11 +36,11 @@ public class ImportFiles {
             e.printStackTrace();
         }
         return fileList;
-    }
+    }*/
 
-    public static String editLine(String line) {
+    /*public static String editLine(String line) {
         // remove double quotes and comma
-        if (line != null) {
+        if (line != null) { 
             if (line.length() > 2) {
                 if (line.equals("null,") || line.equals("\"\",")) {
                     return ""; // no information in survey
@@ -56,7 +56,7 @@ public class ImportFiles {
             }
         }
         return null;
-    }
+    }*/
 
     // tested, works
     /**

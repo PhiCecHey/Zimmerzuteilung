@@ -16,44 +16,6 @@ public class Room {
         this.id = Room.count;
     }
 
-    public Room(final Building building, final int c)
-            throws IllegalArgumentException {
-        ++Room.count;
-        this.id = Room.count;
-        this.officialRoomNumber = Integer.toString(this.id);
-        if (c < 0) {
-            throw new IllegalArgumentException("Die maximale " +
-                    "Schülerkapazität eines Zimmers darf nicht negativ sein.");
-        }
-        this.capacity = c;
-        building.addRoom(this);
-    }
-
-    public Room(final int c) throws IllegalArgumentException {
-        this.id = Room.count;
-        this.officialRoomNumber = Integer.toString(this.id);
-        if (c < 0) {
-            throw new IllegalArgumentException("Die maximale " +
-                    "Schülerkapazität eines Zimmers darf nicht negativ sein.");
-        }
-        this.capacity = c;
-        ++Room.count;
-    }
-
-    public Room(final Building building, final String n, final int c)
-            throws IllegalArgumentException {
-        ++Room.count;
-        this.id = Room.count;
-        if (c < 0) {
-            throw new IllegalArgumentException("Die maximale " +
-                    "Schülerkapazität eines Zimmers darf nicht negativ sein.");
-        }
-        this.capacity = c;
-
-        building.addRoom(this);
-        this.officialRoomNumber = n;
-    }
-
     public Room(final String unoffName, final String offNum, final GENDER s,
             final int c, boolean res) throws IllegalArgumentException {
         ++Room.count;
@@ -81,16 +43,12 @@ public class Room {
         return this.id;
     }
 
-    public int getCapacity() {
+    public int capacity() {
         return this.capacity;
     }
 
     public String officialRoomNumber() {
         return this.officialRoomNumber;
-    }
-
-    public void officialRoomNumber(String n) {
-        this.officialRoomNumber = n;
     }
 
     public boolean reserved() {
@@ -99,13 +57,5 @@ public class Room {
 
     public void reserved(boolean r) {
         this.reserved = r;
-    }
-
-    @Override
-    public String toString() {
-        String string = "Room{id: " + this.id + ", number: " + this.officialRoomNumber
-                + ", capacity: " + this.capacity + "}";
-
-        return string;
     }
 }

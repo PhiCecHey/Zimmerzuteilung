@@ -22,45 +22,6 @@ public class Team {
         this.id = Team.count;
     }
 
-    public Team(ArrayList<Student> students) throws DifferentGenderException {
-        // check for same gender
-        ListIterator<Student> it = students.listIterator();
-        while (it.hasNext()) {
-            Student first = it.next();
-            while (it.hasNext()) {
-                Student second = it.next();
-                if (first.gender() != second.gender()) {
-                    throw new DifferentGenderException(
-                            "Die Schüler eines " + "Teams müssen vom gleichen Geschlecht sein (" + first.name() + ", "
-                                    + second.name() + ").");
-                }
-            }
-        }
-        this.members = students;
-        Team.count++;
-        this.id = Team.count;
-    }
-
-    public Team(ArrayList<Student> students, Wish w) throws DifferentGenderException {
-        // check for same gender
-        ListIterator<Student> it = students.listIterator();
-        while (it.hasNext()) {
-            Student first = it.next();
-            while (it.hasNext()) {
-                Student second = it.next();
-                if (first.gender() != second.gender()) {
-                    throw new DifferentGenderException(
-                            "Die Schüler eines " + "Teams müssen vom gleichen eschlecht sein (" + first.name() + ", "
-                                    + second.name() + ").");
-                }
-            }
-        }
-        this.members = students;
-        this.wish = w;
-        Team.count++;
-        this.id = Team.count;
-    }
-
     public boolean allocateRoom(Room r) {
         if (this.allocatedRoom != null) {
             return false;
@@ -89,24 +50,12 @@ public class Team {
         return this.wish;
     }
 
-    public void wish(Wish w) {
-        this.wish = w;
-    }
-
     public String name() {
         return this.name;
     }
 
     public void name(String n) {
         this.name = n;
-    }
-
-    public String time() {
-        return this.time;
-    }
-
-    public void time(String t) {
-        this.time = t;
     }
 
     public GENDER gender() {
@@ -141,30 +90,11 @@ public class Team {
         return null;
     }
 
-    public boolean hasStudent(String userName) {
-        for (Student student : this.members) {
-            if (student.userName().equals(userName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public String membersToCsv() {
         String str = "";
         for (Student s : this.members) {
             str += s.userName() + " ";
         }
         return str;
-    }
-
-    @Override
-    public String toString() {
-        String res = "Team{id: " + this.id + ", members: ";
-        for (Student member : this.members) {
-            res += member.toString() + ", ";
-        }
-        res += this.wish.toString() + "}";
-        return res;
     }
 }

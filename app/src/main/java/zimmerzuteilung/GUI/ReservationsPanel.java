@@ -6,6 +6,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import zimmerzuteilung.algorithms.Config;
+
 class ReservationPanel extends JPanel {
     JTextField resField;
     private static Dimension dimPanel = new Dimension(Gui.row.width, Gui.row.height);
@@ -18,7 +20,7 @@ class ReservationPanel extends JPanel {
         this.add(new JLabel("Reservierungsbonus: "));
         this.resField = new JTextField();
         this.resField.setMaximumSize(dimField);
-        this.resField.setText("50");
+        this.resField.setText(Float.toString(Config.reservation));
         this.add(this.resField);
     }
 }

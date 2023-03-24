@@ -77,14 +77,4 @@ public class Wish {
     public void building2(Building b) {
         this.building2 = b;
     }
-
-    @Override
-    public String toString() {
-        String res = "Wish{id: " + this.id + ", building1: "
-                + this.building1.toString() + ", room1: " +
-                this.room1.toString() + ", room2: " + this.room2.toString() +
-                ", building2: " + this.building2.toString() + "}";
-
-        return res;
-    }
 }

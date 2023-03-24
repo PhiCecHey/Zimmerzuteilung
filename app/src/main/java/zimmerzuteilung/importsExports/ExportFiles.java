@@ -8,15 +8,13 @@ import java.util.ArrayList;
 
 import zimmerzuteilung.objects.Building;
 import zimmerzuteilung.objects.Room;
-import zimmerzuteilung.objects.Student;
 import zimmerzuteilung.objects.Team;
 import zimmerzuteilung.objects.Wish;
 
 public class ExportFiles {
 
-    private static ArrayList<Building> buildings = ImportFiles.buildings;
-    private static ArrayList<Student> students = ImportFiles.students;
-    private static ArrayList<Team> teams = ImportFiles.teams;
+    //private static ArrayList<Building> buildings = ImportFiles.buildings();
+    private static ArrayList<Team> teams = ImportFiles.teams();
 
     public static boolean eportToCsv(File file) {
         // one row represents one team

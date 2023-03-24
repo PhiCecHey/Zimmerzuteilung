@@ -19,7 +19,6 @@ public class GurobiPanel extends JPanel {
     private WishPanel wishPanel;
     private ReservationPanel resPanel;
     private JButton save;
-    private JPanel buttonPanel;
 
     public GurobiPanel() {
         this.init();
@@ -63,11 +62,7 @@ public class GurobiPanel extends JPanel {
         });
 
         this.add(new Filler(100, (3 * Gui.row.getHeight())));
-
-        this.buttonPanel = new JPanel();
-        this.buttonPanel.setLayout(new BoxLayout(this.buttonPanel, BoxLayout.LINE_AXIS));
-        this.buttonPanel.add(this.save);
-        this.add(this.buttonPanel);
+        this.add(this.save);
     }
 
     private void getRules() {

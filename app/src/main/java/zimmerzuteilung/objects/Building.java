@@ -30,27 +30,12 @@ public class Building {
         this.id = Building.count;
     }
 
-    public Building() {
-        ++Building.count;
-        this.id = Building.count;
-        this.name = Integer.toString(this.id);
-    }
-
     public boolean addRoom(final Room room) {
         if (this.containsRoom(room)) {
             return false;
         }
         this.rooms.add(room);
         return true;
-    }
-
-    public void addRandomRooms(final int nRooms, final int minCapacity,
-            final int maxCapacity) {
-        for (int i = 0; i < nRooms; ++i) {
-            int randCap = ThreadLocalRandom.current().nextInt(
-                    minCapacity, maxCapacity + 1);
-            this.addRoom(new Room(randCap));
-        }
     }
 
     public int id() {
@@ -61,28 +46,8 @@ public class Building {
         return this.name;
     }
 
-    public void name(String n) {
-        this.name = n;
-    }
-
     public ArrayList<Room> rooms() {
         return this.rooms;
-    }
-
-    @Override
-    public String toString() {
-        String string = "Building{id: " + this.id + ", name: " + this.name
-                + ", rooms: [";
-        for (Room room : this.rooms) {
-            string += room.toString() + ", ";
-        }
-        return string += "]}";
-    }
-
-    // TODO
-    public void initRooms() {
-        // von config file lesen
-        // zimmer neu erstellen und zur map hinzufügen
     }
 
     public boolean containsRoom(Room room) {

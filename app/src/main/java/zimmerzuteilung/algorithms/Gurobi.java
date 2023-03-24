@@ -215,7 +215,7 @@ public class Gurobi {
                             Gurobi.allocations.get(r, t).grbVar());
                 }
                 String st = "maxStudentsPerRoom_" + String.valueOf(r);
-                this.model.addConstr(expr, GRB.LESS_EQUAL, Gurobi.rooms.get(r).getCapacity(), st);
+                this.model.addConstr(expr, GRB.LESS_EQUAL, Gurobi.rooms.get(r).capacity(), st);
             }
         } catch (GRBException e) {
             System.out.println("Error code: " + e.getErrorCode() + ". " + e.getMessage());
