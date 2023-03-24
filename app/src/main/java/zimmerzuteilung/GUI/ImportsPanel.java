@@ -49,6 +49,12 @@ public class ImportsPanel extends JPanel {
             this.add(i);
             this.add(new Filler(Gui.row.width, Gui.row.height));
         }
+        
+        // TODO: remove following
+        this.importsPanels.get(0).field.setText("/home/philine/Documents/Link to files/Internatszimmer.csv");
+        this.importsPanels.get(1).field.setText("/home/philine/Documents/Link to files/persDaten2.csv");
+        this.importsPanels.get(2).field.setText("/home/philine/Documents/Link to files/gruppen2.csv");
+        this.importsPanels.get(3).field.setText("/home/philine/Documents/Link to files/Zimmerwahl2.csv");
     }
 
     private void importButton(){

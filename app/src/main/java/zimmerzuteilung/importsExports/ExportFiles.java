@@ -13,7 +13,7 @@ import zimmerzuteilung.objects.Wish;
 
 public class ExportFiles {
 
-    //private static ArrayList<Building> buildings = ImportFiles.buildings();
+    // private static ArrayList<Building> buildings = ImportFiles.buildings();
     private static ArrayList<Team> teams = ImportFiles.teams();
 
     public static boolean eportToCsv(File file) {
@@ -42,7 +42,7 @@ public class ExportFiles {
             }
             if (wish == null) {
                 System.out.println("Team " + team.name() + " hat keinen Zimmerwunsch abgegeben!");
-                comment += "Team " + team.name() + " hat keinen Zimmerwunsch abgegeben!";
+                comment += "Team " + team.name() + " hat keinen Zimmerwunsch abgegeben! ";
                 toWrite += "-, ";
             } else {
                 b1 = wish.building1();
@@ -52,28 +52,28 @@ public class ExportFiles {
             }
             if (b1 == null) {
                 System.out.println("Team " + team.name() + " hat kein Erstwunschinternat angegeben!");
-                comment += "Team " + team.name() + " hat kein Erstwunschinternat angegeben!";
+                comment += "Team " + team.name() + " hat kein Erstwunschinternat angegeben! ";
                 toWrite += "-, ";
             } else {
                 toWrite += b1.name() + ", ";
             }
             if (r1 == null) {
                 System.out.println("Team " + team.name() + " hat kein Erstwunschzimmer angegeben!");
-                comment += "Team " + team.name() + " hat kein Erstwunschzimmer angegeben!";
+                comment += "Team " + team.name() + " hat kein Erstwunschzimmer angegeben! ";
                 toWrite += "-, ";
             } else {
                 toWrite += r1.officialRoomNumber() + ", ";
             }
             if (r2 == null) {
                 System.out.println("Team " + team.name() + " hat kein Zweitwunschzimmer angegeben!");
-                comment += "Team " + team.name() + " hat kein Zweitwunschzimmer angegeben!";
+                comment += "Team " + team.name() + " hat kein Zweitwunschzimmer angegeben! ";
                 toWrite += "-, ";
             } else {
                 toWrite += r2.officialRoomNumber() + ", ";
             }
             if (b2 == null) {
                 System.out.println("Team " + team.name() + " hat kein Zweitwunschinternat angegeben!");
-                comment += "Team " + team.name() + " hat kein Zweitwunschinternat angegeben!";
+                comment += "Team " + team.name() + " hat kein Zweitwunschinternat angegeben! ";
                 toWrite += "-, ";
             } else {
                 toWrite += b2.name() + ", ";

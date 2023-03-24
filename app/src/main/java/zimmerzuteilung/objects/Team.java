@@ -1,8 +1,6 @@
 package zimmerzuteilung.objects;
 
 import java.util.ArrayList;
-import java.util.ListIterator;
-import zimmerzuteilung.Exceptions.*;
 
 public class Team {
     private ArrayList<Student> members;

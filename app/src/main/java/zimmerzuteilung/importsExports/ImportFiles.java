@@ -21,42 +21,47 @@ public class ImportFiles {
     private static ArrayList<Student> students = new ArrayList<>();
     private static ArrayList<Team> teams = new ArrayList<>();
 
-    /*public static File[] getFilesFromFolder(String pathToFolder) {
-        File[] fileList = new File[0];
-        try {
-            File folder = new File(pathToFolder);
-            System.out.println("Ordner: " + folder.getAbsolutePath());
-            fileList = folder.listFiles();
-            if (fileList.length == 0) {
-                throw new FileNotFoundException();
-            }
-            return fileList;
-        } catch (FileNotFoundException e) {
-            System.out.println("Es wurden keine Dateien in dem Ordner " + pathToFolder + "gefunden.");
-            e.printStackTrace();
-        }
-        return fileList;
-    }*/
+    /*
+     * public static File[] getFilesFromFolder(String pathToFolder) {
+     * File[] fileList = new File[0];
+     * try {
+     * File folder = new File(pathToFolder);
+     * System.out.println("Ordner: " + folder.getAbsolutePath());
+     * fileList = folder.listFiles();
+     * if (fileList.length == 0) {
+     * throw new FileNotFoundException();
+     * }
+     * return fileList;
+     * } catch (FileNotFoundException e) {
+     * System.out.println("Es wurden keine Dateien in dem Ordner " + pathToFolder +
+     * "gefunden.");
+     * e.printStackTrace();
+     * }
+     * return fileList;
+     * }
+     */
 
-    /*public static String editLine(String line) {
-        // remove double quotes and comma
-        if (line != null) { 
-            if (line.length() > 2) {
-                if (line.equals("null,") || line.equals("\"\",")) {
-                    return ""; // no information in survey
-                } else {
-                    if (line.endsWith(",")) {
-                        line = line.substring(0, line.length() - 1);
-                    }
-                    if (line.startsWith("\"") && line.endsWith("\"")) {
-                        line = line.substring(1, line.length() - 1);
-                    }
-                    return line.toLowerCase();
-                }
-            }
-        }
-        return null;
-    }*/
+    /*
+     * public static String editLine(String line) {
+     * // remove double quotes and comma
+     * if (line != null) {
+     * if (line.length() > 2) {
+     * if (line.equals("null,") || line.equals("\"\",")) {
+     * return ""; // no information in survey
+     * } else {
+     * if (line.endsWith(",")) {
+     * line = line.substring(0, line.length() - 1);
+     * }
+     * if (line.startsWith("\"") && line.endsWith("\"")) {
+     * line = line.substring(1, line.length() - 1);
+     * }
+     * return line.toLowerCase();
+     * }
+     * }
+     * }
+     * return null;
+     * }
+     */
 
     // tested, works
     /**
@@ -99,6 +104,56 @@ public class ImportFiles {
         }
 
         return true;
+    }
+
+    private static String[] splitOnComma(String line) {
+        String quote = "\"";
+        String[] split = line.split(",");
+        ArrayList<String> list = new ArrayList<>();
+
+        // , could be contained in string that should not be split
+        // => merge strings so that string starts and ends with quote
+        boolean merge = false;
+        String newString = "";
+
+        for (int i = 0; i < split.length; i++) {
+            String entry = split[i].toLowerCase();
+            if (!merge) {
+                if (entry.startsWith(quote)) {
+                    if (entry.endsWith(quote)) {
+                        list.add(entry);
+                        merge = false;
+                        newString = "";
+                    } else {
+                        merge = true;
+                        newString = entry;
+                    }
+                } else {
+                    if (!entry.endsWith(quote)) {
+                        merge = false;
+                        newString = "";
+                        list.add(entry);
+                    }
+                }
+            } else {
+                newString += entry;
+                if (entry.endsWith(quote)) {
+                    list.add(newString);
+                    merge = false;
+                    newString = "";
+                } else {
+                    merge = true;
+                }
+            }
+        }
+
+        // list to array
+        String[] toReturn = new String[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            String entry = list.get(i).replace(quote, "");
+            toReturn[i] = entry;
+        }
+        return toReturn;
     }
 
     // tested, works
@@ -180,27 +235,22 @@ public class ImportFiles {
                 building.addRoom(room);
             }
             reader.close();
+            return ImportFiles.buildings;
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
-        return ImportFiles.buildings;
+        return null;
     }
 
     // tested, works
     public static ArrayList<Team> importWishes(File csv)
             throws IOException, IllegalArgumentException, BuildingDoesNotExist, RoomDoesNotExist, TeamDoesNotExist {
         try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
-            ArrayList<Team> list = ImportFiles.teams;
             int lineNum = 1;
             String line = reader.readLine();
             while ((line = reader.readLine()) != null) {
                 lineNum++;
-                line = line.strip();
-                line = line.replace("\"", "");
-                if (line.equals("")) {
-                    continue; // skip empty lines
-                }
-                String[] entry = line.strip().toLowerCase().split(",");
+                String[] entry = ImportFiles.splitOnComma(line);
                 // ----------------------------------------------get_team-----------------------------------------------
                 Team team = new Team();
                 for (Team t : ImportFiles.teams) {
@@ -288,10 +338,11 @@ public class ImportFiles {
                 }
             }
             reader.close();
+            return ImportFiles.teams;
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
-        return ImportFiles.teams;
+        return null;
     }
 
     // tested, works
@@ -299,20 +350,11 @@ public class ImportFiles {
         try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
             int lineNum = 2;
             String line = reader.readLine();
-            String sep = ",";
-            if (line.contains("sep=")) {
-                sep = Character.toString(line.charAt(4));
-            }
             line = reader.readLine(); // skip heading
 
             while ((line = reader.readLine()) != null) {
                 lineNum++;
-                line = line.strip();
-                if (line.equals("")) {
-                    continue; // skip empty lines
-                }
-                line = line.replace("\"", "");
-                String[] entry = line.strip().toLowerCase().split(",");
+                String[] entry = ImportFiles.splitOnComma(line);
                 // --------------------------------------------get_team_size--------------------------------------------
                 int teamSize = Integer.valueOf(entry[2]);
                 if (teamSize == 0) {
@@ -383,12 +425,7 @@ public class ImportFiles {
             String line = reader.readLine(); // skip heading
             while ((line = reader.readLine()) != null) {
                 lineNum++;
-                line = line.strip();
-                line = line.replace("\"", "");
-                if (line.equals("")) {
-                    continue; // skip empty lines
-                }
-                String[] entry = line.strip().toLowerCase().split(",");
+                String[] entry = ImportFiles.splitOnComma(line);
                 if (entry.length == 0) {
                     continue;
                 }

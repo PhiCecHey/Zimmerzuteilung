@@ -12,6 +12,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 class ChooseFilePanel extends JPanel {
     JLabel label;
@@ -42,6 +43,9 @@ class ChooseFilePanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
                 Gui.changeFont(fileChooser, Gui.mainFrame.getFont().getSize());
+                fileChooser.setAcceptAllFileFilterUsed(false);
+                FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("CSV", "csv");
+                fileChooser.addChoosableFileFilter(fileFilter);
                 int rueckgabeWert = fileChooser.showOpenDialog(null);
                 if (rueckgabeWert == JFileChooser.APPROVE_OPTION) {
                     f.setText(fileChooser.getSelectedFile().getAbsolutePath());
@@ -59,6 +63,7 @@ class ChooseFilePanel extends JPanel {
                 fileChooser.setAcceptAllFileFilterUsed(false);
                 if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                     f.setBackground(Colors.blueTransp);
+                    // TODO: only parent dir returned ?!
                     String currentDir = fileChooser.getCurrentDirectory().getAbsolutePath();
                     if (!currentDir.endsWith("/")) {
                         currentDir += "/";

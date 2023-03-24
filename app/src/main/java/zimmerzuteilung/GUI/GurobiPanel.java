@@ -1,12 +1,15 @@
 package zimmerzuteilung.GUI;
 
+import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import zimmerzuteilung.algorithms.Gurobi;
 import zimmerzuteilung.algorithms.Config;
 
@@ -77,22 +80,69 @@ public class GurobiPanel extends JPanel {
         }
         if (this.respectWish.box.isSelected()) {
             this.gurobiRules.add(Gurobi.RULES.respectWish);
-            try {
-                Config.building1 = Float.parseFloat(this.wishPanel.b1Field.getText());
-                Config.room1 = Float.parseFloat(this.wishPanel.r1Field.getText());
-                Config.room2 = Float.parseFloat(this.wishPanel.r2Field.getText());
-                Config.building2 = Float.parseFloat(this.wishPanel.b2Field.getText());
-            } catch (Exception e) {
-                // TODO
-                System.out.println(e);
-                System.out.println(e.getStackTrace());
-            }
+            GurobiPanel.checkUserInput(this.wishPanel.b1Field, "b1");
+            GurobiPanel.checkUserInput(this.wishPanel.r1Field, "r1");
+            GurobiPanel.checkUserInput(this.wishPanel.r2Field, "r2");
+            GurobiPanel.checkUserInput(this.wishPanel.b2Field, "b2");
+        } else {
+            this.wishPanel.b1Field.setBackground(Colors.yellowTransp);
+            this.wishPanel.r1Field.setBackground(Colors.yellowTransp);
+            this.wishPanel.r2Field.setBackground(Colors.yellowTransp);
+            this.wishPanel.b2Field.setBackground(Colors.yellowTransp);
         }
         if (this.respectRes.box.isSelected()) {
             this.gurobiRules.add(Gurobi.RULES.respectReservations);
+            GurobiPanel.checkUserInput(this.resPanel.resField, "res");
+        } else {
+            this.resPanel.resField.setBackground(Colors.yellowTransp);
         }
-        if (this.respectGradePriv.isFontSet()) {
+        if (this.respectGradePriv.box.isSelected()) {
             this.gurobiRules.add(Gurobi.RULES.respectGradePrivilege);
+            GurobiPanel.checkUserInput(this.gradePanel.twelveField, "12");
+            GurobiPanel.checkUserInput(this.gradePanel.elevenField, "11");
+            GurobiPanel.checkUserInput(this.gradePanel.tenField, "10");
+        } else {
+            this.gradePanel.twelveField.setBackground(Colors.yellowTransp);
+            this.gradePanel.elevenField.setBackground(Colors.yellowTransp);
+            this.gradePanel.tenField.setBackground(Colors.yellowTransp);
         }
+    }
+
+    private static byte checkUserInput(JTextField field, String configName) {
+        byte worked = 0;
+        float config = 0;
+        try {
+            String text = field.getText();
+            if (text != null && !text.equals("")) {
+                worked = 1;
+                config = Float.parseFloat(field.getText());
+            }
+        } catch (Exception e) {
+            worked = -1;
+            field.setBackground(Colors.redTransp);
+        }
+        if (worked == 1) {
+            field.setBackground(Colors.greenTransp);
+            if (configName.toLowerCase().contains("b1")) {
+                Config.building1 = config;
+            } else if (configName.toLowerCase().contains("r1")) {
+                Config.room1 = config;
+            } else if (configName.toLowerCase().contains("r2")) {
+                Config.room2 = config;
+            } else if (configName.toLowerCase().contains("b2")) {
+                Config.building2 = config;
+            } else if (configName.toLowerCase().contains("res")) {
+                Config.reservation = config;
+            } else if (configName.toLowerCase().contains("12")) {
+                Config.twelve = config;
+            } else if (configName.toLowerCase().contains("11")) {
+                Config.eleven = config;
+            } else if (configName.toLowerCase().contains("10")) {
+                Config.ten = config;
+            } else {
+                System.out.println("Problem in function checkUserInput()");
+            }
+        }
+        return worked;
     }
 }

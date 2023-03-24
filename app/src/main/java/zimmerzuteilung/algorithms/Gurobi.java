@@ -320,19 +320,19 @@ public class Gurobi {
                         Log.append("Das Team " + allocation.team().name()
                                 + " hat keinen (vollständigen) Zimmerwunsch abgegeben!");
                     }
-                }
+                } else {
+                    float score = 0;
+                    if (grade == 10) {
+                        score = ten;
+                    } else if (grade == 11) {
+                        score = eleven;
+                    } else if (grade == 12) {
+                        score = twelve;
+                    }
 
-                float score = 0;
-                if (grade == 10) {
-                    score = ten;
-                } else if (grade == 11) {
-                    score = eleven;
-                } else if (grade == 12) {
-                    score = twelve;
-                }
-
-                if (wish.room1().id() == allocation.room().id() || wish.room2().id() == allocation.room().id()) {
-                    allocation.addToScore(score);
+                    if (wish.room1().id() == allocation.room().id() || wish.room2().id() == allocation.room().id()) {
+                        allocation.addToScore(score);
+                    }
                 }
             }
         }
