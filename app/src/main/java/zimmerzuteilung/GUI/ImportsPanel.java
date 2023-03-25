@@ -1,6 +1,5 @@
 package zimmerzuteilung.GUI;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -8,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -16,7 +14,6 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import zimmerzuteilung.Exceptions.WarningException;
 import zimmerzuteilung.importsExports.ImportFiles;
 import zimmerzuteilung.log.Log;
 
@@ -132,7 +129,11 @@ public class ImportsPanel extends JPanel {
             public void warn() {
                 File f = new File(textField.getText());
                 if (f.exists() && !f.isDirectory()) {
-                    textField.setBackground(Colors.blueTransp);
+                    if (!textField.getText().endsWith(".csv")) {
+                        textField.setBackground(Colors.yellowTransp);
+                    } else {
+                        textField.setBackground(Colors.blueTransp);
+                    }
                 } else {
                     textField.setBackground(Colors.redTransp);
                 }
