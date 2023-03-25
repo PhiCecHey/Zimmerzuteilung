@@ -7,9 +7,13 @@ import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import zimmerzuteilung.Exceptions.WarningException;
 import zimmerzuteilung.importsExports.ImportFiles;
@@ -47,6 +51,8 @@ public class ImportsPanel extends JPanel {
 
         for (String s : importLabelStrings) {
             ChooseFilePanel i = new ChooseFilePanel(s, "file");
+            ImportsPanel.checkForFile(i.field);
+
             this.importsPanels.add(i);
             this.add(i);
             this.add(new Filler(Gui.row.width, Gui.row.height));
@@ -66,9 +72,6 @@ public class ImportsPanel extends JPanel {
                 importsArea.setText("");
                 Log.clear();
                 ImportFiles.clear();
-                for (ChooseFilePanel panel : importsPanels) {
-                    panel.field.setBackground(Colors.transp);
-                }
 
                 int i = 0;
                 try {
@@ -104,6 +107,32 @@ public class ImportsPanel extends JPanel {
                     e.printStackTrace();
                 }
                 importsArea.append(Log.log());
+            }
+        });
+    }
+
+    public static void checkForFile(JTextField textField) {
+        // Listen for changes in the text
+        textField.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                warn();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                warn();
+            }
+
+            public void insertUpdate(DocumentEvent e) {
+                warn();
+            }
+
+            public void warn() {
+                File f = new File(textField.getText());
+                if (f.exists() && !f.isDirectory()) {
+                    textField.setBackground(Colors.blueTransp);
+                } else {
+                    textField.setBackground(Colors.redTransp);
+                }
             }
         });
     }
