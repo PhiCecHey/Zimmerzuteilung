@@ -21,7 +21,7 @@ class WishPanel extends JPanel {
 
                 this.b1Field = new JTextField();
                 this.b1Field.setMaximumSize(dimField);
-                this.b1Field.setText(Float.toString(Config.building1));
+                this.b1Field.setText(Float.toString(Config.scoreBuilding1));
                 this.add(new GroupPanel(
                                 new Component[] { new Filler(50, Gui.row.height),
                                                 new JLabel("Erstwunsch Internat Bonus: "), b1Field },
@@ -29,7 +29,7 @@ class WishPanel extends JPanel {
 
                 this.r1Field = new JTextField();
                 this.r1Field.setMaximumSize(dimField);
-                this.r1Field.setText(Float.toString(Config.room1));
+                this.r1Field.setText(Float.toString(Config.scoreRoom1));
                 this.add(new GroupPanel(
                                 new Component[] { new Filler(50, Gui.row.height),
                                                 new JLabel("Erstwunsch Zimmer Bonus: "), r1Field },
@@ -37,7 +37,7 @@ class WishPanel extends JPanel {
 
                 this.r2Field = new JTextField();
                 this.r2Field.setMaximumSize(dimField);
-                this.r2Field.setText(Float.toString(Config.room2));
+                this.r2Field.setText(Float.toString(Config.scoreRoom2));
                 this.add(new GroupPanel(
                                 new Component[] { new Filler(50, Gui.row.height),
                                                 new JLabel("Zweitwunsch Zimmer Bonus: "), r2Field },
@@ -45,7 +45,7 @@ class WishPanel extends JPanel {
 
                 this.b2Field = new JTextField();
                 this.b2Field.setMaximumSize(dimField);
-                this.b2Field.setText(Float.toString(Config.building1));
+                this.b2Field.setText(Float.toString(Config.scoreBuilding1));
                 this.add(new GroupPanel(
                                 new Component[] { new Filler(50, Gui.row.height),
                                                 new JLabel("Zweitwunsch Internat Bonus: "), b2Field },

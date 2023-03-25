@@ -10,6 +10,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+
+import zimmerzuteilung.Exceptions.WarningException;
 import zimmerzuteilung.importsExports.ImportFiles;
 import zimmerzuteilung.log.Log;
 
@@ -49,7 +51,7 @@ public class ImportsPanel extends JPanel {
             this.add(i);
             this.add(new Filler(Gui.row.width, Gui.row.height));
         }
-        
+
         // TODO: remove following
         this.importsPanels.get(0).field.setText("/home/philine/Documents/Link to files/Internatszimmer.csv");
         this.importsPanels.get(1).field.setText("/home/philine/Documents/Link to files/persDaten2.csv");
@@ -57,43 +59,49 @@ public class ImportsPanel extends JPanel {
         this.importsPanels.get(3).field.setText("/home/philine/Documents/Link to files/Zimmerwahl2.csv");
     }
 
-    private void importButton(){
+    private void importButton() {
         this.importsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 // clean
                 importsArea.setText("");
                 Log.clear();
                 ImportFiles.clear();
+                for (ChooseFilePanel panel : importsPanels) {
+                    panel.field.setBackground(Colors.transp);
+                }
 
-                for (int i = 0; i < 4; i++) {
-                    byte fileFound = 0;
-                    try {
-                        if (i == 0) {
-                            if (ImportFiles.importBuildings(new File(importsPanels.get(i).field.getText())) != null) {
-                                fileFound = 1;
-                            }
-                        } else if (i == 1) {
-                            if (ImportFiles.importStudents(new File(importsPanels.get(i).field.getText())) != null) {
-                                fileFound = 1;
-                            }
-                        } else if (i == 2) {
-                            if (ImportFiles.importTeams(new File(importsPanels.get(i).field.getText())) != null) {
-                                fileFound = 1;
-                            }
-                        } else if (i == 3) {
-                            if (ImportFiles.importWishes(new File(importsPanels.get(i).field.getText())) != null) {
-                                fileFound = 1;
-                            }
-                        }
-                    } catch (Exception e) {
-                        fileFound = -1;
-                        importsPanels.get(i).field.setBackground(Colors.redTransp);
-                        e.printStackTrace();
-                        importsArea.append("\n" + e.toString());
+                int i = 0;
+                try {
+                    if (!ImportFiles.importBuildings(new File(importsPanels.get(i).field.getText()))) {
+                        importsPanels.get(0).field.setBackground(Colors.yellowTransp);
+                    } else {
+                        importsPanels.get(0).field.setBackground(Colors.greenTransp);
                     }
-                    if (fileFound == 1) {
-                        importsPanels.get(i).field.setBackground(Colors.greenTransp);
+                    i = 1;
+
+                    if (!ImportFiles.importStudents(new File(importsPanels.get(i).field.getText()))) {
+                        importsPanels.get(1).field.setBackground(Colors.yellowTransp);
+                    } else {
+                        importsPanels.get(1).field.setBackground(Colors.greenTransp);
                     }
+                    i = 2;
+
+                    if (!ImportFiles.importTeams(new File(importsPanels.get(i).field.getText()))) {
+                        importsPanels.get(2).field.setBackground(Colors.yellowTransp);
+                    } else {
+                        importsPanels.get(2).field.setBackground(Colors.greenTransp);
+                    }
+                    i = 3;
+
+                    if (!ImportFiles.importWishes(new File(importsPanels.get(i).field.getText()))) {
+                        importsPanels.get(3).field.setBackground(Colors.yellowTransp);
+                    } else {
+                        importsPanels.get(3).field.setBackground(Colors.greenTransp);
+                    }
+                    i = 4;
+                } catch (Exception e) {
+                    importsPanels.get(i).field.setBackground(Colors.redTransp);
+                    e.printStackTrace();
                 }
                 importsArea.append(Log.log());
             }

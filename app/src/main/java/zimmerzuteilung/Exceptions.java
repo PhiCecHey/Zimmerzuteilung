@@ -1,6 +1,12 @@
 package zimmerzuteilung;
 
 public class Exceptions {
+    public static class WarningException extends Exception {
+        public WarningException(String str) {
+            super(str);
+        }
+    }
+
     public static class BuildingDoesNotExist extends Exception {
         public BuildingDoesNotExist(String str) {
             super(str);
@@ -39,6 +45,18 @@ public class Exceptions {
 
     public static class RoomOccupiedException extends Exception {
         public RoomOccupiedException(String str) {
+            super(str);
+        }
+    }
+
+    public static class StudentInSeveralMoodleGroups extends Exception {
+        public StudentInSeveralMoodleGroups(String str) {
+            super(str);
+        }
+    }
+
+    public static class LineEmptyException extends Exception {
+        public LineEmptyException(String str) {
             super(str);
         }
     }

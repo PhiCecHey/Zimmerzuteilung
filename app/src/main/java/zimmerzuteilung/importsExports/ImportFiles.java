@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import zimmerzuteilung.Exceptions.*;
+import zimmerzuteilung.algorithms.Config;
 import zimmerzuteilung.log.Log;
 import zimmerzuteilung.objects.Building;
 import zimmerzuteilung.objects.GENDER;
@@ -106,9 +107,13 @@ public class ImportFiles {
         return true;
     }
 
-    private static String[] splitOnComma(String line) {
+    private static String[] splitOnComma(String line) throws LineEmptyException {
         String quote = "\"";
-        String[] split = line.split(",");
+        String testIfEmpty = line.replace(",", "");
+        if (line.equals("") || line == null || testIfEmpty.equals("")) {
+            throw new LineEmptyException("");
+        }
+        String[] split = line.toLowerCase().split(",");
         ArrayList<String> list = new ArrayList<>();
 
         // , could be contained in string that should not be split
@@ -157,347 +162,380 @@ public class ImportFiles {
     }
 
     // tested, works
-    public static ArrayList<Building> importBuildings(File csv) throws IOException, IllegalArgumentException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
-            int lineNum = 1;
-            String line = reader.readLine(); // skip heading
-            while ((line = reader.readLine()) != null) {
-                lineNum++;
-                line = line.strip();
-                String[] entry = line.strip().toLowerCase().split(",");
-                if (line.equals("") || entry.length == 0) {
-                    continue; // skip empty lines
+    public static boolean importBuildings(File csv) throws IOException, IllegalArgumentException {
+        boolean noWarnings = true;
+        BufferedReader reader = new BufferedReader(new FileReader(csv));
+        int lineNum = 1;
+        String line = reader.readLine(); // skip heading
+        while ((line = reader.readLine()) != null) {
+            lineNum++;
+            String[] entry;
+            try {
+                entry = ImportFiles.splitOnComma(line);
+            } catch (LineEmptyException e) {
+                continue;
+            }
+            // --------------------------------------------get_building---------------------------------------------
+            Building building = new Building(entry[Config.impBuildBuildingName]);
+            if (ImportFiles.buildings.isEmpty()) {
+                // add first building to list
+                ImportFiles.buildings.add(building);
+            } else {
+                boolean found = false;
+                for (Building b : ImportFiles.buildings) {
+                    if (b.name().toLowerCase().equals(entry[Config.impBuildBuildingName])) {
+                        // avoid duplicates
+                        building = b;
+                        found = true;
+                        break;
+                    }
                 }
-
-                // --------------------------------------------get_building---------------------------------------------
-                Building building = new Building(entry[0]);
-                if (ImportFiles.buildings.isEmpty()) {
-                    // add first building to list
+                if (!found) {
+                    // no building with same name found
                     ImportFiles.buildings.add(building);
-                } else {
-                    boolean found = false;
-                    for (Building b : ImportFiles.buildings) {
-                        if (b.name().toLowerCase().equals(entry[0])) {
-                            // avoid duplicates
-                            building = b;
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        // no building with same name found
-                        ImportFiles.buildings.add(building);
-                    }
                 }
-                // ----------------------------------------------get_room-----------------------------------------------
-                Room room = new Room();
-                for (Room r : building.rooms()) {
-                    if (r.officialRoomNumber().equals(entry[2])) {
-                        // room already exists
-                        System.out.println(
-                                "Raum " + r.officialRoomNumber() + " in " + building.name() + " existiert bereits "
-                                        + "und wird nicht erneut eingelesen! " + "Siehe " + csv.getAbsolutePath()
-                                        + " in Zeile " + lineNum);
-                        continue; // ignore duplicate room
-                    }
-                }
-                // ---------------------------------------------get_gender----------------------------------------------
-                GENDER gender;
-                if (entry[3].contains("w")) {
-                    gender = GENDER.f;
-                } else if (entry[3].contains("m")) {
-                    gender = GENDER.m;
-                } else {
-                    gender = GENDER.d;
-                }
-                // --------------------------------------------get_capacity---------------------------------------------
-                int capacity = 0;
-                try {
-                    capacity = Integer.valueOf(entry[4]);
-                } catch (NumberFormatException e) {
-                    System.out.println(
-                            "Fehler: In " + csv.getAbsolutePath() + " Zeile " + lineNum + " muss für die Kapazität "
-                                    + "eine Zahl angegeben werden! Statt dessen " + "gefunden: " + entry[4]);
-                }
-                // -------------------------------------------check_reserved--------------------------------------------
-                boolean reserved = false;
-                if (entry[5].equals("ja")) {
-                    reserved = true;
-                } else if (!(entry[5].equals("nein") || entry[5].equals(""))) {
-                    // if invalid argument
-                    System.err.println("\"ja\" or \"nein\" expected" + " but got " + entry[5] + "\n"
-                            + csv.getAbsolutePath() + ":" + lineNum);
-                    Log.append("\"ja\" or \"nein\" expected" + " but got " + entry[5] + "\n"
-                            + csv.getAbsolutePath() + ":" + lineNum);
-                }
-                // ----------------------------------------------add_room-----------------------------------------------
-                room = new Room(entry[1], entry[2], gender, capacity, reserved);
-                building.addRoom(room);
             }
-            reader.close();
-            return ImportFiles.buildings;
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            // ----------------------------------------------get_room-----------------------------------------------
+            Room room = new Room();
+            for (Room r : building.rooms()) {
+                if (r.officialRoomNumber().equals(entry[Config.impBuildOfficialRoomNum])) {
+                    // room already exists
+                    String errmsg = "Raum " + r.officialRoomNumber() + " in " + building.name()
+                            + " existiert bereits "
+                            + "und wird nicht erneut eingelesen! " + "Siehe " + csv.getAbsolutePath()
+                            + " in Zeile " + lineNum;
+                    System.out.println(errmsg);
+                    Log.append(errmsg);
+                    continue; // ignore duplicate room
+                }
+            }
+            // ---------------------------------------------get_gender----------------------------------------------
+            GENDER gender;
+            if (entry[Config.impBuildRoomGender].contains("w")) {
+                gender = GENDER.f;
+            } else if (entry[Config.impBuildRoomGender].contains("m")) {
+                gender = GENDER.m;
+            } else {
+                gender = GENDER.d;
+            }
+            // --------------------------------------------get_capacity---------------------------------------------
+            int capacity = 0;
+            try {
+                capacity = Integer.valueOf(entry[Config.impBuildRoomCapacity]);
+            } catch (NumberFormatException e) {
+                String errormsg = "Fehler: In " + csv.getAbsolutePath() + " Zeile " + lineNum
+                        + " muss für die Kapazität "
+                        + "eine Zahl angegeben werden! Statt dessen " + "gefunden: "
+                        + entry[Config.impBuildRoomCapacity];
+                System.out.println(errormsg);
+                Log.append(errormsg);
+            }
+            // -------------------------------------------check_reserved--------------------------------------------
+            boolean reserved = false;
+            if (entry[Config.impBuildRoomReserved].equals("ja")) {
+                reserved = true;
+            } else if (!(entry[Config.impBuildRoomReserved].equals("nein")
+                    || entry[Config.impBuildRoomReserved].equals(""))) {
+                // if invalid argument
+                String errormsg = "\"ja\" or \"nein\" expected" + " but got " + entry[Config.impBuildRoomReserved]
+                        + "\n"
+                        + csv.getAbsolutePath() + ":" + lineNum;
+                System.err.println(errormsg);
+                Log.append(errormsg);
+                noWarnings = false;
+            }
+            // ----------------------------------------------add_room-----------------------------------------------
+            room = new Room(entry[Config.impBuildUnofficialRoomNum], entry[Config.impBuildOfficialRoomNum], gender,
+                    capacity, reserved);
+            building.addRoom(room);
         }
-        return null;
+        reader.close();
+        return noWarnings;
     }
 
     // tested, works
-    public static ArrayList<Team> importWishes(File csv)
+    public static boolean importWishes(File csv)
             throws IOException, IllegalArgumentException, BuildingDoesNotExist, RoomDoesNotExist, TeamDoesNotExist {
-        try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
-            int lineNum = 1;
-            String line = reader.readLine();
-            while ((line = reader.readLine()) != null) {
-                lineNum++;
-                String[] entry = ImportFiles.splitOnComma(line);
-                // ----------------------------------------------get_team-----------------------------------------------
-                Team team = new Team();
-                for (Team t : ImportFiles.teams) {
-                    if (t.name().equals(entry[5])) {
-                        team = t;
-                        break;
-                    }
-                }
-                if (team.name() == null) {
-                    throw new TeamDoesNotExist("Die Zimmerwahl von Team \"" + entry[5] + "\" kann nicht angenommen "
-                            + "werden, da das Team noch nicht angelegt wurde. Haben sich die entsprechenden "
-                            + "Schüler:innen in eine Gruppe im Moodleraum eingetragen?");
-                }
-                // ----------------------------------------------get_wish-----------------------------------------------
-                String nameBuilding1 = "";
-                String nameRoom1 = "";
-                String nameRoom2 = "";
-                String nameBuilding2 = "";
-                for (int i = 9; i < entry.length; i++) {
-                    if (entry[i] != "") {
-                        if (nameBuilding1.equals("")) {
-                            nameBuilding1 = entry[i];
-                        } else if (nameRoom1.equals("")) {
-                            nameRoom1 = entry[i];
-                        } else if (nameRoom2.equals("")) {
-                            nameRoom2 = entry[i];
-                        } else if (nameBuilding2.equals("")) {
-                            nameBuilding2 = entry[i];
-                        }
-                    }
-                }
-
-                Boolean building1 = false, building2 = false, room1 = false, room2 = false;
-                for (Building building : ImportFiles.buildings) {
-                    if (building.name().equals(nameBuilding1)) {
-                        building1 = true;
-                        team.wish().building1(building);
-                    }
-                    if (building.name().equals(nameBuilding2)) {
-                        building2 = true;
-                        team.wish().building2(building);
-                    }
-
-                    if (building1 && building2) {
-                        break;
-                    }
-                }
-                if (!building1) {
-                    throw new BuildingDoesNotExist("Das Internat " + nameBuilding1
-                            + " existiert nicht! Wurde es vorher korrekt eingelesen?");
-                }
-                if (!building2) {
-                    throw new BuildingDoesNotExist("Das Internat " + nameBuilding2
-                            + " existiert nicht! Wurde es vorher korrekt eingelesen?");
-                }
-
-                for (Room room : team.wish().building1().rooms()) {
-                    if (room.officialRoomNumber().equals(nameRoom1)) {
-                        room1 = true;
-                        team.wish().room1(room);
-                    } else if (nameRoom1.contains(room.officialRoomNumber())) {
-                        room1 = true;
-                        team.wish().room1(room);
-                    }
-
-                    if (room.officialRoomNumber().equals(nameRoom2)) {
-                        room2 = true;
-                        team.wish().room2(room);
-                    } else if (nameRoom2.contains(room.officialRoomNumber())) {
-                        room2 = true;
-                        team.wish().room2(room);
-                    }
-
-                    if (room1 && room2) {
-                        break;
-                    }
-                }
-                if (!room1) {
-                    throw new RoomDoesNotExist("Das Zimmer " + nameRoom1
-                            + " existiert nicht! Wurde es vorher korrekt eingelesen?");
-                }
-                if (!room2) {
-                    throw new RoomDoesNotExist("Das Zimmer " + nameRoom2
-                            + " existiert nicht! Wurde es vorher korrekt eingelesen?");
+        boolean noWarnings = true;
+        BufferedReader reader = new BufferedReader(new FileReader(csv));
+        int lineNum = 1;
+        String line = reader.readLine();
+        while ((line = reader.readLine()) != null) {
+            lineNum++;
+            String[] entry;
+            try {
+                entry = ImportFiles.splitOnComma(line);
+            } catch (LineEmptyException e) {
+                continue;
+            }
+            // ----------------------------------------------get_team-----------------------------------------------
+            Team team = new Team();
+            for (Team t : ImportFiles.teams) {
+                if (t.name().equals(entry[Config.impWishTeamName])) {
+                    team = t;
+                    break;
                 }
             }
-            reader.close();
-            return ImportFiles.teams;
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            if (team.name() == null) {
+                String errormsg = "Die Zimmerwahl von Team \"" + entry[Config.impWishTeamName]
+                        + "\" kann nicht angenommen "
+                        + "werden, da das Team noch nicht angelegt wurde. Haben sich die entsprechenden "
+                        + "Schüler:innen in eine Gruppe im Moodleraum eingetragen?";
+                Log.append(errormsg);
+                reader.close();
+                throw new TeamDoesNotExist(errormsg);
+            }
+            // ----------------------------------------------get_wish-----------------------------------------------
+            String nameBuilding1 = "";
+            String nameRoom1 = "";
+            String nameRoom2 = "";
+            String nameBuilding2 = "";
+            for (int i = Config.impWishCycleLengthTilNextMember; i < entry.length; i++) {
+                if (entry[i] != "") {
+                    if (nameBuilding1.equals("")) {
+                        nameBuilding1 = entry[i];
+                    } else if (nameRoom1.equals("")) {
+                        nameRoom1 = entry[i];
+                    } else if (nameRoom2.equals("")) {
+                        nameRoom2 = entry[i];
+                    } else if (nameBuilding2.equals("")) {
+                        nameBuilding2 = entry[i];
+                    }
+                }
+            }
+
+            Boolean building1 = false, building2 = false, room1 = false, room2 = false;
+            for (Building building : ImportFiles.buildings) {
+                if (building.name().equals(nameBuilding1)) {
+                    building1 = true;
+                    team.wish().building1(building);
+                }
+                if (building.name().equals(nameBuilding2)) {
+                    building2 = true;
+                    team.wish().building2(building);
+                }
+
+                if (building1 && building2) {
+                    break;
+                }
+            }
+            if (!building1) {
+                String errormsg = "Das Internat " + nameBuilding1
+                        + " existiert nicht! Wurde es vorher korrekt eingelesen?";
+                Log.append(errormsg);
+                reader.close();
+                throw new BuildingDoesNotExist(errormsg);
+            }
+            if (!building2) {
+                String errormsg = "Das Internat " + nameBuilding2
+                        + " existiert nicht! Wurde es vorher korrekt eingelesen?";
+                Log.append(errormsg);
+                reader.close();
+                throw new BuildingDoesNotExist(errormsg);
+            }
+
+            for (Room room : team.wish().building1().rooms()) {
+                if (room.officialRoomNumber().equals(nameRoom1)) {
+                    room1 = true;
+                    team.wish().room1(room);
+                } else if (nameRoom1.contains(room.officialRoomNumber())) {
+                    room1 = true;
+                    team.wish().room1(room);
+                }
+
+                if (room.officialRoomNumber().equals(nameRoom2)) {
+                    room2 = true;
+                    team.wish().room2(room);
+                } else if (nameRoom2.contains(room.officialRoomNumber())) {
+                    room2 = true;
+                    team.wish().room2(room);
+                }
+
+                if (room1 && room2) {
+                    break;
+                }
+            }
+            if (!room1) {
+                String errormsg = "Das Zimmer " + nameRoom1
+                        + " existiert nicht! Wurde es vorher korrekt eingelesen?";
+                Log.append(errormsg);
+                reader.close();
+                throw new RoomDoesNotExist(errormsg);
+            }
+            if (!room2) {
+                String errormsg = "Das Zimmer " + nameRoom2
+                        + " existiert nicht! Wurde es vorher korrekt eingelesen?";
+                Log.append(errormsg);
+                reader.close();
+                throw new RoomDoesNotExist(errormsg);
+            }
         }
-        return null;
+        reader.close();
+        return noWarnings;
     }
 
     // tested, works
-    public static ArrayList<Team> importTeams(File csv) throws IOException, IllegalArgumentException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
-            int lineNum = 2;
-            String line = reader.readLine();
-            line = reader.readLine(); // skip heading
+    public static boolean importTeams(File csv)
+            throws IOException, IllegalArgumentException, StudentInSeveralMoodleGroups {
+        boolean noWarnings = true;
+        BufferedReader reader = new BufferedReader(new FileReader(csv));
+        int lineNum = 2;
+        String line = reader.readLine();
+        line = reader.readLine(); // skip heading
 
-            while ((line = reader.readLine()) != null) {
-                lineNum++;
-                String[] entry = ImportFiles.splitOnComma(line);
-                // --------------------------------------------get_team_size--------------------------------------------
-                int teamSize = Integer.valueOf(entry[2]);
-                if (teamSize == 0) {
-                    continue; // team is empty
-                }
-                // --------------------------------------------get_teamname---------------------------------------------
-                Team team = new Team();
-                team.name(entry[1]); // moodle team name
+        while ((line = reader.readLine()) != null) {
+            lineNum++;
+            String[] entry;
+            try {
+                entry = ImportFiles.splitOnComma(line);
+            } catch (LineEmptyException e) {
+                continue;
+            }
+            // --------------------------------------------get_team_size--------------------------------------------
+            int teamSize = Integer.valueOf(entry[Config.impTeamTeamSize]);
+            if (teamSize == 0) {
+                continue; // team is empty
+            }
+            // --------------------------------------------get_teamname---------------------------------------------
+            Team team = new Team();
+            team.name(entry[Config.impTeamTeamName]); // moodle team name
 
-                boolean duplicateTeam = false;
-                for (Team t : ImportFiles.teams) {
-                    if (team.name().equals(t.name())) {
-                        duplicateTeam = true;
-                        team = t; // team already added to list of teams
-                        break;
-                    }
-                }
-                // ----------------------------------------get_students_of_team-----------------------------------------
-                for (int i = 8; i <= 7 + teamSize * 5; i += 5) {
-                    String userName = entry[i];
-                    String name = entry[i + 2] + " " + entry[i + 3]; // FirstName LastName
-
-                    Student student = null;
-                    for (Student s : ImportFiles.students) {
-                        if (s.userName().equals(userName)) {
-                            student = s;
-                        }
-                    }
-                    if (student == null) {
-                        student = new Student(name, userName);
-                        System.err.println("Schüler:in " + name + " hat die Umfrage zu den persönlichen Daten nicht "
-                                + "(vollständig) ausgefüllt!");
-                        Log.append("Schüler:in " + name + " hat die Umfrage zu den persönlichen Daten nicht "
-                                + "(vollständig) ausgefüllt!");
-                    }
-
-                    // check for duplicates:
-                    for (Team t : ImportFiles.teams) {
-                        Student duplicate = t.getStudent(userName);
-                        if (duplicate != null) {
-                            System.err.println("Schüler:in befindet sich in mehreren Moodlegruppen!\n"
-                                    + duplicate.userName() + ": " + team.name() + ", " + t.name());
-                            Log.append("Schüler:in befindet sich in mehreren Moodlegruppen!\n"
-                                    + duplicate.userName() + ": " + team.name() + ", " + t.name());
-
-                            // student = duplicate; // add student anyways
-                            break;
-                        }
-                    }
-                    team.addStudent(student); // create new student and add to team
-                }
-                if (!duplicateTeam) {
-                    ImportFiles.teams.add(team);
+            boolean duplicateTeam = false;
+            for (Team t : ImportFiles.teams) {
+                if (team.name().equals(t.name())) {
+                    duplicateTeam = true;
+                    team = t; // team already added to list of teams
+                    break;
                 }
             }
-            reader.close();
-            return ImportFiles.teams;
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+            // ----------------------------------------get_students_of_team-----------------------------------------
+            for (int i = Config.impTeamFirstMember; i <= Config.impTeamCycleLengthTilNextMember - 1 + teamSize
+                    * Config.impTeamCycleLengthTilNextMember; i += Config.impTeamCycleLengthTilNextMember) {
+                String userName = entry[i];
+                String name = entry[i + 2] + " " + entry[i + 3]; // FirstName LastName
 
-    // tested, works
-    public static ArrayList<Student> importStudents(File csv) throws FileNotFoundException, IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(csv))) {
-            int lineNum = 1;
-            String line = reader.readLine(); // skip heading
-            while ((line = reader.readLine()) != null) {
-                lineNum++;
-                String[] entry = ImportFiles.splitOnComma(line);
-                if (entry.length == 0) {
-                    continue;
-                }
-                // ----------------------------------------------get_name-----------------------------------------------
-                String name = entry[7];
-                String username = entry[8];
-                Student student = new Student(name, username);
-                student.moodleDate(entry[1]);
-                // -------------------------------------------check_duplicate-------------------------------------------
-                boolean duplicate = false;
-                boolean skip = false;
+                Student student = null;
                 for (Student s : ImportFiles.students) {
-                    if (s.userName().equals(username)) {
-                        if (ImportFiles.compareDate(s.moodleDate(), student.moodleDate())) {
-                            // overwrite instead of skip
-                            student = s;
-                            duplicate = true;
-                        } else {
-                            // ignore and skip instead of overwrite
-                            skip = true;
-                        }
-                        break;
+                    if (s.userName().equals(userName)) {
+                        student = s;
                     }
                 }
-                if (skip) {
-                    continue; // read next line
-                }
-                // ----------------------------------------------get_grade----------------------------------------------
-                if (entry[9].contains("9")) {
-                    student.grade(9);
-                } else if (entry[9].contains("10")) {
-                    student.grade(10);
-                } else if (entry[9].contains("11")) {
-                    student.grade(11);
-                } else if (entry[9].contains("12")) {
-                    student.grade(12);
-                } else {
-                    System.err.println("Schüler:in " + name + " hat keine gültige Klassenstufe!");
-                    Log.append("Schüler:in " + name + " hat keine gültige Klassenstufe!");
-                }
-                // -----------------------------------------get_specialization------------------------------------------
-                if (entry[10].equals("naturwissenschaften")) {
-                    student.special(SPECIALIZATION.NAWI);
-                } else if (entry[10].equals("musik")) {
-                    student.special(SPECIALIZATION.MUSIK);
-                } else if (entry[10].equals("sprachen")) {
-                    student.special(SPECIALIZATION.SPRACHEN);
-                } else {
-                    System.err.println("Schüler:in " + name + " hat keinen gültigen Zweig!");
-                    Log.append("Schüler:in " + name + " hat keinen gültigen Zweig!");
-                }
-                // ---------------------------------------------get_gender----------------------------------------------
-                if (entry[11].equals("weiblich")) {
-                    student.gender(GENDER.f);
-                } else if (entry[11].contains("m") && entry[11].contains("nnlich")) {
-                    student.gender(GENDER.m);
-                } else if (entry[11].equals("divers")) {
-                    student.gender(GENDER.d);
-                } else {
-                    System.err.println("Schüler:in " + name + " hat ein ungültiges Geschlecht!");
-                    Log.append("Schüler:in " + name + " hat ein ungültiges Geschlecht!");
+                if (student == null) {
+                    student = new Student(name, userName);
+                    System.err.println("Schüler:in " + name + " hat die Umfrage zu den persönlichen Daten nicht "
+                            + "(vollständig) ausgefüllt!");
+                    Log.append("Schüler:in " + name + " hat die Umfrage zu den persönlichen Daten nicht "
+                            + "(vollständig) ausgefüllt!");
+                    noWarnings = false;
                 }
 
-                if (!duplicate) {
-                    ImportFiles.students.add(student);
+                // check for duplicates:
+                for (Team t : ImportFiles.teams) {
+                    Student duplicate = t.getStudent(userName);
+                    if (duplicate != null) {
+                        String errormsg = "Schüler:in befindet sich in mehreren Moodlegruppen! "
+                                + duplicate.userName() + ": " + team.name() + ", " + t.name();
+                        Log.append(errormsg);
+                        reader.close();
+                        throw new StudentInSeveralMoodleGroups(errormsg);
+                    }
+                }
+                team.addStudent(student); // create new student and add to team
+            }
+            if (!duplicateTeam) {
+                ImportFiles.teams.add(team);
+            }
+        }
+        reader.close();
+        return noWarnings;
+    }
+
+    // tested, works
+    public static boolean importStudents(File csv) throws FileNotFoundException, IOException {
+        boolean noWarnings = true;
+        BufferedReader reader = new BufferedReader(new FileReader(csv));
+        int lineNum = 1;
+        String line = reader.readLine(); // skip heading
+        while ((line = reader.readLine()) != null) {
+            lineNum++;
+            String[] entry;
+            try {
+                entry = ImportFiles.splitOnComma(line);
+            } catch (LineEmptyException e) {
+                continue;
+            }
+            // ----------------------------------------------get_name-----------------------------------------------
+            String name = entry[Config.impStudName];
+            String username = entry[Config.impStudUsername];
+            Student student = new Student(name, username);
+            student.moodleDate(entry[Config.impStudDate]);
+            // -------------------------------------------check_duplicate-------------------------------------------
+            boolean duplicate = false;
+            boolean skip = false;
+            for (Student s : ImportFiles.students) {
+                if (s.userName().equals(username)) {
+                    if (ImportFiles.compareDate(s.moodleDate(), student.moodleDate())) {
+                        // overwrite instead of skip
+                        student = s;
+                        duplicate = true;
+                    } else {
+                        // ignore and skip instead of overwrite
+                        skip = true;
+                    }
+                    break;
                 }
             }
-            return ImportFiles.students;
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            if (skip) {
+                continue; // read next line
+            }
+            // ----------------------------------------------get_grade----------------------------------------------
+            if (entry[Config.impStudGrade].contains("9")) {
+                student.grade(9);
+            } else if (entry[Config.impStudGrade].contains("10")) {
+                student.grade(10);
+            } else if (entry[Config.impStudGrade].contains("11")) {
+                student.grade(11);
+            } else if (entry[Config.impStudGrade].contains("12")) {
+                student.grade(12);
+            } else {
+                String errormsg = "Schüler:in " + name + " hat keine gültige Klassenstufe!";
+                System.err.println(errormsg);
+                Log.append(errormsg);
+                noWarnings = false;
+            }
+            // -----------------------------------------get_specialization------------------------------------------
+            if (entry[Config.impStudSpecial].equals("naturwissenschaften")) {
+                student.special(SPECIALIZATION.NAWI);
+            } else if (entry[Config.impStudSpecial].equals("musik")) {
+                student.special(SPECIALIZATION.MUSIK);
+            } else if (entry[Config.impStudSpecial].equals("sprachen")) {
+                student.special(SPECIALIZATION.SPRACHEN);
+            } else {
+                String errormsg = "Schüler:in " + name + " hat keinen gültigen Zweig!";
+                System.err.println(errormsg);
+                Log.append(errormsg);
+                noWarnings = false;
+            }
+            // ---------------------------------------------get_gender----------------------------------------------
+            if (entry[Config.impStudGender].equals("weiblich")) {
+                student.gender(GENDER.f);
+            } else if (entry[Config.impStudGender].contains("m") && entry[Config.impStudGender].contains("nnlich")) {
+                student.gender(GENDER.m);
+            } else if (entry[Config.impStudGender].equals("divers")) {
+                student.gender(GENDER.d);
+            } else {
+                String errormsg = "Schüler:in " + name + " hat ein ungültiges Geschlecht!";
+                System.err.println(errormsg);
+                Log.append(errormsg);
+                noWarnings = false;
+            }
+
+            if (!duplicate) {
+                ImportFiles.students.add(student);
+            }
         }
-        return null;
+        reader.close();
+        return noWarnings;
     }
 
     public static ArrayList<Building> buildings() {

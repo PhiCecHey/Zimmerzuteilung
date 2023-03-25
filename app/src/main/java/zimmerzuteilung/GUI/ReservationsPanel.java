@@ -20,7 +20,7 @@ class ReservationPanel extends JPanel {
         this.add(new JLabel("Reservierungsbonus: "));
         this.resField = new JTextField();
         this.resField.setMaximumSize(dimField);
-        this.resField.setText(Float.toString(Config.reservation));
+        this.resField.setText(Float.toString(Config.scoreReservation));
         this.add(this.resField);
     }
 }

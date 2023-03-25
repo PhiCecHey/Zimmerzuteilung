@@ -124,21 +124,21 @@ public class GurobiPanel extends JPanel {
         if (worked == 1) {
             field.setBackground(Colors.greenTransp);
             if (configName.toLowerCase().contains("b1")) {
-                Config.building1 = config;
+                Config.scoreBuilding1 = config;
             } else if (configName.toLowerCase().contains("r1")) {
-                Config.room1 = config;
+                Config.scoreRoom1 = config;
             } else if (configName.toLowerCase().contains("r2")) {
-                Config.room2 = config;
+                Config.scoreRoom2 = config;
             } else if (configName.toLowerCase().contains("b2")) {
-                Config.building2 = config;
+                Config.scoreBuilding2 = config;
             } else if (configName.toLowerCase().contains("res")) {
-                Config.reservation = config;
+                Config.scoreReservation = config;
             } else if (configName.toLowerCase().contains("12")) {
-                Config.twelve = config;
+                Config.scoreTwelve = config;
             } else if (configName.toLowerCase().contains("11")) {
-                Config.eleven = config;
+                Config.scoreEleven = config;
             } else if (configName.toLowerCase().contains("10")) {
-                Config.ten = config;
+                Config.scoreTen = config;
             } else {
                 System.out.println("Problem in function checkUserInput()");
             }

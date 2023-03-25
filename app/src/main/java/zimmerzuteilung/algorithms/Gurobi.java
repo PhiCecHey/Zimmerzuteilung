@@ -144,13 +144,13 @@ public class Gurobi {
             this.oneTeamPerRoom();
         }
         if (rules.contains(Gurobi.RULES.respectWish)) {
-            Gurobi.respectWish(Config.building1, Config.room1, Config.room2, Config.building2);
+            Gurobi.respectWish(Config.scoreBuilding1, Config.scoreRoom1, Config.scoreRoom2, Config.scoreBuilding2);
         }
         if (rules.contains(Gurobi.RULES.respectGradePrivilege)) {
-            Gurobi.respectGradePrivilege(Config.twelve, Config.eleven, Config.ten);
+            Gurobi.respectGradePrivilege(Config.scoreTwelve, Config.scoreEleven, Config.scoreTen);
         }
         if (rules.contains(Gurobi.RULES.respectReservations)) {
-            Gurobi.respectReservations(Config.reservation);
+            Gurobi.respectReservations(Config.scoreReservation);
         }
     }
 

@@ -1,14 +1,45 @@
 package zimmerzuteilung.algorithms;
 
 public class Config {
-    public static float building1 = 5;
-    public static float building2 = 10;
-    public static float room1 = 8;
-    public static float room2 = 5;
+    // -----------------------SCORES-----------------------
+    // score for wishes
+    public static float scoreBuilding1 = 5;
+    public static float scoreBuilding2 = 10;
+    public static float scoreRoom1 = 8;
+    public static float scoreRoom2 = 5;
 
-    public static float twelve = 7;
-    public static float eleven = 5;
-    public static float ten = 3;
+    // score for grade priv
+    public static float scoreTwelve = 7;
+    public static float scoreEleven = 5;
+    public static float scoreTen = 3;
 
-    public static float reservation = 50;
+    // score for room reservation
+    public static float scoreReservation = 50;
+
+    // -----------------------MOODLE-----------------------
+    // importBuildings:
+    public static int impBuildBuildingName = 0;
+    public static int impBuildUnofficialRoomNum = 1;
+    public static int impBuildOfficialRoomNum = 2;
+    public static int impBuildRoomGender = 3;
+    public static int impBuildRoomCapacity = 4;
+    public static int impBuildRoomReserved = 5;
+
+    // importWishes:
+    public static int impWishTeamName = 5;
+    public static int impWishCycleLengthTilNextMember = 9;
+
+    // importTeams:
+    public static int impTeamTeamName = 1;
+    public static int impTeamTeamSize = 2;
+    public static int impTeamFirstMember = 8;
+    public static int impTeamCycleLengthTilNextMember = 5;
+
+    // importStudents:
+    public static int impStudDate = 1;
+    public static int impStudName = 7;
+    public static int impStudUsername = 8;
+    public static int impStudGrade = 9;
+    public static int impStudSpecial = 10;
+    public static int impStudGender = 11;
 }

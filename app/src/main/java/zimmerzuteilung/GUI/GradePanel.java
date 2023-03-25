@@ -39,8 +39,8 @@ class GradePanel extends JPanel {
                 new Component[] { new Filler(50, Gui.row.getHeight()), new JLabel("10er Bonus: "), this.tenField },
                 "row", dimPanel));
 
-        this.twelveField.setText(Float.toString(Config.twelve));
-        this.elevenField.setText(Float.toString(Config.eleven));
-        this.tenField.setText(Float.toString(Config.ten));
+        this.twelveField.setText(Float.toString(Config.scoreTwelve));
+        this.elevenField.setText(Float.toString(Config.scoreEleven));
+        this.tenField.setText(Float.toString(Config.scoreTen));
     }
 }
