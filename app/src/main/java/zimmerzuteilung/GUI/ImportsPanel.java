@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -102,6 +103,8 @@ public class ImportsPanel extends JPanel {
                         importsPanels.get(3).field.setBackground(Colors.greenTransp);
                     }
                     i = 4;
+                } catch (FileNotFoundException f) {
+                    Log.append("Datei konnte nicht gefunden werden.");
                 } catch (Exception e) {
                     importsPanels.get(i).field.setBackground(Colors.redTransp);
                     e.printStackTrace();
