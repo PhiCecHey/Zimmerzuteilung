@@ -1,11 +1,10 @@
 package zimmerzuteilung.GUI;
 
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -14,49 +13,78 @@ import zimmerzuteilung.algorithms.Gurobi;
 import zimmerzuteilung.algorithms.Config;
 
 public class GurobiPanel extends JPanel {
-    private CheckBoxPanel oneRoomPerTeam, oneTeamPerRoom, maxStudentsPerRoom, respectWish, respectRes, respectGradePriv;
-
     public ArrayList<Gurobi.RULES> gurobiRules = new ArrayList<>();
-
+    private CheckBoxPanel respectWishPanel, respectResPanel, respectGradePrivPanel;
+    private MustOrShouldPanel oneRoomPerTeam, oneTeamPerRoom, maxStudentsPerRoom, respectWishField,
+            respectResField, respectGradePrivField;
     private GradePanel gradePanel;
     private WishPanel wishPanel;
     private ReservationPanel resPanel;
     private JButton save;
 
     public GurobiPanel() {
-        this.init();
+        this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        GroupPanel top = new GroupPanel("row");
+        GroupPanel bottom = new GroupPanel("column");
+        GroupPanel topRight = new GroupPanel("column");
+        GroupPanel topLeft = new GroupPanel("column");
+        top.add(topLeft);
+        top.add(topRight);
+        this.add(top);
+        this.add(bottom);
+        this.initTopRight(topRight);
+        this.initTopLeft(topLeft);
+        this.initBottom(bottom);
     }
 
-    private void init() {
-        this.oneRoomPerTeam = new CheckBoxPanel("Ein Zimmer pro Team", false);
-        this.add(this.oneRoomPerTeam);
-        this.add(new Filler(100, Gui.row.getHeight()));
+    private void initTopRight(GroupPanel topRight) {
+        String heading = "Ein Zimmer pro Team";
+        String descript1 = "Genau ein Zimmer pro Team";
+        String descript2 = "Möglichst ein Zimmer pro Team: ";
+        this.oneRoomPerTeam = new MustOrShouldPanel(heading, descript1, descript2, "Malus bei Nichteinhalten: ");
+        topRight.add(this.oneRoomPerTeam);
 
-        this.oneTeamPerRoom = new CheckBoxPanel("Ein Team pro Zimmer", false);
-        this.add(this.oneTeamPerRoom);
-        this.add(new Filler(100, Gui.row.getHeight()));
+        topRight.add(new Filler(100, Gui.row.getHeight()));
 
-        this.maxStudentsPerRoom = new CheckBoxPanel("maximale Anzahl an Schüler:innen pro Zimmer einhalten", false);
-        this.add(this.maxStudentsPerRoom);
-        this.add(new Filler(100, Gui.row.getHeight()));
+        heading = "Ein Team pro Zimmer";
+        descript1 = "Genau ein Team pro Zimmer";
+        descript2 = "Möglichst ein Team pro Zimmer: ";
+        this.oneTeamPerRoom = new MustOrShouldPanel(heading, descript1, descript2, "Malus bei Nichteinhalten: ");
+        topRight.add(oneTeamPerRoom);
 
-        this.respectWish = new CheckBoxPanel("Zimmerwünsche respektieren", true);
-        this.add(this.respectWish);
+        topRight.add(new Filler(100, Gui.row.getHeight()));
+
+        heading = "Maximale Anzahl an Schüler:innen pro Zimmer einhalten";
+        descript1 = "Immer maximale Anzahl an Schüler:innen pro Zimmer einhalten";
+        descript2 = "Möglichst maximale Anzahl an Schüler:innen pro Zimmer einhalten: ";
+        this.maxStudentsPerRoom = new MustOrShouldPanel(heading, descript1, descript2, "Malus bei Nichteinhalten: ");
+        topRight.add(maxStudentsPerRoom);
+
+        topRight.add(new Filler(Gui.row.width, 5000));
+    }
+
+    private void initTopLeft(GroupPanel topLeft) {
+        this.respectWishPanel = new CheckBoxPanel("Zimmerwünsche respektieren", true);
+        topLeft.add(this.respectWishPanel);
         this.wishPanel = new WishPanel();
-        this.add(this.wishPanel);
-        this.add(new Filler(100, Gui.row.getHeight()));
+        topLeft.add(this.wishPanel);
+        topLeft.add(new Filler(100, Gui.row.getHeight()));
 
-        this.respectRes = new CheckBoxPanel("Zimmerreservierungen respektieren", true);
-        this.add(this.respectRes);
+        this.respectResPanel = new CheckBoxPanel("Zimmerreservierungen respektieren", true);
+        topLeft.add(this.respectResPanel);
         this.resPanel = new ReservationPanel();
-        this.add(this.resPanel);
-        this.add(new Filler(100, Gui.row.getHeight()));
+        topLeft.add(this.resPanel);
+        topLeft.add(new Filler(100, Gui.row.getHeight()));
 
-        this.respectGradePriv = new CheckBoxPanel("12er, 11er, 10er Privileg respektieren", true);
-        this.add(this.respectGradePriv);
+        this.respectGradePrivPanel = new CheckBoxPanel("12er, 11er, 10er Privileg respektieren", true);
+        topLeft.add(this.respectGradePrivPanel);
         this.gradePanel = new GradePanel();
-        this.add(this.gradePanel);
+        topLeft.add(this.gradePanel);
 
+        topLeft.add(new Filler(Gui.row.width, 5000));
+    }
+
+    void initBottom(GroupPanel bottom) {
         this.save = new JButton("anwenden");
         this.save.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -64,21 +92,21 @@ public class GurobiPanel extends JPanel {
             }
         });
 
-        this.add(new Filler(100, (3 * Gui.row.getHeight())));
-        this.add(this.save);
+        bottom.add(new Filler(100, (3 * Gui.row.getHeight())));
+        bottom.add(this.save);
     }
 
     private void getRules() {
-        if (this.oneRoomPerTeam.box.isSelected()) {
+        if (this.oneRoomPerTeam.radioPanel1.radio.isSelected()) {
             this.gurobiRules.add(Gurobi.RULES.oneRoomPerTeam);
         }
-        if (this.oneTeamPerRoom.box.isSelected()) {
+        if (this.oneTeamPerRoom.radioPanel1.radio.isSelected()) {
             this.gurobiRules.add(Gurobi.RULES.oneTeamPerRoom);
         }
-        if (this.maxStudentsPerRoom.box.isSelected()) {
+        if (this.maxStudentsPerRoom.radioPanel1.radio.isSelected()) {
             this.gurobiRules.add(Gurobi.RULES.maxStudentsPerRoom);
         }
-        if (this.respectWish.box.isSelected()) {
+        if (this.respectWishPanel.box.isSelected()) {
             this.gurobiRules.add(Gurobi.RULES.respectWish);
             GurobiPanel.checkUserInput(this.wishPanel.b1Field, "b1");
             GurobiPanel.checkUserInput(this.wishPanel.r1Field, "r1");
@@ -90,13 +118,13 @@ public class GurobiPanel extends JPanel {
             this.wishPanel.r2Field.setBackground(Colors.yellowTransp);
             this.wishPanel.b2Field.setBackground(Colors.yellowTransp);
         }
-        if (this.respectRes.box.isSelected()) {
+        if (this.respectResPanel.box.isSelected()) {
             this.gurobiRules.add(Gurobi.RULES.respectReservations);
             GurobiPanel.checkUserInput(this.resPanel.resField, "res");
         } else {
             this.resPanel.resField.setBackground(Colors.yellowTransp);
         }
-        if (this.respectGradePriv.box.isSelected()) {
+        if (this.respectGradePrivPanel.box.isSelected()) {
             this.gurobiRules.add(Gurobi.RULES.respectGradePrivilege);
             GurobiPanel.checkUserInput(this.gradePanel.twelveField, "12");
             GurobiPanel.checkUserInput(this.gradePanel.elevenField, "11");

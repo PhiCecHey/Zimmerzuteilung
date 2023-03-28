@@ -18,7 +18,9 @@ public class App {
     public static void main(String[] args) {
         // theme
         FlatLightLaf.setup();
-        com.formdev.flatlaf.intellijthemes.FlatCyanLightIJTheme.setup();
+        //com.formdev.flatlaf.intellijthemes.FlatCyanLightIJTheme.setup();
+        com.formdev.flatlaf.intellijthemes.FlatLightFlatIJTheme.setup();
+        //com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatGitHubContrastIJTheme.setup();
         Gui.init();
         //programm();
 

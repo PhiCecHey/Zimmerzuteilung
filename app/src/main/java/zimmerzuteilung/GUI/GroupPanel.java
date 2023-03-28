@@ -5,9 +5,16 @@ import java.awt.Dimension;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-import javax.swing.GroupLayout.Alignment;
 
 class GroupPanel extends JPanel {
+    GroupPanel(String rowOrColumn) {
+        if (rowOrColumn.toLowerCase().equals("row")) {
+            this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+        } else if (rowOrColumn.toLowerCase().equals("column")) {
+            this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        }
+    }
+
     GroupPanel(Component[] components, String rowOrColumn) {
         if (rowOrColumn.toLowerCase().equals("row")) {
             this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
@@ -47,5 +54,11 @@ class GroupPanel extends JPanel {
 
         this.setMaximumSize(dim);
         this.setAlignmentY(al);
+    }
+
+    void addComponents(Component[] components) {
+        for (Component comp : components) {
+            this.add(comp);
+        }
     }
 }

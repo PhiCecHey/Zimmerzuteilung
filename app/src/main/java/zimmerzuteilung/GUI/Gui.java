@@ -14,7 +14,7 @@ import javax.swing.border.Border;
 
 public class Gui {
     private static Dimension window = new Dimension(1920, 1080);
-    public static Dimension row = new Dimension(1920, 40);
+    public static Dimension row = new Dimension(1920, 60);
 
     public static JFrame mainFrame = new JFrame("Landesschule Pforte Zimmerzuteilung");
     public static JTabbedPane tabs = new JTabbedPane();
@@ -53,6 +53,6 @@ public class Gui {
         imports.setLayout(new BoxLayout(imports, BoxLayout.PAGE_AXIS));
         result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
 
-        Gui.changeFont(mainFrame, 20);
+        Gui.changeFont(mainFrame, 22);
     }
 }
