@@ -1,4 +1,4 @@
-package zimmerzuteilung.log;
+package zimmerzuteilung;
 
 public class Log {
     private static String log = "";

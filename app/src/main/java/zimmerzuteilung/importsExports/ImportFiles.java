@@ -7,9 +7,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import zimmerzuteilung.Config;
+import zimmerzuteilung.Log;
 import zimmerzuteilung.Exceptions.*;
-import zimmerzuteilung.algorithms.Config;
-import zimmerzuteilung.log.Log;
 import zimmerzuteilung.objects.Building;
 import zimmerzuteilung.objects.GENDER;
 import zimmerzuteilung.objects.Room;

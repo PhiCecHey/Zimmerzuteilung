@@ -46,6 +46,10 @@ public class Room {
     public int capacity() {
         return this.capacity;
     }
+    
+    public void capacity(final int c) {
+        this.capacity = c;
+    }
 
     public String officialRoomNumber() {
         return this.officialRoomNumber;
@@ -57,5 +61,9 @@ public class Room {
 
     public void reserved(boolean r) {
         this.reserved = r;
+    }
+
+    public GENDER gender() {
+        return this.gender;
     }
 }

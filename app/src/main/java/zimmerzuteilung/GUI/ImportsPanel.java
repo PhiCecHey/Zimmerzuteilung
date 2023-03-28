@@ -14,8 +14,8 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import zimmerzuteilung.Log;
 import zimmerzuteilung.importsExports.ImportFiles;
-import zimmerzuteilung.log.Log;
 
 public class ImportsPanel extends JPanel {
     private ArrayList<ChooseFilePanel> importsPanels = new ArrayList<>();

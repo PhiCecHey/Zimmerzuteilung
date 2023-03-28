@@ -1,13 +1,18 @@
 package zimmerzuteilung.GUI;
 
 import java.io.File;
+import java.util.Iterator;
 
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 public class CheckUserInput {
-    public static void check(JTextField textField){
+    public static void check(JTextField textField) {
         // Listen for changes in the text
         textField.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
@@ -23,7 +28,7 @@ public class CheckUserInput {
             }
 
             public void warn() {
-                
+
             }
         });
     }

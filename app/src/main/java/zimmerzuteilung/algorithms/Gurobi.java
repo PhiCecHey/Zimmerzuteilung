@@ -11,12 +11,14 @@ import gurobi.GRBException;
 import gurobi.GRBLinExpr;
 import gurobi.GRBModel;
 import gurobi.GRBVar;
+import zimmerzuteilung.Config;
+import zimmerzuteilung.Log;
 import zimmerzuteilung.Exceptions.*;
 import zimmerzuteilung.GUI.Gui;
-import zimmerzuteilung.log.*;
 import zimmerzuteilung.objects.Allocation;
 import zimmerzuteilung.objects.Allocations;
 import zimmerzuteilung.objects.Building;
+import zimmerzuteilung.objects.GENDER;
 import zimmerzuteilung.objects.Room;
 import zimmerzuteilung.objects.Student;
 import zimmerzuteilung.objects.Team;
@@ -27,7 +29,7 @@ public class Gurobi {
         // constraints
         oneRoomPerTeam, oneTeamPerRoom, maxStudentsPerRoom,
         // other rules
-        respectWish, respectReservations, respectGradePrivilege;
+        respectWish, respectReservations, respectGradePrivilege, respectRoomGender;
     }
 
     private static ArrayList<Gurobi.RULES> rules = new ArrayList<>();
@@ -136,6 +138,8 @@ public class Gurobi {
     private void addConstraints() {
         if (rules.contains(Gurobi.RULES.maxStudentsPerRoom)) {
             this.maxStudentsPerRoom();
+        } else {
+            this.maxStudentsPerRoomAlternative(Config.maxStudentsPerRoom);
         }
         if (rules.contains(Gurobi.RULES.oneRoomPerTeam)) {
             this.oneRoomPerTeam();
@@ -144,18 +148,23 @@ public class Gurobi {
             this.oneTeamPerRoom();
         }
         if (rules.contains(Gurobi.RULES.respectWish)) {
-            Gurobi.respectWish(Config.scoreBuilding1, Config.scoreRoom1, Config.scoreRoom2, Config.scoreBuilding2);
+            this.respectWish(Config.scoreBuilding1, Config.scoreRoom1, Config.scoreRoom2, Config.scoreBuilding2);
         }
         if (rules.contains(Gurobi.RULES.respectGradePrivilege)) {
-            Gurobi.respectGradePrivilege(Config.scoreTwelve, Config.scoreEleven, Config.scoreTen);
+            this.respectGradePrivilege(Config.scoreTwelve, Config.scoreEleven, Config.scoreTen);
         }
         if (rules.contains(Gurobi.RULES.respectReservations)) {
-            Gurobi.respectReservations(Config.scoreReservation);
+            this.respectReservations();
+        } else {
+            this.respectReservationsAlternative(Config.scoreReservation);
+        }
+        if (rules.contains(Gurobi.RULES.respectRoomGender)) {
+            this.respectRoomGender(Config.scoreGender);
         }
     }
 
     /**
-     * Garanties max one room per team.
+     * Guaranties max one room per team.
      * 
      * @param model
      * @param allocations
@@ -202,9 +211,6 @@ public class Gurobi {
         }
     }
 
-    /**
-     * Garanties no more students per room than the respective room capacity.
-     */
     private void maxStudentsPerRoom() {
         try {
             GRBLinExpr expr;
@@ -222,6 +228,44 @@ public class Gurobi {
         }
     }
 
+    private void maxStudentsPerRoomAlternative(float scoreMaxStudents) {
+        for (int r = 0; r < Gurobi.allocations.nRooms(); ++r) {
+            for (int t = 0; t < Gurobi.allocations.nTeams(); ++t) {
+                Allocation allocation = Gurobi.allocations.get(r, t);
+                int numStudents = allocation.team().members().size();
+                int maxStudents = allocation.room().capacity();
+                if (numStudents > maxStudents) {
+                    allocation.addToScore(scoreMaxStudents);
+                }
+            }
+        }
+    }
+
+    private void respectReservations() {
+        for (int r = 0; r < Gurobi.rooms.size(); ++r) {
+            Gurobi.rooms.get(r).capacity(0);
+        }
+    }
+
+    /**
+     * Adds res from the allocation score so that the respective room is
+     * reserved for ninth graders.
+     * 
+     * @param res: importance of the reservation, higher value represents
+     *             higher
+     *             importance
+     */
+    private void respectReservationsAlternative(final float res) {
+        for (int r = 0; r < Gurobi.allocations.nRooms(); ++r) {
+            for (int t = 0; t < Gurobi.allocations.nTeams(); ++t) {
+                Allocation allocation = Gurobi.allocations.get(r, t);
+                if (allocation.room().reserved()) {
+                    allocation.addToScore(res);
+                }
+            }
+        }
+    }
+
     /**
      * Respects the wishes of the students regarding their rooms.
      * 
@@ -234,7 +278,7 @@ public class Gurobi {
      * @param b2: importance of assigning the team to a room in their
      *            second wish building
      */
-    private static void respectWish(final float b1, final float r1, final float r2, final float b2) {
+    private void respectWish(final float b1, final float r1, final float r2, final float b2) {
         for (int r = 0; r < Gurobi.allocations.nRooms(); ++r) {
             for (int t = 0; t < Gurobi.allocations.nTeams(); ++t) {
                 Allocation allocation = Gurobi.allocations.get(r, t);
@@ -266,25 +310,6 @@ public class Gurobi {
     }
 
     /**
-     * Subtracts res from the allocation score so that the respective room is
-     * reserved for ninth graders.
-     * 
-     * @param res: importance of the reservation, higher value represents
-     *             higher
-     *             importance
-     */
-    private static void respectReservations(final float res) {
-        for (int r = 0; r < Gurobi.allocations.nRooms(); ++r) {
-            for (int t = 0; t < Gurobi.allocations.nTeams(); ++t) {
-                Allocation allocation = Gurobi.allocations.get(r, t);
-                if (allocation.room().reserved()) {
-                    allocation.addToScore(-res);
-                }
-            }
-        }
-    }
-
-    /**
      * Respects the grade of the students of a team. If all students are in 12th
      * grade, they have highest privilege to get that room, followed by 11th
      * graders, then 10th graders.
@@ -293,7 +318,7 @@ public class Gurobi {
      * @param eleven
      * @param ten
      */
-    private static void respectGradePrivilege(final float twelve, final float eleven, final float ten) {
+    private void respectGradePrivilege(final float twelve, final float eleven, final float ten) {
         for (int r = 0; r < Gurobi.allocations.nRooms(); ++r) {
             for (int t = 0; t < Gurobi.allocations.nTeams(); ++t) {
                 Allocation allocation = Gurobi.allocations.get(r, t);
@@ -338,6 +363,16 @@ public class Gurobi {
         }
     }
 
+    private void respectRoomGender(float scoreGender) {
+        for (int r = 0; r < Gurobi.allocations.nRooms(); ++r) {
+            for (int t = 0; t < Gurobi.allocations.nTeams(); ++t) {
+                Allocation allocation = Gurobi.allocations.get(r, t);
+                if (allocation.room().gender() != allocation.team().gender()) {
+                    allocation.addToScore(scoreGender);
+                }
+            }
+        }
+    }
     // ----------------------------------------------------OBJECTIVE----------------------------------------------------
 
     /**

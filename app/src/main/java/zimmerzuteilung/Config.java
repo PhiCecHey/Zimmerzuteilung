@@ -1,4 +1,4 @@
-package zimmerzuteilung.algorithms;
+package zimmerzuteilung;
 
 public class Config {
     // -----------------------SCORES-----------------------
@@ -14,7 +14,13 @@ public class Config {
     public static float scoreTen = 3;
 
     // score for room reservation
-    public static float scoreReservation = 50;
+    public static float scoreReservation = -50;
+
+    //
+    public static float oneRoomPerTeam = -100;
+    public static float oneTeamPerRoom = -100;
+    public static float maxStudentsPerRoom = -100;
+    public static float scoreGender = -50;
 
     // -----------------------MOODLE-----------------------
     // importBuildings:

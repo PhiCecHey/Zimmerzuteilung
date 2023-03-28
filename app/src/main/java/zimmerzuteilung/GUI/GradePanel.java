@@ -5,7 +5,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import zimmerzuteilung.algorithms.Config;
+import zimmerzuteilung.Config;
 
 import java.awt.Component;
 import java.awt.Dimension;

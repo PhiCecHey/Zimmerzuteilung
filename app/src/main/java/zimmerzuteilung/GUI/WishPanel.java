@@ -8,7 +8,7 @@ import java.awt.Dimension;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import zimmerzuteilung.algorithms.Config;
+import zimmerzuteilung.Config;
 
 class WishPanel extends JPanel {
         private static Dimension dimPanel = new Dimension(Gui.row.width, Gui.row.height);
