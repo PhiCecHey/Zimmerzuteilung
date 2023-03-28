@@ -14,7 +14,7 @@ import javax.swing.border.Border;
 
 public class Gui {
     private static Dimension window = new Dimension(1920, 1080);
-    public static Dimension row = new Dimension(1920, 60);
+    public static Dimension row = new Dimension(1920, 50);
 
     public static JFrame mainFrame = new JFrame("Landesschule Pforte Zimmerzuteilung");
     public static JTabbedPane tabs = new JTabbedPane();

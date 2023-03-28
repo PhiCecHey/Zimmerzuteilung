@@ -1,5 +1,6 @@
 package zimmerzuteilung.GUI;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import zimmerzuteilung.algorithms.Gurobi;
 public class GurobiPanel extends JPanel {
     public ArrayList<Gurobi.RULES> gurobiRules = new ArrayList<>();
     private CheckBoxPanel oneRoomPerTeam, oneTeamPerRoom, respectWishPanel, respectGradePrivPanel;
-    private MustOrShouldPanel maxStudentsPerRoom, respectResPanel;
+    private MustOrShouldPanel maxStudentsPerRoom, respectResPanel, respectRoomGenderPanel;
     private GradePanel gradePanel;
     private WishPanel wishPanel;
     private JButton save;
@@ -39,15 +40,15 @@ public class GurobiPanel extends JPanel {
     }
 
     private void initTopRight(GroupPanel topRight) {
-        String heading, descript1, descript2, description3;
+        String heading, descript1, descript2, descript3;
         float value;
 
         heading = "Zimmerreservierungen respektieren";
         descript1 = "Unbedingt reservierte Zimmer freihalten";
         descript2 = "Zimmer freihalten falls möglich: ";
-        description3 = "Malus für nicht reservierte Zimmer: ";
+        descript3 = "Malus für nicht reservierte Zimmer: ";
         value = Config.scoreReservation;
-        this.respectResPanel = new MustOrShouldPanel(heading, descript1, descript2, description3, value);
+        this.respectResPanel = new MustOrShouldPanel(heading, descript1, descript2, descript3, value);
 
         topRight.add(this.respectResPanel);
 
@@ -58,10 +59,22 @@ public class GurobiPanel extends JPanel {
         heading = "Maximale Anzahl an Schüler:innen pro Zimmer einhalten";
         descript1 = "Immer maximale Anzahl an Schüler:innen pro Zimmer einhalten";
         descript2 = "Möglichst maximale Anzahl an Schüler:innen pro Zimmer einhalten: ";
-        description3 = "Malus bei Nichteinhalten: ";
+        descript3 = "Malus bei Nichteinhalten: ";
         value = Config.maxStudentsPerRoom;
-        this.maxStudentsPerRoom = new MustOrShouldPanel(heading, descript1, descript2, description3, value);
+        this.maxStudentsPerRoom = new MustOrShouldPanel(heading, descript1, descript2, descript3, value);
         topRight.add(maxStudentsPerRoom);
+
+        topRight.add(new JLabel("       "));
+        topRight.add(new JLabel("       "));
+        topRight.add(new JLabel("       "));
+
+        heading = "Mädchen-/Jungszimmer berücksichtigen";
+        descript1 = "Immer berücksichtigen";
+        descript2 = "Möglichst berücksichtigen: ";
+        descript3 = "Malus bei Nichtberücksichtigung: ";
+        value = Config.scoreGender;
+        this.respectRoomGenderPanel = new MustOrShouldPanel(heading, descript1, descript2, descript3, value);
+        topRight.add(this.respectRoomGenderPanel);
 
         topRight.add(new JLabel("             "));
         topRight.add(new JLabel("             "));
@@ -97,7 +110,10 @@ public class GurobiPanel extends JPanel {
     }
 
     void initBottom(GroupPanel bottom) {
-        this.area = new JTextArea("\n\n\n\n");
+        bottom.setLayout(new BoxLayout(bottom, BoxLayout.PAGE_AXIS));
+
+        this.area = new JTextArea("\n\n");
+        this.area.setMaximumSize(new Dimension(Gui.row.width, 200));
         area.setEditable(false);
         bottom.add(this.area);
 
@@ -107,18 +123,19 @@ public class GurobiPanel extends JPanel {
                 getRules();
             }
         });
-        // bottom.add(this.area);
         bottom.add(this.save);
     }
 
     private void getRules() {
-        this.area.setText("\n\n\n\n");
+        this.area.setText("");
         if (this.oneRoomPerTeam.box.isSelected()) {
             this.gurobiRules.add(Gurobi.RULES.oneRoomPerTeam);
         }
+
         if (this.oneTeamPerRoom.box.isSelected()) {
             this.gurobiRules.add(Gurobi.RULES.oneTeamPerRoom);
         }
+
         if (this.maxStudentsPerRoom.radioPanel1.radio.isSelected()) {
             this.gurobiRules.add(Gurobi.RULES.maxStudentsPerRoom);
         } else if (this.maxStudentsPerRoom.radioPanel2.radio.isSelected()) {
@@ -134,6 +151,7 @@ public class GurobiPanel extends JPanel {
                 this.area.append("Max Anzahl an Schülern pro Zimmer: Bitte eine negative Zahl eintragen!\n");
             }
         }
+
         if (this.respectResPanel.radioPanel1.radio.isSelected()) {
             this.gurobiRules.add(Gurobi.RULES.respectReservations);
         } else if (this.respectResPanel.radioPanel2.radio.isSelected()) {
@@ -149,6 +167,23 @@ public class GurobiPanel extends JPanel {
                 this.area.append("Reservierte Zimmer: Bitte eine negative Zahl eintragen!\n");
             }
         }
+
+        if (this.respectRoomGenderPanel.radioPanel1.radio.isSelected()) {
+            this.gurobiRules.add(Gurobi.RULES.respectRoomGender);
+        } else if (this.respectRoomGenderPanel.radioPanel2.radio.isSelected()) {
+            boolean worked = true;
+            try {
+                Config.scoreGender = Float.parseFloat(this.respectRoomGenderPanel.field.getText());
+            } catch (NumberFormatException e) {
+                worked = false;
+            }
+            if (worked) {
+                this.respectRoomGenderPanel.field.setBackground(Colors.greenTransp);
+            } else {
+                this.area.append("Geschlecht berücksichtigen: Bitte eine negative Zahl eintragen!\n");
+            }
+        }
+
         if (this.respectWishPanel.box.isSelected()) {
             this.gurobiRules.add(Gurobi.RULES.respectWish);
             GurobiPanel.checkUserInput(this.wishPanel.b1Field, "b1");
@@ -161,6 +196,7 @@ public class GurobiPanel extends JPanel {
             this.wishPanel.r2Field.setBackground(Colors.yellowTransp);
             this.wishPanel.b2Field.setBackground(Colors.yellowTransp);
         }
+
         if (this.respectGradePrivPanel.box.isSelected()) {
             this.gurobiRules.add(Gurobi.RULES.respectGradePrivilege);
             GurobiPanel.checkUserInput(this.gradePanel.twelveField, "12");
