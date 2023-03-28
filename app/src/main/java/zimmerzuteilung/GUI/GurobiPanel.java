@@ -1,5 +1,6 @@
 package zimmerzuteilung.GUI;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,11 +18,12 @@ import zimmerzuteilung.algorithms.Gurobi;
 
 public class GurobiPanel extends JPanel {
     public ArrayList<Gurobi.RULES> gurobiRules = new ArrayList<>();
-    private CheckBoxPanel oneRoomPerTeam, oneTeamPerRoom, respectWishPanel, respectGradePrivPanel;
+    private CheckBoxPanel oneRoomPerTeam, oneTeamPerRoom, respectWishPanel, respectGradePrivPanel, randomPanel;
     private MustOrShouldPanel maxStudentsPerRoom, respectResPanel, respectRoomGenderPanel;
     private GradePanel gradePanel;
     private WishPanel wishPanel;
     private JButton save;
+    private JTextField randomField;
     private JTextArea area;
 
     public GurobiPanel() {
@@ -75,14 +77,6 @@ public class GurobiPanel extends JPanel {
         value = Config.scoreGender;
         this.respectRoomGenderPanel = new MustOrShouldPanel(heading, descript1, descript2, descript3, value);
         topRight.add(this.respectRoomGenderPanel);
-
-        topRight.add(new JLabel("             "));
-        topRight.add(new JLabel("             "));
-        topRight.add(new JLabel("             "));
-        topRight.add(new JLabel("             "));
-        topRight.add(new JLabel("             "));
-        topRight.add(new JLabel("             "));
-        topRight.add(new JLabel("             "));
     }
 
     private void initTopLeft(GroupPanel topLeft) {
@@ -107,6 +101,16 @@ public class GurobiPanel extends JPanel {
         topLeft.add(this.respectGradePrivPanel);
         this.gradePanel = new GradePanel();
         topLeft.add(this.gradePanel);
+
+        topLeft.add(new JLabel("             "));
+
+        this.randomPanel = new CheckBoxPanel("Zufall: ", true);
+        this.randomPanel.setMaximumSize(this.randomPanel.getMinimumSize());
+        this.randomPanel.box.setSelected(false);
+        this.randomField = new JTextField(Float.toString(Config.scoreRandom));
+        this.randomField.setMaximumSize(new Dimension(150, Gui.row.height));
+        CheckUserInput.checkForPositive(this.randomField);
+        topLeft.add(new GroupPanel(new Component[]{this.randomPanel, this.randomField, new Filler(Gui.row.width, 1)}, "row"));
     }
 
     void initBottom(GroupPanel bottom) {
@@ -134,6 +138,20 @@ public class GurobiPanel extends JPanel {
 
         if (this.oneTeamPerRoom.box.isSelected()) {
             this.gurobiRules.add(Gurobi.RULES.oneTeamPerRoom);
+        }
+
+        if (this.randomPanel.box.isSelected()) {
+            boolean worked = true;
+            try {
+                Config.scoreRandom = Float.parseFloat(this.randomField.getText());
+            } catch (NumberFormatException e) {
+                worked = false;
+            }
+            if (worked) {
+                this.randomField.setBackground(Colors.greenTransp);
+            } else {
+                this.area.append("Zufall: Bitte eine positive Zahl eintragen!\n");
+            }
         }
 
         if (this.maxStudentsPerRoom.radioPanel1.radio.isSelected()) {

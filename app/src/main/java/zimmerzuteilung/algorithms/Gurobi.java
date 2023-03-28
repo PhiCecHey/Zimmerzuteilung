@@ -403,7 +403,7 @@ public class Gurobi {
         GRBLinExpr objective = new GRBLinExpr();
         for (int r = 0; r < Gurobi.allocations.nRooms(); ++r) {
             for (int t = 0; t < Gurobi.allocations.nTeams(); ++t) {
-                double random = ThreadLocalRandom.current().nextDouble(min, max);
+                double random = ThreadLocalRandom.current().nextDouble(min, max + Config.scoreRandom);
                 Allocation currentAlloc = Gurobi.allocations.get(r, t);
                 Gurobi.allocations.get(r, t).score(currentAlloc.score() + random);
                 objective.addTerm(currentAlloc.score(), currentAlloc.grbVar());

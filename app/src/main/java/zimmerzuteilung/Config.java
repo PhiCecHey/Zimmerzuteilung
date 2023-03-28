@@ -16,7 +16,8 @@ public class Config {
     // score for room reservation
     public static float scoreReservation = -50;
 
-    //
+    public static float scoreRandom = 0;
+    
     public static float oneRoomPerTeam = -100;
     public static float oneTeamPerRoom = -100;
     public static float maxStudentsPerRoom = -100;
