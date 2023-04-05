@@ -204,7 +204,7 @@ public class ImportFiles {
                             + " existiert bereits "
                             + "und wird nicht erneut eingelesen! " + "Siehe " + csv.getAbsolutePath()
                             + " in Zeile " + lineNum;
-                    System.out.println(errmsg);
+                    System.err.println(errmsg);
                     Log.append(errmsg);
                     continue; // ignore duplicate room
                 }
@@ -216,6 +216,10 @@ public class ImportFiles {
             } else if (entry[Config.impBuildRoomGender].contains("m")) {
                 gender = GENDER.m;
             } else {
+                String errormsg = "Zimmer " + room.officialRoomNumber() + " hat ein ungültiges Geschlecht!";
+                System.err.println(errormsg);
+                Log.append(errormsg);
+                noWarnings = false;
                 gender = GENDER.d;
             }
             // --------------------------------------------get_capacity---------------------------------------------
@@ -227,7 +231,7 @@ public class ImportFiles {
                         + " muss für die Kapazität "
                         + "eine Zahl angegeben werden! Statt dessen " + "gefunden: "
                         + entry[Config.impBuildRoomCapacity];
-                System.out.println(errormsg);
+                System.err.println(errormsg);
                 Log.append(errormsg);
             }
             // -------------------------------------------check_reserved--------------------------------------------
@@ -443,6 +447,19 @@ public class ImportFiles {
                 team.addStudent(student); // create new student and add to team
             }
             if (!duplicateTeam) {
+                // check gender of students
+                GENDER gender = ImportFiles.determineGender(team);
+                if (gender == null) {
+                    team.gender(GENDER.d);
+                    String errormsg = "Das Team " + team.name() + " ist nicht gleichgeschlechtlich!";
+                    System.err.println(errormsg);
+                    Log.append(errormsg);
+                    noWarnings = false;
+                } else {
+                    team.gender(gender);
+                }
+
+                // add team
                 ImportFiles.teams.add(team);
             }
         }
@@ -552,4 +569,40 @@ public class ImportFiles {
         ImportFiles.teams.clear();
     }
 
+    private static GENDER determineGender(Team team) {
+        short countM = 0;
+        short countF = 0;
+        short countD = 0;
+        for (Student s : team.members()) {
+            if (s.gender().equals(GENDER.f)) {
+                countF++;
+            } else if (s.gender().equals(GENDER.m)) {
+                countM++;
+            } else if (s.gender().equals(GENDER.d)) {
+                countD++;
+            } else {
+                s.gender(GENDER.d);
+                String errmsg = "Schüler " + s.userName() + " hat kein gültiges Geschlecht!";
+                System.err.println(errmsg);
+                Log.append(errmsg);
+            }
+        }
+        if (countM > 0 && countF > 0 || countM > 0 && countD > 0 || countF > 0 && countD > 0) {
+            return null;
+        }
+
+        if (countM > countF) {
+            if (countM >= countD) {
+                return GENDER.m;
+            } else {
+                return GENDER.d;
+            }
+        } else {
+            if (countF >= countD) {
+                return GENDER.f;
+            } else {
+                return GENDER.d;
+            }
+        }
+    }
 }

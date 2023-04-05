@@ -17,7 +17,7 @@ import zimmerzuteilung.Config;
 import zimmerzuteilung.algorithms.Gurobi;
 
 public class GurobiPanel extends JPanel {
-    public ArrayList<Gurobi.RULES> gurobiRules = new ArrayList<>();
+    private static ArrayList<Gurobi.RULES> gurobiRules = new ArrayList<>();
     private CheckBoxPanel oneRoomPerTeam, oneTeamPerRoom, respectWishPanel, respectGradePrivPanel, randomPanel;
     private MustOrShouldPanel maxStudentsPerRoom, respectResPanel, respectRoomGenderPanel;
     private GradePanel gradePanel;
@@ -110,7 +110,8 @@ public class GurobiPanel extends JPanel {
         this.randomField = new JTextField(Float.toString(Config.scoreRandom));
         this.randomField.setMaximumSize(new Dimension(150, Gui.row.height));
         CheckUserInput.checkForPositive(this.randomField);
-        topLeft.add(new GroupPanel(new Component[]{this.randomPanel, this.randomField, new Filler(Gui.row.width, 1)}, "row"));
+        topLeft.add(new GroupPanel(new Component[] { this.randomPanel, this.randomField, new Filler(Gui.row.width, 1) },
+                "row"));
     }
 
     void initBottom(GroupPanel bottom) {
@@ -124,20 +125,22 @@ public class GurobiPanel extends JPanel {
         this.save = new JButton("anwenden");
         this.save.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                getRules();
+                determineRules();
             }
         });
         bottom.add(this.save);
     }
 
-    private void getRules() {
+    private void determineRules() {
         this.area.setText("");
+        GurobiPanel.gurobiRules.clear();
+        
         if (this.oneRoomPerTeam.box.isSelected()) {
-            this.gurobiRules.add(Gurobi.RULES.oneRoomPerTeam);
+            GurobiPanel.gurobiRules.add(Gurobi.RULES.oneRoomPerTeam);
         }
 
         if (this.oneTeamPerRoom.box.isSelected()) {
-            this.gurobiRules.add(Gurobi.RULES.oneTeamPerRoom);
+            GurobiPanel.gurobiRules.add(Gurobi.RULES.oneTeamPerRoom);
         }
 
         if (this.randomPanel.box.isSelected()) {
@@ -155,7 +158,7 @@ public class GurobiPanel extends JPanel {
         }
 
         if (this.maxStudentsPerRoom.radioPanel1.radio.isSelected()) {
-            this.gurobiRules.add(Gurobi.RULES.maxStudentsPerRoom);
+            GurobiPanel.gurobiRules.add(Gurobi.RULES.maxStudentsPerRoom);
         } else if (this.maxStudentsPerRoom.radioPanel2.radio.isSelected()) {
             boolean worked = true;
             try {
@@ -171,7 +174,7 @@ public class GurobiPanel extends JPanel {
         }
 
         if (this.respectResPanel.radioPanel1.radio.isSelected()) {
-            this.gurobiRules.add(Gurobi.RULES.respectReservations);
+            GurobiPanel.gurobiRules.add(Gurobi.RULES.respectReservations);
         } else if (this.respectResPanel.radioPanel2.radio.isSelected()) {
             boolean worked = true;
             try {
@@ -187,8 +190,10 @@ public class GurobiPanel extends JPanel {
         }
 
         if (this.respectRoomGenderPanel.radioPanel1.radio.isSelected()) {
-            this.gurobiRules.add(Gurobi.RULES.respectRoomGender);
+            GurobiPanel.gurobiRules.add(Gurobi.RULES.respectRoomGender);
+            System.out.println("HIER0");
         } else if (this.respectRoomGenderPanel.radioPanel2.radio.isSelected()) {
+            System.out.println("HIER1");
             boolean worked = true;
             try {
                 Config.scoreGender = Float.parseFloat(this.respectRoomGenderPanel.field.getText());
@@ -203,7 +208,7 @@ public class GurobiPanel extends JPanel {
         }
 
         if (this.respectWishPanel.box.isSelected()) {
-            this.gurobiRules.add(Gurobi.RULES.respectWish);
+            GurobiPanel.gurobiRules.add(Gurobi.RULES.respectWish);
             GurobiPanel.checkUserInput(this.wishPanel.b1Field, "b1");
             GurobiPanel.checkUserInput(this.wishPanel.r1Field, "r1");
             GurobiPanel.checkUserInput(this.wishPanel.r2Field, "r2");
@@ -216,7 +221,7 @@ public class GurobiPanel extends JPanel {
         }
 
         if (this.respectGradePrivPanel.box.isSelected()) {
-            this.gurobiRules.add(Gurobi.RULES.respectGradePrivilege);
+            GurobiPanel.gurobiRules.add(Gurobi.RULES.respectGradePrivilege);
             GurobiPanel.checkUserInput(this.gradePanel.twelveField, "12");
             GurobiPanel.checkUserInput(this.gradePanel.elevenField, "11");
             GurobiPanel.checkUserInput(this.gradePanel.tenField, "10");
@@ -225,6 +230,10 @@ public class GurobiPanel extends JPanel {
             this.gradePanel.elevenField.setBackground(Colors.yellowTransp);
             this.gradePanel.tenField.setBackground(Colors.yellowTransp);
         }
+    }
+
+    public static ArrayList<Gurobi.RULES> rules() {
+        return GurobiPanel.gurobiRules;
     }
 
     private static byte checkUserInput(JTextField field, String configName) {

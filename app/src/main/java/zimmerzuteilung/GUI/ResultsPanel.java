@@ -40,22 +40,16 @@ public class ResultsPanel extends JPanel {
         this.exportResultsButton = new JButton("Ergebnisse als csv exportieren");
         ResultsPanel.exportResults(exportResultsButton, this.chooseFolder.field);
         this.add(new GroupPanel(
-                new Component[] { this.chooseFolder, new Filler(50, Gui.row.height), this.exportResultsButton }, "row"));
+                new Component[] { this.chooseFolder, new Filler(50, Gui.row.height), this.exportResultsButton },
+                "row"));
     }
 
     private void calcResult() {
         this.calcResults.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
+                showResults.setText("Berechnung gestartet...\n\n");
                 try {
-                    ArrayList<Gurobi.RULES> rules = new ArrayList<>();
-                    rules.add(Gurobi.RULES.maxStudentsPerRoom);
-                    rules.add(Gurobi.RULES.oneRoomPerTeam);
-                    rules.add(Gurobi.RULES.oneTeamPerRoom);
-                    rules.add(Gurobi.RULES.respectReservations);
-                    rules.add(Gurobi.RULES.respectWish);
-                    rules.add(Gurobi.RULES.respectGradePrivilege);
-
-                    Gurobi g = new Gurobi(rules, ImportFiles.buildings(), ImportFiles.teams());
+                    Gurobi g = new Gurobi(GurobiPanel.rules(), ImportFiles.buildings(), ImportFiles.teams());
                     g.calculate();
                 } catch (Exception e) {
                     e.printStackTrace();
