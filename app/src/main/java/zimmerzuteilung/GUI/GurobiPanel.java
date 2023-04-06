@@ -47,8 +47,8 @@ public class GurobiPanel extends JPanel {
 
         heading = "Zimmerreservierungen respektieren";
         descript1 = "Unbedingt reservierte Zimmer freihalten";
-        descript2 = "Zimmer freihalten falls möglich: ";
-        descript3 = "Malus für nicht reservierte Zimmer: ";
+        descript2 = "Zimmer freihalten falls moeglich: ";
+        descript3 = "Malus fuer nicht reservierte Zimmer: ";
         value = Config.scoreReservation;
         this.respectResPanel = new MustOrShouldPanel(heading, descript1, descript2, descript3, value);
 
@@ -58,9 +58,9 @@ public class GurobiPanel extends JPanel {
         topRight.add(new JLabel("       "));
         topRight.add(new JLabel("       "));
 
-        heading = "Maximale Anzahl an Schüler:innen pro Zimmer einhalten";
-        descript1 = "Immer maximale Anzahl an Schüler:innen pro Zimmer einhalten";
-        descript2 = "Möglichst maximale Anzahl an Schüler:innen pro Zimmer einhalten: ";
+        heading = "Maximale Anzahl an Schueler:innen pro Zimmer einhalten";
+        descript1 = "Immer maximale Anzahl an Schueler:innen pro Zimmer einhalten";
+        descript2 = "Moeglichst maximale Anzahl an Schueler:innen pro Zimmer einhalten: ";
         descript3 = "Malus bei Nichteinhalten: ";
         value = Config.maxStudentsPerRoom;
         this.maxStudentsPerRoom = new MustOrShouldPanel(heading, descript1, descript2, descript3, value);
@@ -70,10 +70,10 @@ public class GurobiPanel extends JPanel {
         topRight.add(new JLabel("       "));
         topRight.add(new JLabel("       "));
 
-        heading = "Mädchen-/Jungszimmer berücksichtigen";
-        descript1 = "Immer berücksichtigen";
-        descript2 = "Möglichst berücksichtigen: ";
-        descript3 = "Malus bei Nichtberücksichtigung: ";
+        heading = "Maedchen-/Jungszimmer beruecksichtigen";
+        descript1 = "Immer beruecksichtigen";
+        descript2 = "Moeglichst beruecksichtigen: ";
+        descript3 = "Malus bei Nichtberuecksichtigung: ";
         value = Config.scoreGender;
         this.respectRoomGenderPanel = new MustOrShouldPanel(heading, descript1, descript2, descript3, value);
         topRight.add(this.respectRoomGenderPanel);
@@ -90,7 +90,7 @@ public class GurobiPanel extends JPanel {
 
         topLeft.add(new JLabel("             "));
 
-        this.respectWishPanel = new CheckBoxPanel("Zimmerwünsche respektieren", true);
+        this.respectWishPanel = new CheckBoxPanel("Zimmerwuensche respektieren", true);
         topLeft.add(this.respectWishPanel);
         this.wishPanel = new WishPanel();
         topLeft.add(this.wishPanel);
@@ -169,7 +169,7 @@ public class GurobiPanel extends JPanel {
             if (worked) {
                 this.maxStudentsPerRoom.field.setBackground(Colors.greenTransp);
             } else {
-                this.area.append("Max Anzahl an Schülern pro Zimmer: Bitte eine negative Zahl eintragen!\n");
+                this.area.append("Max Anzahl an Schuelern pro Zimmer: Bitte eine negative Zahl eintragen!\n");
             }
         }
 
@@ -203,7 +203,7 @@ public class GurobiPanel extends JPanel {
             if (worked) {
                 this.respectRoomGenderPanel.field.setBackground(Colors.greenTransp);
             } else {
-                this.area.append("Geschlecht berücksichtigen: Bitte eine negative Zahl eintragen!\n");
+                this.area.append("Geschlecht beruecksichtigen: Bitte eine negative Zahl eintragen!\n");
             }
         }
 

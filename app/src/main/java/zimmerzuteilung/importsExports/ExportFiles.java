@@ -18,7 +18,7 @@ public class ExportFiles {
 
     public static boolean eportToCsv(File file) {
         // one row represents one team
-        String toWrite = "Gruppenname, Zimmermitbewohner, Zugeteiltes Zimmer, Score (höher ist besser), Erstwunschinternat, Erstwunschzimmer, Zweitwunschzimmer, Zweitwunschinternat, Kommentar\n";
+        String toWrite = "Gruppenname, Zimmermitbewohner, Zugeteiltes Zimmer, Score (hoeher ist besser), Erstwunschinternat, Erstwunschzimmer, Zweitwunschzimmer, Zweitwunschinternat, Kommentar\n";
 
         for (Team team : ExportFiles.teams) {
             String comment = "";

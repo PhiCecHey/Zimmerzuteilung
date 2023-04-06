@@ -34,7 +34,7 @@ public class HelpPanel extends JPanel {
 
     private void addActionListeners() {
         // TODO
-        this.helpText.append("Informationen und Hilfestellungen über das Programm");
+        this.helpText.append("Informationen und Hilfestellungen ueber das Programm");
         this.plus.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 Gui.changeFont(Gui.mainFrame, Gui.mainFrame.getFont().getSize() + 1);

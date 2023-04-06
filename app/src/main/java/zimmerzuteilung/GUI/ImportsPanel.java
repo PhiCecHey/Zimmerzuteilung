@@ -44,8 +44,8 @@ public class ImportsPanel extends JPanel {
     }
 
     private void imports() {
-        String[] importLabelStrings = new String[] { "Zimmer: ", "Personenbezogene Daten der Schüler:innen: ",
-                "Gruppen: ", "Zimmerwünsche" };
+        String[] importLabelStrings = new String[] { "Zimmer: ", "Personenbezogene Daten der Schueler:innen: ",
+                "Gruppen: ", "Zimmerwuensche" };
 
         for (String s : importLabelStrings) {
             ChooseFilePanel i = new ChooseFilePanel(s, "file");

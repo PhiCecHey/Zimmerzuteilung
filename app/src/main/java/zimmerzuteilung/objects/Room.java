@@ -22,7 +22,7 @@ public class Room {
         this.id = Room.count;
         if (c < 0) {
             throw new IllegalArgumentException("Die maximale " +
-                    "Schülerkapazität eines Zimmers darf nicht negativ sein.");
+                    "Schuelerkapazitaet eines Zimmers darf nicht negativ sein.");
         }
         this.capacity = c;
         this.officialRoomNumber = offNum;

@@ -216,7 +216,7 @@ public class ImportFiles {
             } else if (entry[Config.impBuildRoomGender].contains("m")) {
                 gender = GENDER.m;
             } else {
-                String errormsg = "Zimmer " + room.officialRoomNumber() + " hat ein ungültiges Geschlecht!";
+                String errormsg = "Zimmer " + room.officialRoomNumber() + " hat ein ungueltiges Geschlecht!";
                 System.err.println(errormsg);
                 Log.append(errormsg);
                 noWarnings = false;
@@ -228,7 +228,7 @@ public class ImportFiles {
                 capacity = Integer.valueOf(entry[Config.impBuildRoomCapacity]);
             } catch (NumberFormatException e) {
                 String errormsg = "Fehler: In " + csv.getAbsolutePath() + " Zeile " + lineNum
-                        + " muss für die Kapazität "
+                        + " muss fuer die Kapazitaet "
                         + "eine Zahl angegeben werden! Statt dessen " + "gefunden: "
                         + entry[Config.impBuildRoomCapacity];
                 System.err.println(errormsg);
@@ -284,7 +284,7 @@ public class ImportFiles {
                 String errormsg = "Die Zimmerwahl von Team \"" + entry[Config.impWishTeamName]
                         + "\" kann nicht angenommen "
                         + "werden, da das Team noch nicht angelegt wurde. Haben sich die entsprechenden "
-                        + "Schüler:innen in eine Gruppe im Moodleraum eingetragen?";
+                        + "Schueler:innen in eine Gruppe im Moodleraum eingetragen?";
                 Log.append(errormsg);
                 reader.close();
                 throw new TeamDoesNotExist(errormsg);
@@ -426,10 +426,10 @@ public class ImportFiles {
                 }
                 if (student == null) {
                     student = new Student(name, userName);
-                    System.err.println("Schüler:in " + name + " hat die Umfrage zu den persönlichen Daten nicht "
-                            + "(vollständig) ausgefüllt!");
-                    Log.append("Schüler:in " + name + " hat die Umfrage zu den persönlichen Daten nicht "
-                            + "(vollständig) ausgefüllt!");
+                    System.err.println("Schueler:in " + name + " hat die Umfrage zu den persoenlichen Daten nicht "
+                            + "(vollstaendig) ausgefuellt!");
+                    Log.append("Schueler:in " + name + " hat die Umfrage zu den persoenlichen Daten nicht "
+                            + "(vollstaendig) ausgefuellt!");
                     noWarnings = false;
                 }
 
@@ -437,7 +437,7 @@ public class ImportFiles {
                 for (Team t : ImportFiles.teams) {
                     Student duplicate = t.getStudent(userName);
                     if (duplicate != null) {
-                        String errormsg = "Schüler:in befindet sich in mehreren Moodlegruppen! "
+                        String errormsg = "Schueler:in befindet sich in mehreren Moodlegruppen! "
                                 + duplicate.userName() + ": " + team.name() + ", " + t.name();
                         Log.append(errormsg);
                         reader.close();
@@ -515,7 +515,7 @@ public class ImportFiles {
             } else if (entry[Config.impStudGrade].contains("12")) {
                 student.grade(12);
             } else {
-                String errormsg = "Schüler:in " + name + " hat keine gültige Klassenstufe!";
+                String errormsg = "Schueler:in " + name + " hat keine gueltige Klassenstufe!";
                 System.err.println(errormsg);
                 Log.append(errormsg);
                 noWarnings = false;
@@ -528,7 +528,7 @@ public class ImportFiles {
             } else if (entry[Config.impStudSpecial].equals("sprachen")) {
                 student.special(SPECIALIZATION.SPRACHEN);
             } else {
-                String errormsg = "Schüler:in " + name + " hat keinen gültigen Zweig!";
+                String errormsg = "Schueler:in " + name + " hat keinen gueltigen Zweig!";
                 System.err.println(errormsg);
                 Log.append(errormsg);
                 noWarnings = false;
@@ -541,7 +541,7 @@ public class ImportFiles {
             } else if (entry[Config.impStudGender].equals("divers")) {
                 student.gender(GENDER.d);
             } else {
-                String errormsg = "Schüler:in " + name + " hat ein ungültiges Geschlecht!";
+                String errormsg = "Schueler:in " + name + " hat ein ungueltiges Geschlecht!";
                 System.err.println(errormsg);
                 Log.append(errormsg);
                 noWarnings = false;
@@ -582,7 +582,7 @@ public class ImportFiles {
                 countD++;
             } else {
                 s.gender(GENDER.d);
-                String errmsg = "Schüler " + s.userName() + " hat kein gültiges Geschlecht!";
+                String errmsg = "Schueler " + s.userName() + " hat kein gueltiges Geschlecht!";
                 System.err.println(errmsg);
                 Log.append(errmsg);
             }

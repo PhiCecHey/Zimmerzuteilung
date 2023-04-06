@@ -132,8 +132,8 @@ public class Gurobi {
         } catch (GRBException e) {
             System.out.println("Error code: " + e.getErrorCode() + ". "
                     + e.getMessage());
-            Log.append("Ein Fehler ist während der Berechnung aufgetreten.");
-            Gui.result.showResults.append("\n\nEin Fehler ist während der Berechnung aufgetreten.");
+            Log.append("Ein Fehler ist waehrend der Berechnung aufgetreten.");
+            Gui.result.showResults.append("\n\nEin Fehler ist waehrend der Berechnung aufgetreten.");
         }
         Gui.result.showResults.append("\nBerechnung beendet.");
     }
@@ -297,10 +297,10 @@ public class Gurobi {
                         || wish.room2() == null) {
                     if (!this.invalidTeam.contains(allocation.team())) {
                         System.err.println("Das Team " + allocation.team().name()
-                                + " hat keinen (vollständigen) Zimmerwunsch abgegeben!");
+                                + " hat keinen (vollstaendigen) Zimmerwunsch abgegeben!");
                         this.invalidTeam.add(allocation.team());
                         Log.append("Das Team " + allocation.team().name()
-                                + " hat keinen (vollständigen) Zimmerwunsch abgegeben!");
+                                + " hat keinen (vollstaendigen) Zimmerwunsch abgegeben!");
                     }
                 }
 
@@ -349,10 +349,10 @@ public class Gurobi {
                         || wish.room2() == null) {
                     if (!this.invalidTeam.contains(allocation.team())) {
                         System.err.println("Das Team " + allocation.team().name()
-                                + " hat keinen (vollständigen) Zimmerwunsch abgegeben!");
+                                + " hat keinen (vollstaendigen) Zimmerwunsch abgegeben!");
                         this.invalidTeam.add(allocation.team());
                         Log.append("Das Team " + allocation.team().name()
-                                + " hat keinen (vollständigen) Zimmerwunsch abgegeben!");
+                                + " hat keinen (vollstaendigen) Zimmerwunsch abgegeben!");
                     }
                 } else {
                     float score = 0;
@@ -453,7 +453,7 @@ public class Gurobi {
             System.err.println("Problem in function extractResults()");
             e.printStackTrace();
             Log.append(
-                    "Es konnte keine Zuteilung gefunden werden. Eine Zuteilung könnte nach Ändern der Parameter möglich sein.");
+                    "Es konnte keine Zuteilung gefunden werden. Eine Zuteilung koennte nach aendern der Parameter moeglich sein.");
         }
 
         if (worked) {
