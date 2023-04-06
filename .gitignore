@@ -24,3 +24,5 @@ bin
 
 *.log
 jre
+*.zip
+*.exe
