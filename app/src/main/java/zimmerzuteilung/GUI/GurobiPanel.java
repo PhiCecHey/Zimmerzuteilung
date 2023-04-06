@@ -191,9 +191,9 @@ public class GurobiPanel extends JPanel {
 
         if (this.respectRoomGenderPanel.radioPanel1.radio.isSelected()) {
             GurobiPanel.gurobiRules.add(Gurobi.RULES.respectRoomGender);
-            System.out.println("HIER0");
+            System.out.println("HIER muss selected");
         } else if (this.respectRoomGenderPanel.radioPanel2.radio.isSelected()) {
-            System.out.println("HIER1");
+            System.out.println("HIER möglichst selected");
             boolean worked = true;
             try {
                 Config.scoreGender = Float.parseFloat(this.respectRoomGenderPanel.field.getText());

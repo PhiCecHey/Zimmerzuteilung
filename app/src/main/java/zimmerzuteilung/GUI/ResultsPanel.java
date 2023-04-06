@@ -1,11 +1,9 @@
 package zimmerzuteilung.GUI;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -13,6 +11,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import gurobi.GRBException;
 import zimmerzuteilung.algorithms.Gurobi;
 import zimmerzuteilung.importsExports.ExportFiles;
 import zimmerzuteilung.importsExports.ImportFiles;
@@ -47,13 +46,14 @@ public class ResultsPanel extends JPanel {
     private void calcResult() {
         this.calcResults.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                showResults.setText("Berechnung gestartet...\n\n");
-                try {
-                    Gurobi g = new Gurobi(GurobiPanel.rules(), ImportFiles.buildings(), ImportFiles.teams());
-                    g.calculate();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                showResults.setText(
+                        "Falls die Berechnung nicht beendet wird, bitte überprüfen Sie Ihre Gurobi Optimizer "
+                                + "Installation und die dazugehörige Lizenz!\n"
+                                + "https://www.gurobi.com/downloads/gurobi-software/\n\n");
+                showResults.append("Berechnung gestartet...\n\n");
+
+                Gurobi g = new Gurobi(GurobiPanel.rules(), ImportFiles.buildings(), ImportFiles.teams());
+                g.calculate();
             }
         });
     }

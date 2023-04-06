@@ -1,5 +1,6 @@
 package zimmerzuteilung.algorithms;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -56,9 +57,7 @@ public class Gurobi {
         this.rules = r;
         this.teams = t;
 
-        for(var rule : this.rules){
-            System.out.println(r);
-        }
+        System.out.println(this.rules);
 
         for (Building building : this.buildings) {
             for (Room room : building.rooms()) {
@@ -78,8 +77,7 @@ public class Gurobi {
             this.model = new GRBModel(env);
             this.model.set(GRB.StringAttr.ModelName, "zimmerzuteilung");
         } catch (GRBException e) {
-            System.out.println("Error code: " + e.getErrorCode() + ". "
-                    + e.getMessage());
+            System.err.println("Error code: " + e.getErrorCode() + ". " + e.getMessage());
         }
     }
 
@@ -129,13 +127,16 @@ public class Gurobi {
             model.dispose();
             env.dispose();
 
+            System.out.println("FERTIG");
+
         } catch (GRBException e) {
             System.out.println("Error code: " + e.getErrorCode() + ". "
                     + e.getMessage());
             Log.append("Ein Fehler ist waehrend der Berechnung aufgetreten.");
             Gui.result.showResults.append("\n\nEin Fehler ist waehrend der Berechnung aufgetreten.");
+            model.dispose();
         }
-        Gui.result.showResults.append("\nBerechnung beendet.");
+        Gui.result.showResults.append("\n\nBerechnung beendet.\n\n");
     }
 
     // ---------------------------------------------------CONSTRAINTS---------------------------------------------------
@@ -164,11 +165,9 @@ public class Gurobi {
             this.respectReservationsAlternative(Config.scoreReservation);
         }
         if (this.rules.contains(Gurobi.RULES.respectRoomGender)) {
-            System.out.println("HIER2");
             this.respectRoomGender();
         } else {
             this.respectRoomGenderAlternative(Config.scoreGender);
-            System.out.println("hier");
         }
     }
 
@@ -251,8 +250,21 @@ public class Gurobi {
     }
 
     private void respectReservations() {
-        for (int r = 0; r < this.rooms.size(); ++r) {
-            this.rooms.get(r).capacity(0);
+        try {
+            GRBLinExpr expr;
+            for (int r = 0; r < this.rooms.size(); ++r) {
+                expr = new GRBLinExpr();
+                for (int t = 0; t < this.teams.size(); ++t) {
+                    Allocation alloc = this.allocations.get(r, t);
+                    if (alloc.room().reserved()) {
+                        expr.addTerm(1, alloc.grbVar());
+                    }
+                }
+                String st = "respectRoomReservation_" + String.valueOf(r);
+                this.model.addConstr(expr, GRB.EQUAL, 0, st);
+            }
+        } catch (GRBException e) {
+            System.out.println("Error code: " + e.getErrorCode() + ". " + e.getMessage());
         }
     }
 
@@ -261,8 +273,7 @@ public class Gurobi {
      * reserved for ninth graders.
      * 
      * @param res: importance of the reservation, higher value represents
-     *             higher
-     *             importance
+     *             higher importance
      */
     private void respectReservationsAlternative(final float res) {
         for (int r = 0; r < this.allocations.nRooms(); ++r) {
@@ -373,18 +384,19 @@ public class Gurobi {
     }
 
     private void respectRoomGender() {
+        System.out.println("HIER respectRoomGender");
         try {
             GRBLinExpr expr;
             for (int r = 0; r < this.rooms.size(); ++r) {
-                expr = new GRBLinExpr();
                 for (int t = 0; t < this.teams.size(); ++t) {
+                    expr = new GRBLinExpr();
                     Allocation alloc = allocations.get(r, t);
                     // if room and team gender matches: 1, else: 0
                     int genderMatches = (alloc.team().gender() == alloc.room().gender() ? 1 : 0);
-                    expr.addTerm(genderMatches, this.allocations.get(r, t).grbVar());
+                    expr.addTerm(genderMatches, alloc.grbVar());
+                    String st = "respectRoomGender_" + String.valueOf(r);
+                    this.model.addConstr(expr, GRB.EQUAL, 1, st);
                 }
-                String st = "respectRoomGender_" + String.valueOf(r);
-                this.model.addConstr(expr, GRB.EQUAL, 1, st);
             }
         } catch (GRBException e) {
             System.out.println("Error code: " + e.getErrorCode() + ". " + e.getMessage());
@@ -392,7 +404,7 @@ public class Gurobi {
     }
 
     private void respectRoomGenderAlternative(float scoreGender) {
-        System.out.println("HIER");
+        System.out.println("HIER respectRoomGenderAlternative");
         for (int r = 0; r < this.allocations.nRooms(); ++r) {
             for (int t = 0; t < this.allocations.nTeams(); ++t) {
                 Allocation allocation = this.allocations.get(r, t);
@@ -445,122 +457,128 @@ public class Gurobi {
 
     private boolean extractResults() {
         this.grbVars = this.getGRBVars();
-        boolean worked = true;
         try {
+            int optimstatus = model.get(GRB.IntAttr.Status);
+            if (optimstatus != GRB.OPTIMAL) {
+                System.out.println("Model infeasible.");
+                Log.append("\n\n\nEs konnte keine Zuteilung gefunden werden. Eine Zuteilung koennte nach Aenderung "
+                        + "der Parameter im Tab Gurobi moeglich sein.");
+                model.dispose();
+                env.dispose();
+                return false;
+            }
             this.results = this.model.get(GRB.DoubleAttr.X, grbVars);
         } catch (GRBException e) {
-            worked = false;
             System.err.println("Problem in function extractResults()");
             e.printStackTrace();
-            Log.append(
-                    "Es konnte keine Zuteilung gefunden werden. Eine Zuteilung koennte nach aendern der Parameter moeglich sein.");
+            return false;
         }
 
-        if (worked) {
-            for (int r = 0; r < this.rooms.size(); r++) {
-                for (int t = 0; t < this.teams.size(); t++) {
-                    if (this.results[r][t] != 0) {
-                        Team team = this.teams.get(t);
-                        Room room = this.rooms.get(r);
-                        try {
-                            boolean allocateRoom = team.allocateRoom(room);
-                            boolean allocateTeam = room.allocateTeam(team);
-                            if (allocateRoom == false) {
-                                throw new RoomOccupiedException("Team " + team.name() + " wurde bereits das Zimmer "
-                                        + room.officialRoomNumber() + " zugeordnet.");
+        for (int r = 0; r < this.rooms.size(); r++) {
+            for (int t = 0; t < this.teams.size(); t++) {
+                if (this.results[r][t] != 0) {
+                    Team team = this.teams.get(t);
+                    Room room = this.rooms.get(r);
+                    try {
+                        boolean allocateRoom = team.allocateRoom(room);
+                        boolean allocateTeam = room.allocateTeam(team);
+                        if (allocateRoom == false) {
+                            throw new RoomOccupiedException("Team " + team.name() + " wurde bereits das Zimmer "
+                                    + room.officialRoomNumber() + " zugeordnet.");
 
-                            }
-                            if (allocateTeam == false) {
-                                throw new RoomOccupiedException(
-                                        "Dem Zimmer " + room.officialRoomNumber() + " wurde bereits das Team "
-                                                + team.name() + " zugeordnet.");
-                            }
-                            if (allocateRoom && allocateTeam) {
-                                double score = this.allocations.get(r, t).score();
-                                score = DoubleRounder.round(score, 1);
-                                team.score((float) score);
-                            }
-                        } catch (RoomOccupiedException e) {
-                            e.printStackTrace();
                         }
+                        if (allocateTeam == false) {
+                            throw new RoomOccupiedException(
+                                    "Dem Zimmer " + room.officialRoomNumber() + " wurde bereits das Team "
+                                            + team.name() + " zugeordnet.");
+                        }
+                        if (allocateRoom && allocateTeam) {
+                            double score = this.allocations.get(r, t).score();
+                            score = DoubleRounder.round(score, 1);
+                            team.score((float) score);
+                        }
+                    } catch (RoomOccupiedException e) {
+                        e.printStackTrace();
                     }
                 }
             }
         }
-        return worked;
+        return true;
     }
 
     private String print(boolean all, boolean worked) {
         String print = Log.log() + "\n\n\n";
-        if (worked) {
-            if (all) {
-                print += "\n-------------------- SCORE MATRIX --------------------\n";
-            }
+        if (!worked) {
+            return print;
+        }
 
-            // maximum score:
-            double max = 0;
-            for (int t = 0; t < this.teams.size(); ++t) {
-                double m = 0;
-                for (int r = 0; r < this.rooms.size(); ++r) {
-                    if (m < this.allocations.get(r, t).score()) {
-                        m = this.allocations.get(r, t).score();
-                    }
-                }
-                max += m;
-            }
+        if (all) {
+            print += "\n-------------------- SCORE MATRIX --------------------\n";
+        }
 
-            print += "Maximum score: \t" + max;
-
-            // current score:
-            double cur = 0;
-            for (int r = 0; r < this.rooms.size(); r++) {
-                for (int t = 0; t < this.teams.size(); t++) {
-                    if (this.results[r][t] == 1) {
-                        cur += this.allocations.get(r, t).score();
-                    }
+        // maximum score:
+        double max = 0;
+        for (int t = 0; t < this.teams.size(); ++t) {
+            double m = 0;
+            for (int r = 0; r < this.rooms.size(); ++r) {
+                if (m < this.allocations.get(r, t).score()) {
+                    m = this.allocations.get(r, t).score();
                 }
             }
-            print += "\nCurrent score: \t\t" + cur;
-            print += "\nDifference: \t\t" + Math.abs(max - cur) + "\n\n";
+            max += m;
+        }
 
-            if (max == 0 && cur == 0) {
-                return null;
-            }
+        print += "Maximum score: \t" + max;
 
-            String teamNames = "";
+        // current score:
+        double cur = 0;
+        for (int r = 0; r < this.rooms.size(); r++) {
             for (int t = 0; t < this.teams.size(); t++) {
-                teamNames += this.teams.get(t).name() + "\t";
-            }
-
-            // score matrix:
-            if (all) {
-                print += "\n\n--------------------- Score matrix: ---------------------";
-                print += "\n" + teamNames + "ZimmerNr";
-                for (int r = 0; r < this.rooms.size(); ++r) {
-                    String str = "";
-                    for (int s = 0; s < this.teams.size(); ++s) {
-                        str += DoubleRounder.round(this.allocations.get(r, s).score(), 1) + "\t";
-                    }
-                    print += "\n" + str + this.rooms.get(r).officialRoomNumber();
+                if (this.results[r][t] == 1) {
+                    cur += this.allocations.get(r, t).score();
                 }
-
-                print += "\n\n--------------------- ALLOCATION ---------------------";
             }
+        }
+        print += "\nCurrent score: \t\t" + cur;
+        print += "\nDifference: \t\t" + Math.abs(max - cur) + "\n\n";
 
+        if (max == 0 && cur == 0) {
+            return null;
+        }
+
+        String teamNames = "";
+        for (int t = 0; t < this.teams.size(); t++) {
+            teamNames += this.teams.get(t).name() + "\t";
+        }
+
+        // score matrix:
+        if (all) {
+            print += "\n\n--------------------- Score matrix: ---------------------";
             print += "\n" + teamNames + "ZimmerNr";
+            for (int r = 0; r < this.rooms.size(); ++r) {
+                String str = "";
+                for (int s = 0; s < this.teams.size(); ++s) {
+                    str += DoubleRounder.round(this.allocations.get(r, s).score(), 1) + "\t";
+                }
+                print += "\n" + str + this.rooms.get(r).officialRoomNumber();
+            }
 
-            for (int r = 0; r < this.rooms.size(); r++) {
-                String allocated = "";
-                for (int t = 0; t < this.teams.size(); t++) {
-                    if (this.results[r][t] == 0) {
-                        allocated += " - \t";
-                    } else {
-                        allocated += " # \t";
-                    }
+            print += "\n\n--------------------- ALLOCATION ---------------------";
+        }
+
+        print += "\n" + teamNames + "ZimmerNr";
+
+        for (int r = 0; r < this.rooms.size(); r++) {
+            String allocated = "";
+            for (int t = 0; t < this.teams.size(); t++) {
+                if (this.results[r][t] == 0) {
+                    allocated += " - \t";
+                } else {
+                    allocated += " # \t";
                 }
-                if (allocated.contains("#")) {
-                    print += "\n" + allocated + " " + this.rooms.get(r).officialRoomNumber();
-                }
+            }
+            if (allocated.contains("#")) {
+                print += "\n" + allocated + " " + this.rooms.get(r).officialRoomNumber();
             }
         }
         return print;
