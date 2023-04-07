@@ -1,6 +1,7 @@
 package zimmerzuteilung.GUI;
 
 import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -17,7 +18,7 @@ class GradePanel extends JPanel {
     JPanel twelvePanel, elevenPanel, tenPanel;
     JTextField twelveField, elevenField, tenField;
 
-    GradePanel(boolean check) {
+    GradePanel(JCheckBox box) {
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         // this.setMaximumSize(dimPanel);
 
@@ -47,10 +48,9 @@ class GradePanel extends JPanel {
         this.elevenField.setText(Float.toString(Config.scoreEleven));
         this.tenField.setText(Float.toString(Config.scoreTen));
 
-        if (check) {
-            CheckUserInput.checkForPositive(this.elevenField);
-            CheckUserInput.checkForPositive(this.twelveField);
-            CheckUserInput.checkForPositive(this.tenField);
-        }
+        CheckUserInput.checkForPositive(box, this.elevenField);
+        CheckUserInput.checkForPositive(box, this.twelveField);
+        CheckUserInput.checkForPositive(box, this.tenField);
+
     }
 }

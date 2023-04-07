@@ -1,6 +1,7 @@
 package zimmerzuteilung.GUI;
 
 import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 
 import java.awt.Component;
@@ -16,7 +17,7 @@ class WishPanel extends JPanel {
 
     JTextField b1Field, b2Field, r1Field, r2Field;
 
-    WishPanel(boolean check) {
+    WishPanel(JCheckBox box) {
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
         this.b1Field = new JTextField();
@@ -47,12 +48,11 @@ class WishPanel extends JPanel {
                 new Component[] { new Filler(50, Gui.row.height), new JLabel("Zweitwunsch Internat Bonus: "), b2Field },
                 "row", dimPanel));
 
-        if (check) {
-            CheckUserInput.checkForPositive(this.b1Field);
-            CheckUserInput.checkForPositive(this.r1Field);
-            CheckUserInput.checkForPositive(this.r2Field);
-            CheckUserInput.checkForPositive(this.b2Field);
-        }
+        CheckUserInput.checkForPositive(box, this.b1Field);
+        CheckUserInput.checkForPositive(box, this.r1Field);
+        CheckUserInput.checkForPositive(box, this.r2Field);
+        CheckUserInput.checkForPositive(box, this.b2Field);
+
     }
 
 }

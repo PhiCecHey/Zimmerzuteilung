@@ -42,7 +42,7 @@ public class CheckUserInput {
         });
     }
 
-    public static void checkForFloat(JTextField textField) {
+    public static void checkForFloat(JCheckBox box, JTextField textField) {
         // Listen for changes in the text
         textField.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
@@ -58,22 +58,24 @@ public class CheckUserInput {
             }
 
             public void warn() {
-                boolean worked = true;
-                try {
-                    Float.parseFloat(textField.getText());
-                } catch (NumberFormatException e) {
-                    worked = false;
-                }
-                if (worked) {
-                    textField.setBackground(Colors.blueTransp);
-                } else {
-                    textField.setBackground(Colors.redTransp);
+                if (box.isSelected()) {
+                    boolean worked = true;
+                    try {
+                        Float.parseFloat(textField.getText());
+                    } catch (NumberFormatException e) {
+                        worked = false;
+                    }
+                    if (worked) {
+                        textField.setBackground(Colors.blueTransp);
+                    } else {
+                        textField.setBackground(Colors.redTransp);
+                    }
                 }
             }
         });
     }
 
-    public static void checkForPositive(JTextField textField) {
+    public static void checkForPositive(JCheckBox box, JTextField textField) {
         // Listen for changes in the text
         textField.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
@@ -89,27 +91,29 @@ public class CheckUserInput {
             }
 
             public void warn() {
-                float value = -1;
-                boolean worked = true;
-                try {
-                    value = Float.parseFloat(textField.getText());
-                } catch (NumberFormatException e) {
-                    worked = false;
-                }
-                if (worked) {
-                    if (value >= 0) {
-                        textField.setBackground(Colors.blueTransp);
-                    } else {
-                        textField.setBackground(Colors.yellowTransp);
+                if (box.isSelected()) {
+                    float value = -1;
+                    boolean worked = true;
+                    try {
+                        value = Float.parseFloat(textField.getText());
+                    } catch (NumberFormatException e) {
+                        worked = false;
                     }
-                } else {
-                    textField.setBackground(Colors.redTransp);
+                    if (worked) {
+                        if (value >= 0) {
+                            textField.setBackground(Colors.blueTransp);
+                        } else {
+                            textField.setBackground(Colors.yellowTransp);
+                        }
+                    } else {
+                        textField.setBackground(Colors.redTransp);
+                    }
                 }
             }
         });
     }
 
-    public static void checkForNegative(JTextField textField) {
+    public static void checkForNegative(JCheckBox box, JTextField textField) {
         // Listen for changes in the text
         textField.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
@@ -125,21 +129,61 @@ public class CheckUserInput {
             }
 
             public void warn() {
-                float value = 1;
-                boolean worked = true;
-                try {
-                    value = Float.parseFloat(textField.getText());
-                } catch (NumberFormatException e) {
-                    worked = false;
-                }
-                if (worked) {
-                    if (value < 0) {
-                        textField.setBackground(Colors.blueTransp);
-                    } else {
-                        textField.setBackground(Colors.yellowTransp);
+                if (box.isSelected()) {
+                    float value = 1;
+                    boolean worked = true;
+                    try {
+                        value = Float.parseFloat(textField.getText());
+                    } catch (NumberFormatException e) {
+                        worked = false;
                     }
-                } else {
-                    textField.setBackground(Colors.redTransp);
+                    if (worked) {
+                        if (value < 0) {
+                            textField.setBackground(Colors.blueTransp);
+                        } else {
+                            textField.setBackground(Colors.yellowTransp);
+                        }
+                    } else {
+                        textField.setBackground(Colors.redTransp);
+                    }
+                }
+            }
+        });
+    }
+
+    public static void checkForNegative(JRadioButton box, JTextField textField) {
+        // Listen for changes in the text
+        textField.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                warn();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                warn();
+            }
+
+            public void insertUpdate(DocumentEvent e) {
+                warn();
+            }
+
+            public void warn() {
+                if (box.isSelected()) {
+                    float value = 1;
+                    boolean worked = true;
+                    try {
+                        value = Float.parseFloat(textField.getText());
+                    } catch (NumberFormatException e) {
+                        worked = false;
+                    }
+                    if (worked) {
+                        if (value < 0) {
+                            textField.setBackground(Colors.blueTransp);
+                        } else {
+                            textField.setBackground(Colors.yellowTransp);
+                        }
+                    } else {
+                        textField.setBackground(Colors.redTransp);
+                    }
                 }
             }
         });
@@ -151,11 +195,13 @@ public class CheckUserInput {
             public void itemStateChanged(ItemEvent arg0) {
                 if (box.isSelected()) {
                     for (JTextField field : fields) {
-                        field.setBackground(Color.WHITE);
+                        field.setBackground(field.getForeground());
+                        field.setForeground(Color.BLACK);
                         field.setEditable(true);
                     }
                 } else {
                     for (JTextField field : fields) {
+                        field.setForeground(field.getBackground());
                         field.setBackground(Colors.greyTransp);
                         field.setEditable(false);
                     }
@@ -173,11 +219,11 @@ public class CheckUserInput {
                         field.setEditable(true);
                         field.setBackground(Colors.blueTransp);
                         if (FloatPosNeg.toLowerCase().contains("neg")) {
-                            CheckUserInput.checkForNegative(field);
+                            CheckUserInput.checkForNegative(box, field);
                         } else if (FloatPosNeg.toLowerCase().contains("pos")) {
-                            CheckUserInput.checkForPositive(field);
+                            CheckUserInput.checkForPositive(box, field);
                         } else {
-                            CheckUserInput.checkForFloat(field);
+                            CheckUserInput.checkForFloat(box, field);
                         }
                     }
                 } else {

@@ -28,9 +28,9 @@ public class MustOrShouldPanel extends JPanel {
         this.field = new JTextField(String.valueOf(value));
         this.field.setMaximumSize(new Dimension(150, Gui.row.height));
         field.setBackground(Colors.greyTransp);
-        CheckUserInput.checkForNegative(field);
+        CheckUserInput.checkForNegative(this.radioPanel2.radio, field);
         field.setEditable(false);
-        CheckUserInput.checkForNegative(this.field);
+        CheckUserInput.checkForNegative(this.radioPanel2.radio, this.field);
         this.add(new GroupPanel(
                 new Component[] { new Filler(150, Gui.row.height), new JLabel(description3), this.field,
                         new Filler(Gui.row.width, Gui.row.height) },

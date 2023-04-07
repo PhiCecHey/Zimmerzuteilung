@@ -90,18 +90,18 @@ public class GurobiPanel extends JPanel {
         topLeft.add(new JLabel("             "));
 
         this.respectWishPanel = new CheckBoxPanel("Zimmerwuensche respektieren", true);
-        this.wishPanel = new WishPanel(false);
+        this.wishPanel = new WishPanel(this.respectWishPanel.box);
         CheckUserInput.checkSelected(this.respectWishPanel.box, new JTextField[] { this.wishPanel.b1Field,
-                this.wishPanel.r1Field, this.wishPanel.r2Field, this.wishPanel.b2Field }, "pos");
+                this.wishPanel.r1Field, this.wishPanel.r2Field, this.wishPanel.b2Field });
         topLeft.add(this.respectWishPanel);
         topLeft.add(this.wishPanel);
 
         topLeft.add(new JLabel("             "));
 
         this.respectGradePrivPanel = new CheckBoxPanel("12er, 11er, 10er Privileg respektieren", true);
-        this.gradePanel = new GradePanel(false);
+        this.gradePanel = new GradePanel(this.respectGradePrivPanel.box);
         CheckUserInput.checkSelected(this.respectGradePrivPanel.box, new JTextField[] { this.gradePanel.tenField,
-                this.gradePanel.elevenField, this.gradePanel.twelveField }, "pos");
+                this.gradePanel.elevenField, this.gradePanel.twelveField });
         topLeft.add(this.respectGradePrivPanel);
         topLeft.add(this.gradePanel);
 
@@ -115,26 +115,32 @@ public class GurobiPanel extends JPanel {
         this.randomField.setBackground(Colors.greyTransp);
         this.randomField.setMaximumSize(new Dimension(150, Gui.row.height));
         CheckUserInput.checkSelected(this.randomPanel.box, new JTextField[] { this.randomField });
-        CheckUserInput.checkForPositive(this.randomField);
+        CheckUserInput.checkForPositive(this.randomPanel.box, this.randomField);
         topLeft.add(new GroupPanel(new Component[] { this.randomPanel, this.randomField, new Filler(Gui.row.width, 1) },
                 "row"));
     }
 
     void initBottom(GroupPanel bottom) {
         bottom.setLayout(new BoxLayout(bottom, BoxLayout.PAGE_AXIS));
-
-        this.area = new JTextArea("\n\n");
-        this.area.setMaximumSize(new Dimension(Gui.row.width, 200));
-        area.setEditable(false);
-        bottom.add(this.area);
+        bottom.add(new JLabel("   "));
+        bottom.add(new JLabel("   "));
 
         this.save = new JButton("anwenden");
+        this.save.setBackground(Colors.blueTransp);
         this.save.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 determineRules();
+                save.setBackground(Colors.greenTransp);
             }
         });
-        bottom.add(this.save);
+        bottom.add(new GroupPanel(new Component[] { new Filler(Gui.row.width / 2, this.save.getHeight()), this.save,
+                new Filler(Gui.row.width / 2, this.save.getHeight()) }, "row"));
+
+        bottom.add(new Filler(Gui.row.width, 2 * Gui.row.height));
+
+        this.area = new JTextArea("\n\n");
+        area.setEditable(false);
+        bottom.add(this.area);
     }
 
     private void determineRules() {
@@ -198,9 +204,7 @@ public class GurobiPanel extends JPanel {
 
         if (this.respectRoomGenderPanel.radioPanel1.radio.isSelected()) {
             GurobiPanel.gurobiRules.add(Gurobi.RULES.respectRoomGender);
-            System.out.println("HIER muss selected");
         } else if (this.respectRoomGenderPanel.radioPanel2.radio.isSelected()) {
-            System.out.println("HIER möglichst selected");
             boolean worked = true;
             try {
                 Config.scoreGender = Float.parseFloat(this.respectRoomGenderPanel.field.getText());
@@ -216,34 +220,55 @@ public class GurobiPanel extends JPanel {
 
         if (this.respectWishPanel.box.isSelected()) {
             GurobiPanel.gurobiRules.add(Gurobi.RULES.respectWish);
-            GurobiPanel.checkUserInput(this.wishPanel.b1Field, "b1");
-            GurobiPanel.checkUserInput(this.wishPanel.r1Field, "r1");
-            GurobiPanel.checkUserInput(this.wishPanel.r2Field, "r2");
-            GurobiPanel.checkUserInput(this.wishPanel.b2Field, "b2");
-        } else {
+            boolean worked = GurobiPanel.checkUserInput(this.wishPanel.b1Field, "b1");
+            if (!worked) {
+                this.area.append("Erstwusnsch Internat Bonus: Bitte eine positive Zahl eintragen!\n");
+            }
+            worked = GurobiPanel.checkUserInput(this.wishPanel.r1Field, "r1");
+            if (!worked) {
+                this.area.append("Erstwusnsch Zimmer Bonus: Bitte eine positive Zahl eintragen!\n");
+            }
+            worked = GurobiPanel.checkUserInput(this.wishPanel.r2Field, "r2");
+            if (!worked) {
+                this.area.append("Zweitwunsch Zimmer Bonus: Bitte eine positive Zahl eintragen!\n");
+            }
+            worked = GurobiPanel.checkUserInput(this.wishPanel.b2Field, "b2");
+            if (!worked) {
+                this.area.append("Zweitwunsch Internat Bonus: Bitte eine positive Zahl eintragen!\n");
+            }
+        } /*else {
             this.wishPanel.b1Field.setBackground(Colors.yellowTransp);
             this.wishPanel.r1Field.setBackground(Colors.yellowTransp);
             this.wishPanel.r2Field.setBackground(Colors.yellowTransp);
             this.wishPanel.b2Field.setBackground(Colors.yellowTransp);
-        }
+        }*/
 
         if (this.respectGradePrivPanel.box.isSelected()) {
             GurobiPanel.gurobiRules.add(Gurobi.RULES.respectGradePrivilege);
-            GurobiPanel.checkUserInput(this.gradePanel.twelveField, "12");
-            GurobiPanel.checkUserInput(this.gradePanel.elevenField, "11");
-            GurobiPanel.checkUserInput(this.gradePanel.tenField, "10");
-        } else {
+            boolean worked = GurobiPanel.checkUserInput(this.gradePanel.twelveField, "12");
+            if (!worked) {
+                this.area.append("12er Privileg: Bitte eine positive Zahl eintragen!\n");
+            }
+            worked = GurobiPanel.checkUserInput(this.gradePanel.elevenField, "11");
+            if (!worked) {
+                this.area.append("11er Privileg: Bitte eine positive Zahl eintragen!\n");
+            }
+            worked = GurobiPanel.checkUserInput(this.gradePanel.tenField, "10");
+            if (!worked) {
+                this.area.append("10er Privileg: Bitte eine positive Zahl eintragen!\n");
+            }
+        } /*else {
             this.gradePanel.twelveField.setBackground(Colors.yellowTransp);
             this.gradePanel.elevenField.setBackground(Colors.yellowTransp);
             this.gradePanel.tenField.setBackground(Colors.yellowTransp);
-        }
+        }*/
     }
 
     public static ArrayList<Gurobi.RULES> rules() {
         return GurobiPanel.gurobiRules;
     }
 
-    private static byte checkUserInput(JTextField field, String configName) {
+    private static boolean checkUserInput(JTextField field, String configName) {
         byte worked = 0;
         float config = 0;
         try {
@@ -278,6 +303,9 @@ public class GurobiPanel extends JPanel {
                 System.out.println("Problem in function checkUserInput()");
             }
         }
-        return worked;
+        if (worked == 1) {
+            return true;
+        }
+        return false;
     }
 }
