@@ -241,7 +241,7 @@ public class CheckUserInput {
             @Override
             public void itemStateChanged(ItemEvent arg0) {
                 if (radio.isSelected()) {
-                    field.setBackground(Colors.transp);
+                    field.setBackground(Color.WHITE);
                     field.setEditable(true);
                 } else {
                     field.setEditable(false);

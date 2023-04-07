@@ -107,12 +107,12 @@ public class GurobiPanel extends JPanel {
 
         topLeft.add(new JLabel("             "));
 
-        this.randomPanel = new CheckBoxPanel("Zufall: ", true);
+        this.randomPanel = new CheckBoxPanel("Extra Zufall: ", true);
         this.randomPanel.setMaximumSize(this.randomPanel.getMinimumSize());
-        this.randomPanel.box.setSelected(false);
+        // this.randomPanel.box.setSelected(false);
         this.randomField = new JTextField(Float.toString(Config.scoreRandom));
-        this.randomField.setEditable(false);
-        this.randomField.setBackground(Colors.greyTransp);
+        // this.randomField.setEditable(false);
+        // this.randomField.setBackground(Colors.greyTransp);
         this.randomField.setMaximumSize(new Dimension(150, Gui.row.height));
         CheckUserInput.checkSelected(this.randomPanel.box, new JTextField[] { this.randomField });
         CheckUserInput.checkForPositive(this.randomPanel.box, this.randomField);
@@ -236,12 +236,14 @@ public class GurobiPanel extends JPanel {
             if (!worked) {
                 this.area.append("Zweitwunsch Internat Bonus: Bitte eine positive Zahl eintragen!\n");
             }
-        } /*else {
-            this.wishPanel.b1Field.setBackground(Colors.yellowTransp);
-            this.wishPanel.r1Field.setBackground(Colors.yellowTransp);
-            this.wishPanel.r2Field.setBackground(Colors.yellowTransp);
-            this.wishPanel.b2Field.setBackground(Colors.yellowTransp);
-        }*/
+        } /*
+           * else {
+           * this.wishPanel.b1Field.setBackground(Colors.yellowTransp);
+           * this.wishPanel.r1Field.setBackground(Colors.yellowTransp);
+           * this.wishPanel.r2Field.setBackground(Colors.yellowTransp);
+           * this.wishPanel.b2Field.setBackground(Colors.yellowTransp);
+           * }
+           */
 
         if (this.respectGradePrivPanel.box.isSelected()) {
             GurobiPanel.gurobiRules.add(Gurobi.RULES.respectGradePrivilege);
@@ -257,11 +259,13 @@ public class GurobiPanel extends JPanel {
             if (!worked) {
                 this.area.append("10er Privileg: Bitte eine positive Zahl eintragen!\n");
             }
-        } /*else {
-            this.gradePanel.twelveField.setBackground(Colors.yellowTransp);
-            this.gradePanel.elevenField.setBackground(Colors.yellowTransp);
-            this.gradePanel.tenField.setBackground(Colors.yellowTransp);
-        }*/
+        } /*
+           * else {
+           * this.gradePanel.twelveField.setBackground(Colors.yellowTransp);
+           * this.gradePanel.elevenField.setBackground(Colors.yellowTransp);
+           * this.gradePanel.tenField.setBackground(Colors.yellowTransp);
+           * }
+           */
     }
 
     public static ArrayList<Gurobi.RULES> rules() {

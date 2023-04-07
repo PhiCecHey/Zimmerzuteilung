@@ -383,7 +383,6 @@ public class Gurobi {
     }
 
     private void respectRoomGender() {
-        System.out.println("HIER respectRoomGender");
         try {
             GRBLinExpr expr;
             for (int r = 0; r < this.rooms.size(); ++r) {
@@ -403,7 +402,6 @@ public class Gurobi {
     }
 
     private void respectRoomGenderAlternative(float scoreGender) {
-        System.out.println("HIER respectRoomGenderAlternative");
         for (int r = 0; r < this.allocations.nRooms(); ++r) {
             for (int t = 0; t < this.allocations.nTeams(); ++t) {
                 Allocation allocation = this.allocations.get(r, t);
