@@ -51,7 +51,6 @@ public class GurobiPanel extends JPanel {
         descript3 = "Malus fuer nicht reservierte Zimmer: ";
         value = Config.scoreReservation;
         this.respectResPanel = new MustOrShouldPanel(heading, descript1, descript2, descript3, value);
-
         topRight.add(this.respectResPanel);
 
         topRight.add(new JLabel("       "));
@@ -91,15 +90,19 @@ public class GurobiPanel extends JPanel {
         topLeft.add(new JLabel("             "));
 
         this.respectWishPanel = new CheckBoxPanel("Zimmerwuensche respektieren", true);
-        topLeft.add(this.respectWishPanel);
         this.wishPanel = new WishPanel();
+        CheckUserInput.checkSelected(this.respectWishPanel.box, new JTextField[] { this.wishPanel.b1Field,
+                this.wishPanel.r1Field, this.wishPanel.r2Field, this.wishPanel.b2Field });
+        topLeft.add(this.respectWishPanel);
         topLeft.add(this.wishPanel);
 
         topLeft.add(new JLabel("             "));
 
         this.respectGradePrivPanel = new CheckBoxPanel("12er, 11er, 10er Privileg respektieren", true);
-        topLeft.add(this.respectGradePrivPanel);
         this.gradePanel = new GradePanel();
+        CheckUserInput.checkSelected(this.respectGradePrivPanel.box, new JTextField[] { this.gradePanel.tenField,
+                this.gradePanel.elevenField, this.gradePanel.twelveField });
+        topLeft.add(this.respectGradePrivPanel);
         topLeft.add(this.gradePanel);
 
         topLeft.add(new JLabel("             "));
@@ -108,7 +111,10 @@ public class GurobiPanel extends JPanel {
         this.randomPanel.setMaximumSize(this.randomPanel.getMinimumSize());
         this.randomPanel.box.setSelected(false);
         this.randomField = new JTextField(Float.toString(Config.scoreRandom));
+        this.randomField.setEditable(false);
+        this.randomField.setBackground(Colors.greyTransp);
         this.randomField.setMaximumSize(new Dimension(150, Gui.row.height));
+        CheckUserInput.checkSelected(this.randomPanel.box, new JTextField[] { this.randomField });
         CheckUserInput.checkForPositive(this.randomField);
         topLeft.add(new GroupPanel(new Component[] { this.randomPanel, this.randomField, new Filler(Gui.row.width, 1) },
                 "row"));
@@ -134,7 +140,7 @@ public class GurobiPanel extends JPanel {
     private void determineRules() {
         this.area.setText("");
         GurobiPanel.gurobiRules.clear();
-        
+
         if (this.oneRoomPerTeam.box.isSelected()) {
             GurobiPanel.gurobiRules.add(Gurobi.RULES.oneRoomPerTeam);
         }
@@ -151,6 +157,7 @@ public class GurobiPanel extends JPanel {
                 worked = false;
             }
             if (worked) {
+                GurobiPanel.gurobiRules.add(Gurobi.RULES.addExtraRandomness);
                 this.randomField.setBackground(Colors.greenTransp);
             } else {
                 this.area.append("Zufall: Bitte eine positive Zahl eintragen!\n");

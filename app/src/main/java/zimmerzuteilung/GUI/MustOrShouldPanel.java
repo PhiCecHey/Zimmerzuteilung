@@ -2,14 +2,10 @@ package zimmerzuteilung.GUI;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 public class MustOrShouldPanel extends JPanel {
@@ -44,22 +40,6 @@ public class MustOrShouldPanel extends JPanel {
         bg.add(this.radioPanel1.radio);
         bg.add(this.radioPanel2.radio);
         
-        MustOrShouldPanel.radioListener(radioPanel2.radio, field);
-    }
-
-    static void radioListener(JRadioButton radio2, JTextField field) {
-        radio2.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent arg0) {
-                if (radio2.isSelected()) {
-                    field.setBackground(Colors.transp);
-                    field.setEditable(true);
-                } else {
-                    field.setEditable(false);
-                    field.setBackground(Colors.greyTransp);
-                }
-            }
-
-        });
+        CheckUserInput.checkSelected(radioPanel2.radio, field);
     }
 }

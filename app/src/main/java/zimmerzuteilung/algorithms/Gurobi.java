@@ -1,6 +1,5 @@
 package zimmerzuteilung.algorithms;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -29,7 +28,7 @@ public class Gurobi {
         // constraints
         oneRoomPerTeam, oneTeamPerRoom, maxStudentsPerRoom,
         // other rules
-        respectWish, respectReservations, respectGradePrivilege, respectRoomGender;
+        respectWish, respectReservations, respectGradePrivilege, respectRoomGender, addExtraRandomness;
     }
 
     private ArrayList<Gurobi.RULES> rules;
@@ -100,7 +99,7 @@ public class Gurobi {
 
             // ------------------------------------------------OBJECTIVE------------------------------------------------
 
-            this.objective = this.calculateObjectiveLinExpr(0.1, 1);
+            this.objective = this.calculateObjectiveLinExpr(0.1, 1, this.rules.contains(Gurobi.RULES.addExtraRandomness));
             this.model.setObjective(this.objective, GRB.MAXIMIZE);
 
             // -------------------------------------------------OPTIMIZE------------------------------------------------
@@ -440,11 +439,16 @@ public class Gurobi {
      * @param max
      * @return
      */
-    private GRBLinExpr calculateObjectiveLinExpr(final double min, final double max) {
+    private GRBLinExpr calculateObjectiveLinExpr(final double min, final double max, boolean addExtraRandomness) {
         GRBLinExpr objective = new GRBLinExpr();
         for (int r = 0; r < this.allocations.nRooms(); ++r) {
             for (int t = 0; t < this.allocations.nTeams(); ++t) {
-                double random = ThreadLocalRandom.current().nextDouble(min, max + Config.scoreRandom);
+                double random;
+                if (addExtraRandomness) {
+                    random = ThreadLocalRandom.current().nextDouble(min, max + Config.scoreRandom);
+                } else {
+                    random = ThreadLocalRandom.current().nextDouble(min, max);
+                }
                 Allocation currentAlloc = this.allocations.get(r, t);
                 this.allocations.get(r, t).score(currentAlloc.score() + random);
                 objective.addTerm(currentAlloc.score(), currentAlloc.grbVar());
