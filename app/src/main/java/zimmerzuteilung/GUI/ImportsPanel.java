@@ -10,10 +10,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
 import zimmerzuteilung.Log;
 import zimmerzuteilung.importsExports.ImportFiles;
 

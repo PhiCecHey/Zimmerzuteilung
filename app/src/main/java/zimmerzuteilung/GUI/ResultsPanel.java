@@ -11,7 +11,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import gurobi.GRBException;
 import zimmerzuteilung.algorithms.Gurobi;
 import zimmerzuteilung.importsExports.ExportFiles;
 import zimmerzuteilung.importsExports.ImportFiles;

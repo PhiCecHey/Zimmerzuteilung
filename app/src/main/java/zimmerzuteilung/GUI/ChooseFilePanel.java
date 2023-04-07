@@ -3,7 +3,6 @@ package zimmerzuteilung.GUI;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

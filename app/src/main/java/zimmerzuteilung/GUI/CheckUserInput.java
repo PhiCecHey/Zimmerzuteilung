@@ -146,9 +146,9 @@ public class CheckUserInput {
     }
 
     public static void checkSelected(JCheckBox box, JTextField[] fields) {
-        /*box.addActionListener(new ActionListener() {
+        box.addItemListener(new ItemListener() {
             @Override
-            public void actionPerformed(ActionEvent arg0) {
+            public void itemStateChanged(ItemEvent arg0) {
                 if (box.isSelected()) {
                     for (JTextField field : fields) {
                         field.setBackground(Color.WHITE);
@@ -161,15 +161,24 @@ public class CheckUserInput {
                     }
                 }
             }
-        });*/
+        });
+    }
 
+    public static void checkSelected(JCheckBox box, JTextField[] fields, String FloatPosNeg) {
         box.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent arg0) {
                 if (box.isSelected()) {
                     for (JTextField field : fields) {
-                        field.setBackground(Color.WHITE);
                         field.setEditable(true);
+                        field.setBackground(Colors.blueTransp);
+                        if (FloatPosNeg.toLowerCase().contains("neg")) {
+                            CheckUserInput.checkForNegative(field);
+                        } else if (FloatPosNeg.toLowerCase().contains("pos")) {
+                            CheckUserInput.checkForPositive(field);
+                        } else {
+                            CheckUserInput.checkForFloat(field);
+                        }
                     }
                 } else {
                     for (JTextField field : fields) {

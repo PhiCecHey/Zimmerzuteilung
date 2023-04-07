@@ -262,10 +262,10 @@ public class ImportFiles {
             throws IOException, IllegalArgumentException, BuildingDoesNotExist, RoomDoesNotExist, TeamDoesNotExist {
         boolean noWarnings = true;
         BufferedReader reader = new BufferedReader(new FileReader(csv));
-        int lineNum = 1;
+        //int lineNum = 1;
         String line = reader.readLine();
         while ((line = reader.readLine()) != null) {
-            lineNum++;
+            //lineNum++;
             String[] entry;
             try {
                 entry = ImportFiles.splitOnComma(line);
@@ -383,12 +383,12 @@ public class ImportFiles {
             throws IOException, IllegalArgumentException, StudentInSeveralMoodleGroups {
         boolean noWarnings = true;
         BufferedReader reader = new BufferedReader(new FileReader(csv));
-        int lineNum = 2;
+        //int lineNum = 2;
         String line = reader.readLine();
         line = reader.readLine(); // skip heading
 
         while ((line = reader.readLine()) != null) {
-            lineNum++;
+            //lineNum++;
             String[] entry;
             try {
                 entry = ImportFiles.splitOnComma(line);
@@ -471,10 +471,10 @@ public class ImportFiles {
     public static boolean importStudents(File csv) throws FileNotFoundException, IOException {
         boolean noWarnings = true;
         BufferedReader reader = new BufferedReader(new FileReader(csv));
-        int lineNum = 1;
+        //int lineNum = 1;
         String line = reader.readLine(); // skip heading
         while ((line = reader.readLine()) != null) {
-            lineNum++;
+            //lineNum++;
             String[] entry;
             try {
                 entry = ImportFiles.splitOnComma(line);

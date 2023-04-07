@@ -90,18 +90,18 @@ public class GurobiPanel extends JPanel {
         topLeft.add(new JLabel("             "));
 
         this.respectWishPanel = new CheckBoxPanel("Zimmerwuensche respektieren", true);
-        this.wishPanel = new WishPanel();
+        this.wishPanel = new WishPanel(false);
         CheckUserInput.checkSelected(this.respectWishPanel.box, new JTextField[] { this.wishPanel.b1Field,
-                this.wishPanel.r1Field, this.wishPanel.r2Field, this.wishPanel.b2Field });
+                this.wishPanel.r1Field, this.wishPanel.r2Field, this.wishPanel.b2Field }, "pos");
         topLeft.add(this.respectWishPanel);
         topLeft.add(this.wishPanel);
 
         topLeft.add(new JLabel("             "));
 
         this.respectGradePrivPanel = new CheckBoxPanel("12er, 11er, 10er Privileg respektieren", true);
-        this.gradePanel = new GradePanel();
+        this.gradePanel = new GradePanel(false);
         CheckUserInput.checkSelected(this.respectGradePrivPanel.box, new JTextField[] { this.gradePanel.tenField,
-                this.gradePanel.elevenField, this.gradePanel.twelveField });
+                this.gradePanel.elevenField, this.gradePanel.twelveField }, "pos");
         topLeft.add(this.respectGradePrivPanel);
         topLeft.add(this.gradePanel);
 

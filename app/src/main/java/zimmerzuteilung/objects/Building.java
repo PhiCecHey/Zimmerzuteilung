@@ -1,9 +1,6 @@
 package zimmerzuteilung.objects;
 
-import java.util.Map;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class Building {
 
