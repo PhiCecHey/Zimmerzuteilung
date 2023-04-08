@@ -1,13 +1,29 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+//import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
 
     id("org.jetbrains.kotlin.jvm") version "1.7.0-RC2"
+    id("java")
+
+    // https://github.com/TheBoegl/gradle-launch4j
+    id("edu.sc.seis.launch4j") version "2.5.4"
+
+    // https://github.com/johnrengelman/shadow
+    //id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+
+    maven {
+        url = uri("https://github.com/TheBoegl/gradle-launch4j")
+    }
+
+    gradlePluginPortal()
 }
 
 dependencies {
@@ -29,6 +45,8 @@ dependencies {
     // https://github.com/JFormDesigner/FlatLaf
     implementation("com.formdev:flatlaf:3.0")
     implementation("com.formdev:flatlaf-intellij-themes:3.0")
+
+    //implementation("com.github.johnrengelman:shadow:7.0.0")
 }
 
 application {
@@ -36,13 +54,37 @@ application {
     mainClass.set("zimmerzuteilung.App")
 }
 
+// https://github.com/TheBoegl/gradle-launch4j
+launch4j { // TODO: configure
+  mainClassName = "zimmerzuteilung.App"
+  //icon = "${projectDir}/icons/myApp.ico"
+  outfile = "../../../release/${rootProject.name}.exe"
+  // jarTask =  tasks.fatJar
+  bundledJrePath = "jre"
+  chdir = "."
+}
+
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
 
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "17"
+}
+
+/*tasks {
+    named<ShadowJar>("shadowJar") {
+        archiveBaseName.set("zimmerzuteilung")
+        mergeServiceFiles()
+        //manifest {
+        //    attributes(mapOf("Main-Class" to "com.app.App"))
+        //}
+    }
+}*/
+
 tasks {
-    val fatJar = register<Jar>("fatJar") {
+    val fatJar = register<Jar>("fatJafatJar()r") {
         dependsOn.addAll(listOf("compileJava", "compileKotlin", "processResources")) // We need this for Gradle optimization to work
         archiveClassifier.set("standalone") // Naming the jar
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -57,3 +99,4 @@ tasks {
         dependsOn(fatJar) // Trigger fat jar creation during build
     }
 }
+
