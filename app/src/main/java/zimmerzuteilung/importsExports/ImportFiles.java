@@ -140,7 +140,7 @@ public class ImportFiles {
         String[] toReturn = new String[list.size()];
         for (int i = 0; i < list.size(); i++) {
             String entry = list.get(i).replace(quote, "");
-            toReturn[i] = entry;
+            toReturn[i] = entry.strip();
         }
         return toReturn;
     }
@@ -272,7 +272,7 @@ public class ImportFiles {
                         + "Schueler:innen in eine Gruppe im Moodleraum eingetragen?";
                 Log.append(errormsg);
                 reader.close();
-                //throw new TeamDoesNotExistException(errormsg);
+                // throw new TeamDoesNotExistException(errormsg);
                 noWarnings = false;
             }
             // ----------------------------------------------get_wish-----------------------------------------------
@@ -483,6 +483,7 @@ public class ImportFiles {
             throws IOException, IllegalArgumentException, StudentInSeveralMoodleGroupsException,
             StudentDoesNotExistException {
         boolean noWarnings = true;
+        boolean ignoreNotInGroup = true; // TODO
         BufferedReader reader = new BufferedReader(new FileReader(txt));
         // int lineNum = 2;
         String line = reader.readLine();
@@ -504,16 +505,27 @@ public class ImportFiles {
             boolean studentHasNoGroup = false;
             try {
                 teamName = entry[Config.impTeamTeamName2];
+                if (teamName.equals("")) {
+                    if (ignoreNotInGroup) {
+                        continue;
+                    }
+                }
             } catch (ArrayIndexOutOfBoundsException e) {
+                // if (ignoreNotInGroup) {
+                studentHasNoGroup = true;
+                // }
+            }
+
+            Student student = ImportFiles.findStudentByName(firstName, lastName);
+
+            if (studentHasNoGroup && student == null) {
                 String errormsg = "Schueler:in " + firstName + " " + lastName
                         + " hat sich in keine Moodlegruppe eingetragen und kann demnach keinem "
                         + "Zimmer zugeteilt werden!";
                 Log.append(errormsg);
                 noWarnings = false;
-                studentHasNoGroup = true;
             }
 
-            Student student = ImportFiles.findStudentByName(firstName, lastName);
             if (student == null) {
                 // student duplicate
                 String errormsg = "Schueler:in " + firstName + " " + lastName
@@ -522,8 +534,9 @@ public class ImportFiles {
                 // throw new StudentDoesNotExistException(errormsg);
                 Log.append(errormsg);
                 noWarnings = false;
-                student = new Student(firstName + lastName, email);
+                student = new Student(firstName + " " + lastName, email);
                 student.email(email);
+                ImportFiles.students.add(student);
             }
 
             GENDER gender = teamName.toLowerCase().contains("jung") ? GENDER.m : GENDER.f;
