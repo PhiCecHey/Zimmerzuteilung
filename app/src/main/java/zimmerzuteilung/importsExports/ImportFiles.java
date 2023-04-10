@@ -483,7 +483,6 @@ public class ImportFiles {
             throws IOException, IllegalArgumentException, StudentInSeveralMoodleGroupsException,
             StudentDoesNotExistException {
         boolean noWarnings = true;
-        boolean ignoreNotInGroup = true; // TODO
         BufferedReader reader = new BufferedReader(new FileReader(txt));
         // int lineNum = 2;
         String line = reader.readLine();
@@ -505,15 +504,8 @@ public class ImportFiles {
             boolean studentHasNoGroup = false;
             try {
                 teamName = entry[Config.impTeamTeamName2];
-                if (teamName.equals("")) {
-                    if (ignoreNotInGroup) {
-                        continue;
-                    }
-                }
             } catch (ArrayIndexOutOfBoundsException e) {
-                // if (ignoreNotInGroup) {
                 studentHasNoGroup = true;
-                // }
             }
 
             Student student = ImportFiles.findStudentByName(firstName, lastName);
