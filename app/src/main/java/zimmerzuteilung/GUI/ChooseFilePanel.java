@@ -1,12 +1,11 @@
 package zimmerzuteilung.GUI;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -43,8 +42,10 @@ class ChooseFilePanel extends JPanel {
                 JFileChooser fileChooser = new JFileChooser();
                 Gui.changeFont(fileChooser, Gui.mainFrame.getFont().getSize());
                 fileChooser.setAcceptAllFileFilterUsed(false);
-                FileNameExtensionFilter fileFilter = new FileNameExtensionFilter("CSV", "csv");
-                fileChooser.addChoosableFileFilter(fileFilter);
+                FileNameExtensionFilter fileFilterCsv = new FileNameExtensionFilter("CSV", "csv");
+                FileNameExtensionFilter fileFilterTxt = new FileNameExtensionFilter("TEXT", "txt");
+                fileChooser.addChoosableFileFilter(fileFilterCsv);
+                fileChooser.addChoosableFileFilter(fileFilterTxt);
                 int rueckgabeWert = fileChooser.showOpenDialog(null);
                 if (rueckgabeWert == JFileChooser.APPROVE_OPTION) {
                     f.setText(fileChooser.getSelectedFile().getAbsolutePath());
