@@ -1,7 +1,6 @@
 package zimmerzuteilung;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 
 import com.formdev.flatlaf.FlatLightLaf;
@@ -28,14 +27,16 @@ public class App {
 
     public static void programm() {
         File zimmer = new File("files/Internatszimmer.csv");
-        File gruppen = new File("files/gruppen.csv");
+        File maedchen = new File("files/Zimmereinteilung Mädchenzimmer.txt.csv");
+        File jungen = new File("files/Zimmereinteilung Jungenzimmer.txt.csv");
         File zimmerwahl = new File("files/Zimmerwahl.csv");
         File persDaten = new File("files/persDaten.csv");
 
         try {
             ImportFiles.importBuildings(zimmer);
             ImportFiles.importStudents(persDaten);
-            ImportFiles.importTeams(gruppen);
+            ImportFiles.importGirlTeams(maedchen);
+            ImportFiles.importBoyTeams(jungen);
             ImportFiles.importWishes(zimmerwahl);
         } catch (Exception e) {
             System.out.println(zimmer.getAbsolutePath());

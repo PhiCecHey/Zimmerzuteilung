@@ -4,7 +4,7 @@ public class Log {
     private static String log = "";
 
     public static void append(String s) {
-        Log.log += "\n" + s;
+        Log.log += "\n" + s + "\n";
     }
 
     public static String log() {

@@ -10,6 +10,7 @@ public class Student {
     private int grade;
     private SPECIALIZATION special;
     private String moodleDate;
+    private String email;
 
     /*public Student() {
         ++Student.count;
@@ -59,5 +60,9 @@ public class Student {
 
     public void moodleDate(String mD) {
         this.moodleDate = mD;
+    }
+
+    public void email(String em){
+        this.email = em;
     }
 }

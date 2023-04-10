@@ -7,20 +7,26 @@ public class Exceptions {
         }
     }
 
-    public static class BuildingDoesNotExist extends Exception {
-        public BuildingDoesNotExist(String str) {
+    public static class BuildingDoesNotExistException extends Exception {
+        public BuildingDoesNotExistException(String str) {
             super(str);
         }
     }
 
-    public static class RoomDoesNotExist extends Exception {
-        public RoomDoesNotExist(String str) {
+    public static class RoomDoesNotExistException extends Exception {
+        public RoomDoesNotExistException(String str) {
             super(str);
         }
     }
 
-    public static class TeamDoesNotExist extends Exception {
-        public TeamDoesNotExist(String str) {
+    public static class TeamDoesNotExistException extends Exception {
+        public TeamDoesNotExistException(String str) {
+            super(str);
+        }
+    }
+
+    public static class StudentDoesNotExistException extends Exception {
+        public StudentDoesNotExistException(String str) {
             super(str);
         }
     }
@@ -49,8 +55,8 @@ public class Exceptions {
         }
     }
 
-    public static class StudentInSeveralMoodleGroups extends Exception {
-        public StudentInSeveralMoodleGroups(String str) {
+    public static class StudentInSeveralMoodleGroupsException extends Exception {
+        public StudentInSeveralMoodleGroupsException(String str) {
             super(str);
         }
     }

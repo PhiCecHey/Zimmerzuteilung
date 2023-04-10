@@ -8,8 +8,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import zimmerzuteilung.Config;
+import zimmerzuteilung.Exceptions.BuildingDoesNotExistException;
+import zimmerzuteilung.Exceptions.LineEmptyException;
+import zimmerzuteilung.Exceptions.RoomDoesNotExistException;
+import zimmerzuteilung.Exceptions.StudentDoesNotExistException;
+import zimmerzuteilung.Exceptions.StudentInSeveralMoodleGroupsException;
+import zimmerzuteilung.Exceptions.TeamDoesNotExistException;
 import zimmerzuteilung.Log;
-import zimmerzuteilung.Exceptions.*;
 import zimmerzuteilung.objects.Building;
 import zimmerzuteilung.objects.GENDER;
 import zimmerzuteilung.objects.Room;
@@ -20,6 +25,7 @@ import zimmerzuteilung.objects.Team;
 public class ImportFiles {
     private static ArrayList<Building> buildings = new ArrayList<>();
     private static ArrayList<Student> students = new ArrayList<>();
+    private static ArrayList<Student> studentsWithoutGroup = new ArrayList<>();
     private static ArrayList<Team> teams = new ArrayList<>();
 
     /*
@@ -39,28 +45,6 @@ public class ImportFiles {
      * e.printStackTrace();
      * }
      * return fileList;
-     * }
-     */
-
-    /*
-     * public static String editLine(String line) {
-     * // remove double quotes and comma
-     * if (line != null) {
-     * if (line.length() > 2) {
-     * if (line.equals("null,") || line.equals("\"\",")) {
-     * return ""; // no information in survey
-     * } else {
-     * if (line.endsWith(",")) {
-     * line = line.substring(0, line.length() - 1);
-     * }
-     * if (line.startsWith("\"") && line.endsWith("\"")) {
-     * line = line.substring(1, line.length() - 1);
-     * }
-     * return line.toLowerCase();
-     * }
-     * }
-     * }
-     * return null;
      * }
      */
 
@@ -107,13 +91,13 @@ public class ImportFiles {
         return true;
     }
 
-    private static String[] splitOnComma(String line) throws LineEmptyException {
+    private static String[] splitOnString(String line, String splitOn) throws LineEmptyException {
         String quote = "\"";
-        String testIfEmpty = line.replace(",", "");
+        String testIfEmpty = line.replace(splitOn, "");
         if (line.equals("") || line == null || testIfEmpty.equals("")) {
             throw new LineEmptyException("");
         }
-        String[] split = line.toLowerCase().split(",");
+        String[] split = line.toLowerCase().split(splitOn);
         ArrayList<String> list = new ArrayList<>();
 
         // , could be contained in string that should not be split
@@ -171,7 +155,7 @@ public class ImportFiles {
             lineNum++;
             String[] entry;
             try {
-                entry = ImportFiles.splitOnComma(line);
+                entry = ImportFiles.splitOnString(line, ",");
             } catch (LineEmptyException e) {
                 continue;
             }
@@ -259,16 +243,17 @@ public class ImportFiles {
 
     // tested, works
     public static boolean importWishes(File csv)
-            throws IOException, IllegalArgumentException, BuildingDoesNotExist, RoomDoesNotExist, TeamDoesNotExist {
+            throws IOException, IllegalArgumentException, BuildingDoesNotExistException, RoomDoesNotExistException,
+            TeamDoesNotExistException {
         boolean noWarnings = true;
         BufferedReader reader = new BufferedReader(new FileReader(csv));
-        //int lineNum = 1;
+        // int lineNum = 1;
         String line = reader.readLine();
         while ((line = reader.readLine()) != null) {
-            //lineNum++;
+            // lineNum++;
             String[] entry;
             try {
-                entry = ImportFiles.splitOnComma(line);
+                entry = ImportFiles.splitOnString(line, ",");
             } catch (LineEmptyException e) {
                 continue;
             }
@@ -287,7 +272,8 @@ public class ImportFiles {
                         + "Schueler:innen in eine Gruppe im Moodleraum eingetragen?";
                 Log.append(errormsg);
                 reader.close();
-                throw new TeamDoesNotExist(errormsg);
+                //throw new TeamDoesNotExistException(errormsg);
+                noWarnings = false;
             }
             // ----------------------------------------------get_wish-----------------------------------------------
             String nameBuilding1 = "";
@@ -328,14 +314,14 @@ public class ImportFiles {
                         + " existiert nicht! Wurde es vorher korrekt eingelesen?";
                 Log.append(errormsg);
                 reader.close();
-                throw new BuildingDoesNotExist(errormsg);
+                throw new BuildingDoesNotExistException(errormsg);
             }
             if (!building2) {
                 String errormsg = "Das Internat " + nameBuilding2
                         + " existiert nicht! Wurde es vorher korrekt eingelesen?";
                 Log.append(errormsg);
                 reader.close();
-                throw new BuildingDoesNotExist(errormsg);
+                throw new BuildingDoesNotExistException(errormsg);
             }
 
             for (Room room : team.wish().building1().rooms()) {
@@ -364,14 +350,14 @@ public class ImportFiles {
                         + " existiert nicht! Wurde es vorher korrekt eingelesen?";
                 Log.append(errormsg);
                 reader.close();
-                throw new RoomDoesNotExist(errormsg);
+                throw new RoomDoesNotExistException(errormsg);
             }
             if (!room2) {
                 String errormsg = "Das Zimmer " + nameRoom2
                         + " existiert nicht! Wurde es vorher korrekt eingelesen?";
                 Log.append(errormsg);
                 reader.close();
-                throw new RoomDoesNotExist(errormsg);
+                throw new RoomDoesNotExistException(errormsg);
             }
         }
         reader.close();
@@ -379,105 +365,239 @@ public class ImportFiles {
     }
 
     // tested, works
-    public static boolean importTeams(File csv)
-            throws IOException, IllegalArgumentException, StudentInSeveralMoodleGroups {
+    /*
+     * public static boolean importTeams(File csv)
+     * throws IOException, IllegalArgumentException,
+     * StudentInSeveralMoodleGroupsException {
+     * boolean noWarnings = true;
+     * BufferedReader reader = new BufferedReader(new FileReader(csv));
+     * // int lineNum = 2;
+     * String line = reader.readLine();
+     * line = reader.readLine(); // skip heading
+     * 
+     * while ((line = reader.readLine()) != null) {
+     * // lineNum++;
+     * String[] entry;
+     * try {
+     * entry = ImportFiles.splitOnString(line, ",");
+     * } catch (LineEmptyException e) {
+     * continue;
+     * }
+     * //
+     * --------------------------------------------get_team_size--------------------
+     * ------------------------
+     * int teamSize = Integer.valueOf(entry[Config.impTeamTeamSize]);
+     * if (teamSize == 0) {
+     * continue; // team is empty
+     * }
+     * //
+     * --------------------------------------------get_teamname---------------------
+     * ------------------------
+     * Team team = new Team();
+     * team.name(entry[Config.impTeamTeamName]); // moodle team name
+     * 
+     * boolean duplicateTeam = false;
+     * for (Team t : ImportFiles.teams) {
+     * if (team.name().equals(t.name())) {
+     * duplicateTeam = true;
+     * team = t; // team already added to list of teams
+     * break;
+     * }
+     * }
+     * //
+     * ----------------------------------------get_students_of_team-----------------
+     * ------------------------
+     * for (int i = Config.impTeamFirstMember; i <=
+     * Config.impTeamCycleLengthTilNextMember - 1 + teamSize
+     * Config.impTeamCycleLengthTilNextMember; i +=
+     * Config.impTeamCycleLengthTilNextMember) {
+     * String userName = entry[i];
+     * String name = entry[i + 2] + " " + entry[i + 3]; // FirstName LastName
+     * 
+     * Student student = null;
+     * for (Student s : ImportFiles.students) {
+     * if (s.userName().equals(userName)) {
+     * student = s;
+     * }
+     * }
+     * if (student == null) {
+     * student = new Student(name, userName);
+     * System.err.println("Schueler:in " + name +
+     * " hat die Umfrage zu den persoenlichen Daten nicht "
+     * + "(vollstaendig) ausgefuellt!");
+     * Log.append("Schueler:in " + name +
+     * " hat die Umfrage zu den persoenlichen Daten nicht "
+     * + "(vollstaendig) ausgefuellt!");
+     * noWarnings = false;
+     * }
+     * 
+     * // check for duplicates:
+     * for (Team t : ImportFiles.teams) {
+     * Student duplicate = t.getStudent(userName);
+     * if (duplicate != null) {
+     * String errormsg = "Schueler:in befindet sich in mehreren Moodlegruppen! "
+     * + duplicate.userName() + ": " + team.name() + ", " + t.name();
+     * Log.append(errormsg);
+     * reader.close();
+     * throw new StudentInSeveralMoodleGroupsException(errormsg);
+     * }
+     * }
+     * team.addStudent(student); // create new student and add to team
+     * }
+     * if (!duplicateTeam) {
+     * // check gender of students
+     * GENDER gender = ImportFiles.determineGender(team);
+     * if (gender == null) {
+     * team.gender(GENDER.d);
+     * String errormsg = "Das Team " + team.name() +
+     * " ist nicht gleichgeschlechtlich!";
+     * System.err.println(errormsg);
+     * Log.append(errormsg);
+     * noWarnings = false;
+     * } else {
+     * team.gender(gender);
+     * }
+     * 
+     * // add team
+     * ImportFiles.teams.add(team);
+     * }
+     * }
+     * reader.close();
+     * return noWarnings;
+     * }
+     */
+
+    public static boolean importGirlTeams(File txt)
+            throws IOException, IllegalArgumentException, StudentInSeveralMoodleGroupsException,
+            StudentDoesNotExistException {
+        return ImportFiles.importGirlBoyTeams(txt, true);
+    }
+
+    public static boolean importBoyTeams(File txt)
+            throws IOException, IllegalArgumentException, StudentInSeveralMoodleGroupsException,
+            StudentDoesNotExistException {
+        return ImportFiles.importGirlBoyTeams(txt, false);
+    }
+
+    private static boolean importGirlBoyTeams(File txt, boolean girl)
+            throws IOException, IllegalArgumentException, StudentInSeveralMoodleGroupsException,
+            StudentDoesNotExistException {
         boolean noWarnings = true;
-        BufferedReader reader = new BufferedReader(new FileReader(csv));
-        //int lineNum = 2;
+        BufferedReader reader = new BufferedReader(new FileReader(txt));
+        // int lineNum = 2;
         String line = reader.readLine();
-        line = reader.readLine(); // skip heading
+        // line = reader.readLine(); // skip heading
 
         while ((line = reader.readLine()) != null) {
-            //lineNum++;
+            // lineNum++;
             String[] entry;
             try {
-                entry = ImportFiles.splitOnComma(line);
+                entry = ImportFiles.splitOnString(line, "\t");
             } catch (LineEmptyException e) {
                 continue;
             }
-            // --------------------------------------------get_team_size--------------------------------------------
-            int teamSize = Integer.valueOf(entry[Config.impTeamTeamSize]);
-            if (teamSize == 0) {
-                continue; // team is empty
-            }
-            // --------------------------------------------get_teamname---------------------------------------------
-            Team team = new Team();
-            team.name(entry[Config.impTeamTeamName]); // moodle team name
 
-            boolean duplicateTeam = false;
-            for (Team t : ImportFiles.teams) {
-                if (team.name().equals(t.name())) {
-                    duplicateTeam = true;
-                    team = t; // team already added to list of teams
-                    break;
-                }
+            String firstName = entry[Config.impTeamFirstName];
+            String lastName = entry[Config.impTeamLastName];
+            String email = entry[Config.impTeamEmail];
+            String teamName = "";
+            boolean studentHasNoGroup = false;
+            try {
+                teamName = entry[Config.impTeamTeamName2];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                String errormsg = "Schueler:in " + firstName + " " + lastName
+                        + " hat sich in keine Moodlegruppe eingetragen und kann demnach keinem "
+                        + "Zimmer zugeteilt werden!";
+                Log.append(errormsg);
+                noWarnings = false;
+                studentHasNoGroup = true;
             }
-            // ----------------------------------------get_students_of_team-----------------------------------------
-            for (int i = Config.impTeamFirstMember; i <= Config.impTeamCycleLengthTilNextMember - 1 + teamSize
-                    * Config.impTeamCycleLengthTilNextMember; i += Config.impTeamCycleLengthTilNextMember) {
-                String userName = entry[i];
-                String name = entry[i + 2] + " " + entry[i + 3]; // FirstName LastName
 
-                Student student = null;
-                for (Student s : ImportFiles.students) {
-                    if (s.userName().equals(userName)) {
-                        student = s;
-                    }
-                }
-                if (student == null) {
-                    student = new Student(name, userName);
-                    System.err.println("Schueler:in " + name + " hat die Umfrage zu den persoenlichen Daten nicht "
-                            + "(vollstaendig) ausgefuellt!");
-                    Log.append("Schueler:in " + name + " hat die Umfrage zu den persoenlichen Daten nicht "
-                            + "(vollstaendig) ausgefuellt!");
-                    noWarnings = false;
-                }
-
-                // check for duplicates:
-                for (Team t : ImportFiles.teams) {
-                    Student duplicate = t.getStudent(userName);
-                    if (duplicate != null) {
-                        String errormsg = "Schueler:in befindet sich in mehreren Moodlegruppen! "
-                                + duplicate.userName() + ": " + team.name() + ", " + t.name();
-                        Log.append(errormsg);
-                        reader.close();
-                        throw new StudentInSeveralMoodleGroups(errormsg);
-                    }
-                }
-                team.addStudent(student); // create new student and add to team
+            Student student = ImportFiles.findStudentByName(firstName, lastName);
+            if (student == null) {
+                // student duplicate
+                String errormsg = "Schueler:in " + firstName + " " + lastName
+                        + " hat nicht die Persoenliche Daten Umfrage ausgefuellt! Damit sind die "
+                        + "Klassenstufe und der Zweig unbekannt.";
+                // throw new StudentDoesNotExistException(errormsg);
+                Log.append(errormsg);
+                noWarnings = false;
+                student = new Student(firstName + lastName, email);
+                student.email(email);
             }
-            if (!duplicateTeam) {
-                // check gender of students
-                GENDER gender = ImportFiles.determineGender(team);
-                if (gender == null) {
-                    team.gender(GENDER.d);
-                    String errormsg = "Das Team " + team.name() + " ist nicht gleichgeschlechtlich!";
-                    System.err.println(errormsg);
-                    Log.append(errormsg);
-                    noWarnings = false;
-                } else {
-                    team.gender(gender);
-                }
 
-                // add team
-                ImportFiles.teams.add(team);
+            GENDER gender = teamName.toLowerCase().contains("jung") ? GENDER.m : GENDER.f;
+            student.email(email);
+
+            if (studentHasNoGroup) {
+                ImportFiles.studentsWithoutGroup.add(student);
+                continue;
             }
+
+            Team team = ImportFiles.findTeamByName(teamName);
+            if (team == null) {
+                team = new Team();
+                team.name(teamName);
+            }
+            team.gender(gender);
+
+            if (ImportFiles.findStudentInTeam(student) != null) {
+                reader.close();
+                String errormsg = "Schueler:in " + student.name() + " hat sich in mehrere "
+                        + "Moodlegruppen eingetragen!";
+                Log.append(errormsg);
+                throw new StudentInSeveralMoodleGroupsException("errormsg");
+            }
+
+            student.gender(gender);
+            team.addStudent(student);
+
+            // add team
+            ImportFiles.teams.add(team);
         }
         reader.close();
         return noWarnings;
+    }
+
+    private static Student findStudentByName(String firstName, String lastName) {
+        for (Student student : ImportFiles.students) {
+            if (student.name().contains(firstName.toLowerCase()) && student.name().contains(lastName.toLowerCase())) {
+                return student;
+            }
+        }
+        return null;
+    }
+
+    private static Student findStudentInTeam(Student student) {
+        for (Team team : ImportFiles.teams) {
+            Student s = team.getStudent(student.userName());
+            if (s != null) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    private static Team findTeamByName(String teamName) {
+        for (Team team : ImportFiles.teams) {
+            if (team.name().equals(teamName.toLowerCase())) {
+                return team;
+            }
+        }
+        return null;
     }
 
     // tested, works
     public static boolean importStudents(File csv) throws FileNotFoundException, IOException {
         boolean noWarnings = true;
         BufferedReader reader = new BufferedReader(new FileReader(csv));
-        //int lineNum = 1;
+        // int lineNum = 1;
         String line = reader.readLine(); // skip heading
         while ((line = reader.readLine()) != null) {
-            //lineNum++;
+            // lineNum++;
             String[] entry;
             try {
-                entry = ImportFiles.splitOnComma(line);
+                entry = ImportFiles.splitOnString(line, ",");
             } catch (LineEmptyException e) {
                 continue;
             }
@@ -533,19 +653,24 @@ public class ImportFiles {
                 Log.append(errormsg);
                 noWarnings = false;
             }
-            // ---------------------------------------------get_gender----------------------------------------------
-            if (entry[Config.impStudGender].equals("weiblich")) {
-                student.gender(GENDER.f);
-            } else if (entry[Config.impStudGender].contains("m") && entry[Config.impStudGender].contains("nnlich")) {
-                student.gender(GENDER.m);
-            } else if (entry[Config.impStudGender].equals("divers")) {
-                student.gender(GENDER.d);
-            } else {
-                String errormsg = "Schueler:in " + name + " hat ein ungueltiges Geschlecht!";
-                System.err.println(errormsg);
-                Log.append(errormsg);
-                noWarnings = false;
-            }
+            /*
+             * //
+             * ---------------------------------------------get_gender----------------------
+             * ------------------------
+             * if (entry[Config.impStudGender].equals("weiblich")) {
+             * student.gender(GENDER.f);
+             * } else if (entry[Config.impStudGender].contains("m") &&
+             * entry[Config.impStudGender].contains("nnlich")) {
+             * student.gender(GENDER.m);
+             * } else if (entry[Config.impStudGender].equals("divers")) {
+             * student.gender(GENDER.d);
+             * } else {
+             * String errormsg = "Schueler:in " + name + " hat ein ungueltiges Geschlecht!";
+             * System.err.println(errormsg);
+             * Log.append(errormsg);
+             * noWarnings = false;
+             * }
+             */
 
             if (!duplicate) {
                 ImportFiles.students.add(student);
@@ -569,40 +694,44 @@ public class ImportFiles {
         ImportFiles.teams.clear();
     }
 
-    private static GENDER determineGender(Team team) {
-        short countM = 0;
-        short countF = 0;
-        short countD = 0;
-        for (Student s : team.members()) {
-            if (s.gender().equals(GENDER.f)) {
-                countF++;
-            } else if (s.gender().equals(GENDER.m)) {
-                countM++;
-            } else if (s.gender().equals(GENDER.d)) {
-                countD++;
-            } else {
-                s.gender(GENDER.d);
-                String errmsg = "Schueler " + s.userName() + " hat kein gueltiges Geschlecht!";
-                System.err.println(errmsg);
-                Log.append(errmsg);
-            }
-        }
-        if (countM > 0 && countF > 0 || countM > 0 && countD > 0 || countF > 0 && countD > 0) {
-            return null;
-        }
-
-        if (countM > countF) {
-            if (countM >= countD) {
-                return GENDER.m;
-            } else {
-                return GENDER.d;
-            }
-        } else {
-            if (countF >= countD) {
-                return GENDER.f;
-            } else {
-                return GENDER.d;
-            }
-        }
-    }
+    /*
+     * private static GENDER determineGender(Team team) {
+     * short countM = 0;
+     * short countF = 0;
+     * short countD = 0;
+     * for (Student s : team.members()) {
+     * if (s.gender().equals(GENDER.f)) {
+     * countF++;
+     * } else if (s.gender().equals(GENDER.m)) {
+     * countM++;
+     * } else if (s.gender().equals(GENDER.d)) {
+     * countD++;
+     * } else {
+     * s.gender(GENDER.d);
+     * String errmsg = "Schueler " + s.userName() +
+     * " hat kein gueltiges Geschlecht!";
+     * System.err.println(errmsg);
+     * Log.append(errmsg);
+     * }
+     * }
+     * if (countM > 0 && countF > 0 || countM > 0 && countD > 0 || countF > 0 &&
+     * countD > 0) {
+     * return null;
+     * }
+     * 
+     * if (countM > countF) {
+     * if (countM >= countD) {
+     * return GENDER.m;
+     * } else {
+     * return GENDER.d;
+     * }
+     * } else {
+     * if (countF >= countD) {
+     * return GENDER.f;
+     * } else {
+     * return GENDER.d;
+     * }
+     * }
+     * }
+     */
 }

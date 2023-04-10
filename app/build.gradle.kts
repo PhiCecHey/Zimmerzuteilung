@@ -47,6 +47,9 @@ dependencies {
     implementation("com.formdev:flatlaf-intellij-themes:3.0")
 
     //implementation("com.github.johnrengelman:shadow:7.0.0")
+    
+    // https://github.com/ebourg/jsign
+    //implementation("net.jsign:jsign-gradle-plugin:4.2")
 }
 
 application {
@@ -72,6 +75,19 @@ tasks.named<Test>("test") {
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
 }
+
+/*task("sign") { // https://ebourg.github.io/jsign/
+    doLast {
+        val jsign = project.extensions.getByName("jsign") as groovy.lang.Closure<*>
+        jsign("file"      to "release/Zimmerzuteilung.exe",
+            "name"      to "Zimmerzuteilung",
+            "url"       to "zimmerzuteilung.App",
+            "keystore"  to "keystore.p12",
+            "alias"     to "test",
+            "storepass" to "secret",
+            "tsaurl"    to "http://timestamp.sectigo.com")
+    }
+}*/
 
 /*tasks {
     named<ShadowJar>("shadowJar") {

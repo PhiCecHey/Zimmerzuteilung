@@ -41,6 +41,10 @@ public class Config {
     public static int impTeamTeamSize = 2;
     public static int impTeamFirstMember = 8;
     public static int impTeamCycleLengthTilNextMember = 5;
+    public static int impTeamFirstName = 0;
+    public static int impTeamLastName = 1;
+    public static int impTeamEmail = 3;
+    public static int impTeamTeamName2 = 4;
 
     // importStudents:
     public static int impStudDate = 1;

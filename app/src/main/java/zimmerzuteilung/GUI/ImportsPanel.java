@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+
 import zimmerzuteilung.Log;
 import zimmerzuteilung.importsExports.ImportFiles;
 
@@ -41,7 +42,7 @@ public class ImportsPanel extends JPanel {
 
     private void imports() {
         String[] importLabelStrings = new String[] { "Zimmer: ", "Personenbezogene Daten der Schueler:innen: ",
-                "Gruppen: ", "Zimmerwuensche" };
+                "Maedchenteams: ", "Jungenteams: ", "Zimmerwuensche: " };
 
         for (String s : importLabelStrings) {
             ChooseFilePanel i = new ChooseFilePanel(s, "file");
@@ -53,9 +54,10 @@ public class ImportsPanel extends JPanel {
 
         // TODO: remove following
         this.importsPanels.get(0).field.setText("/home/philine/Documents/Link to files/Internatszimmer.csv");
-        this.importsPanels.get(1).field.setText("/home/philine/Documents/Link to files/persDaten2.csv");
-        this.importsPanels.get(2).field.setText("/home/philine/Documents/Link to files/gruppen2.csv");
-        this.importsPanels.get(3).field.setText("/home/philine/Documents/Link to files/Zimmerwahl2.csv");
+        this.importsPanels.get(1).field.setText("/home/philine/Documents/Link to files/Klassenstufe_und_Zweig.csv");
+        this.importsPanels.get(2).field.setText("/home/philine/Documents/Link to files/Zimmereinteilung Mädchenzimmer.txt");
+        this.importsPanels.get(3).field.setText("/home/philine/Documents/Link to files/Zimmereinteilung Jungenzimmer.txt");
+        this.importsPanels.get(4).field.setText("/home/philine/Documents/Link to files/Zimmerwunsch.csv");
     }
 
     private void importButton() {
@@ -82,19 +84,26 @@ public class ImportsPanel extends JPanel {
                     }
                     i = 2;
 
-                    if (!ImportFiles.importTeams(new File(importsPanels.get(i).field.getText()))) {
+                    if (!ImportFiles.importGirlTeams(new File(importsPanels.get(i).field.getText()))) {
                         importsPanels.get(2).field.setBackground(Colors.yellowTransp);
                     } else {
                         importsPanels.get(2).field.setBackground(Colors.greenTransp);
                     }
                     i = 3;
 
-                    if (!ImportFiles.importWishes(new File(importsPanels.get(i).field.getText()))) {
+                    if (!ImportFiles.importBoyTeams(new File(importsPanels.get(i).field.getText()))) {
                         importsPanels.get(3).field.setBackground(Colors.yellowTransp);
                     } else {
                         importsPanels.get(3).field.setBackground(Colors.greenTransp);
                     }
                     i = 4;
+
+                    if (!ImportFiles.importWishes(new File(importsPanels.get(i).field.getText()))) {
+                        importsPanels.get(4).field.setBackground(Colors.yellowTransp);
+                    } else {
+                        importsPanels.get(4).field.setBackground(Colors.greenTransp);
+                    }
+                    i = 5;
                 } catch (FileNotFoundException f) {
                     Log.append("Datei konnte nicht gefunden werden.");
                 } catch (Exception e) {

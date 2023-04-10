@@ -45,10 +45,10 @@ public class GurobiPanel extends JPanel {
         String heading, descript1, descript2, descript3;
         float value;
 
-        heading = "Zimmerreservierungen respektieren";
+        heading = "Zimmer reservieren";
         descript1 = "Unbedingt reservierte Zimmer freihalten";
-        descript2 = "Zimmer freihalten falls moeglich: ";
-        descript3 = "Malus fuer nicht reservierte Zimmer: ";
+        descript2 = "Falls moeglich reservierte Zimmer freihalten: ";
+        descript3 = "Bonus fuer nicht reservierte Zimmer: ";
         value = Config.scoreReservation;
         this.respectResPanel = new MustOrShouldPanel(heading, descript1, descript2, descript3, value);
         topRight.add(this.respectResPanel);
@@ -57,10 +57,10 @@ public class GurobiPanel extends JPanel {
         topRight.add(new JLabel("       "));
         topRight.add(new JLabel("       "));
 
-        heading = "Maximale Anzahl an Schueler:innen pro Zimmer einhalten";
-        descript1 = "Immer maximale Anzahl an Schueler:innen pro Zimmer einhalten";
-        descript2 = "Moeglichst maximale Anzahl an Schueler:innen pro Zimmer einhalten: ";
-        descript3 = "Malus bei Nichteinhalten: ";
+        heading = "Maximale Anzahl an Schueler:innen pro Zimmer";
+        descript1 = "Immer maximale Belegung einhalten";
+        descript2 = "Moeglichst maximale Belegung einhalten: ";
+        descript3 = "Bonus bei Nichteinhalten: ";
         value = Config.maxStudentsPerRoom;
         this.maxStudentsPerRoom = new MustOrShouldPanel(heading, descript1, descript2, descript3, value);
         topRight.add(maxStudentsPerRoom);
@@ -69,10 +69,10 @@ public class GurobiPanel extends JPanel {
         topRight.add(new JLabel("       "));
         topRight.add(new JLabel("       "));
 
-        heading = "Maedchen-/Jungszimmer beruecksichtigen";
-        descript1 = "Immer beruecksichtigen";
-        descript2 = "Moeglichst beruecksichtigen: ";
-        descript3 = "Malus bei Nichtberuecksichtigung: ";
+        heading = "Maedchenteams in Maedchenzimmer und Jungenteams in Jungenzimmer";
+        descript1 = "Immer einhalten";
+        descript2 = "Moeglichst einhalten: ";
+        descript3 = "Bonus bei Nichteinhalten: ";
         value = Config.scoreGender;
         this.respectRoomGenderPanel = new MustOrShouldPanel(heading, descript1, descript2, descript3, value);
         topRight.add(this.respectRoomGenderPanel);
@@ -84,7 +84,7 @@ public class GurobiPanel extends JPanel {
 
         topLeft.add(new JLabel("             "));
 
-        this.oneTeamPerRoom = new CheckBoxPanel("Ein Team pro Zimmer", true);
+        this.oneTeamPerRoom = new CheckBoxPanel("Maximal ein Team pro Zimmer", true);
         topLeft.add(oneTeamPerRoom);
 
         topLeft.add(new JLabel("             "));
@@ -111,9 +111,7 @@ public class GurobiPanel extends JPanel {
         this.randomPanel.setMaximumSize(this.randomPanel.getMinimumSize());
         // this.randomPanel.box.setSelected(false);
         this.randomField = new JTextField(Float.toString(Config.scoreRandom));
-        // this.randomField.setEditable(false);
-        // this.randomField.setBackground(Colors.greyTransp);
-        this.randomField.setMaximumSize(new Dimension(150, Gui.row.height));
+        this.randomField.setMaximumSize(new Dimension(300, Gui.row.height));
         CheckUserInput.checkSelected(this.randomPanel.box, new JTextField[] { this.randomField });
         CheckUserInput.checkForPositive(this.randomPanel.box, this.randomField);
         topLeft.add(new GroupPanel(new Component[] { this.randomPanel, this.randomField, new Filler(Gui.row.width, 1) },
@@ -222,19 +220,19 @@ public class GurobiPanel extends JPanel {
             GurobiPanel.gurobiRules.add(Gurobi.RULES.respectWish);
             boolean worked = GurobiPanel.checkUserInput(this.wishPanel.b1Field, "b1");
             if (!worked) {
-                this.area.append("Erstwusnsch Internat Bonus: Bitte eine positive Zahl eintragen!\n");
+                this.area.append("Erstwusnschinternat Bonus: Bitte eine positive Zahl eintragen!\n");
             }
             worked = GurobiPanel.checkUserInput(this.wishPanel.r1Field, "r1");
             if (!worked) {
-                this.area.append("Erstwusnsch Zimmer Bonus: Bitte eine positive Zahl eintragen!\n");
+                this.area.append("Erstwusnschzimmer Bonus: Bitte eine positive Zahl eintragen!\n");
             }
             worked = GurobiPanel.checkUserInput(this.wishPanel.r2Field, "r2");
             if (!worked) {
-                this.area.append("Zweitwunsch Zimmer Bonus: Bitte eine positive Zahl eintragen!\n");
+                this.area.append("Zweitwunschzimmer Bonus: Bitte eine positive Zahl eintragen!\n");
             }
             worked = GurobiPanel.checkUserInput(this.wishPanel.b2Field, "b2");
             if (!worked) {
-                this.area.append("Zweitwunsch Internat Bonus: Bitte eine positive Zahl eintragen!\n");
+                this.area.append("Zweitwunschinternat Bonus: Bitte eine positive Zahl eintragen!\n");
             }
         } /*
            * else {

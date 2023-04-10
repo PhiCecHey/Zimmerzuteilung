@@ -1,0 +1,158 @@
+Vorname	Nachname	ID-Nummer	E-Mail-Adresse	Gruppe	Gruppenwahl
+Ahlers	Lena	 	S-1@landesschule-pforta.de		
+Albrecht	Maya	09s-SJ2021	albrecht-maya@gmx.de		
+Alligand	Clement	 	alligandclement@gmail.com		
+Auerswald	Marlen Isolde	09m-SJ2021	marlen_auerswald@outlook.de		
+Awokoya	Tomiwa	09n-SJ2021	tomiawokoya@gmail.com		
+Bauer	Franka	 	franka.bauer@outlook.de		
+Beelitz	Wilhelm	 	esszettofficial@gmail.com		
+Berheine	Kim	09m-SJ2021	berheinekim@gmail.com		
+Beyreuther	Vicky	 	magnusbey@icloud.com		
+Bismarck	Julius von	 	juliusvonbismarck.lsp@gmail.com		
+Boeckhoff	Raphael	 	S-5@landesschule-pforta.de		
+Bollinger	Nelly	 	S-6@landesschule-pforta.de		
+Brache	Klara	 	klarabrache2@gmail.com		
+Breitenbuch	Ida	09s-SJ2021	ida.breitenbuch@gmail.com 		
+Brömel	Lotta	09m-SJ2021	grafgruenpflanze@gmail.com		
+Brüning	Ann-Kathrin	09s-SJ2021	bruningkath@gmail.com		
+Bulst	Johanna	 	bulst.johanna@gmail.com		
+Castell	Albrecht	09m-SJ2021	albrechtcastell@gmx.de		
+Cebulla	Linus	09n-SJ2021	linus@cippel.de		
+Cramer	Frederik	09n-SJ2021	frederikcramer0@gmail.com		
+Deckert	Sabrina	 	sabrina.deckert@web.de		
+Degen	Tamina	09s-SJ2021	tamina.degen@gmx.de		
+Denzel	Alina	 	adenzel08@gmail.com		
+Dietrich	Bela	 	belaleo@scaladin.de		
+Dragan	Maria	09n-SJ2021	d.maria260505@gmail.com		
+Eilhoff	Kirsten	 	ludger.eilhoff@t-online.de		
+Eisenschmidt	Isabel	 	eisenschmidtisabel@gmail.com		
+Erffa	Cecilia	09m-SJ2021	cecilia.erffa@icloud.de		
+Eschweiler	Louisa	 	louisa.eschweiler@gmx.de		
+Flöter	Magdalena	09n-SJ2021	magdalena.floeter@gmx.de		
+Forsen	Benedikt	 	meisterbefo@web.de		
+Förster	Isabelle	09n-SJ2021	isabellefoerster2007@gmail.com		
+Förster	Josephine	 	josy200593@gmail.com		
+Franke	Emma Maria	 	emma.franke@aol.com		
+Gagelmann	Lilith	 	lilith.gagelmann@posteo.de		
+Geisler	Clemens Erich Knut	 	clegei02@gmx.de		
+Gorecki	Fin	 	S-9@landesschule-pforta.de		
+Görz	Jette Aurélie	 	jette.goerz@gmail.com		
+Grötzsch	Carl	09m-SJ2021	carligroetzsch@web.de		
+Gruhn	Laura	 	laura.gruhn@t-online.de		
+Gummersbach	Marlene	 	marlene.gummersbach@gmail.com		
+Günther	Amelie	09n-SJ2021	amsel0208@yahoo.com		
+Gutekunst	Jara	09n-SJ2021	jaragutekunst@icloud.com		
+Härtel	Alma	09m-SJ2021	alma.thyrow@gmail.com		
+Haspel	Hannah Iris	 	Haspel.hannah@gmail.com		
+Hattendorf	Carl	09m-SJ2021	carl.hattendorf@gmail.com		
+Hecht	Paul	09n-SJ2021	paulhecht05@gmail.com		
+Henning	Lennart	 	lennart.henning007@icloud.com		
+Herda	Hanna	 	hanna.herda.HH@gmail.com		
+Hertzsch	Antonia	 	antonia@hertzsch.de		
+Hesse	Alexander	 	alexander.karl.hesse@gmail.com		
+Hoops	Marlen	09s-SJ2021	marlihoops07@gmail.com		
+Huelsze	Paul	 	paulhuelsse@gmx.de		
+Humpsch	Alexandra	 	alexandra.humbsch@gmail.com		
+Hupel	Julia	 	julhuru123@gmail.com		
+Ixmeier	Ulrich	 	ulrich.ixmeier@landesschule-pforta.de		
+Jarczak	Florentine	09m-SJ2021	florentine.jarczak@icloud.com		
+Kadlubski	Kasimir	 	kasimir.kadlubski@icloud.com		
+Kampf	Adrian	 	adrian-kampf@t-online.de		
+Kirchner	Jonathan	09n-SJ2021	joni.kirchner@t-online.de		
+Kluge	Jan	09n-SJ2021	jan.walther.kluge@gmx.de		
+Ködderitzsch	Tizian	 	tkoeddi@gmail.com		
+Kohn	Jannis	 	S-13@landesschule-pforta.de		
+König	Linda	 	koeniglinda2303@gmail.com		
+König	Magdalena	09m-SJ2021	magdalena.koenig7@gmail.com		
+Konrath	Jonas	 	jonas.jonrath@mail.de		
+Kowalsky	Theresia-Anni Dorothea Elsa Marie Conradia Kathari	 	theresia.anni.kowalsky@gmail.com		
+Krause	Karline	09s-SJ2021	karlikrausse@gmail.com		
+Kreibe	Annika	 	annika.kreibe@gmail.com		
+Kroboth	Friederike	09s-SJ2021	Friederike-Kroboth@gmx.de		
+Kubitschek	Wieland	 	wieland.kubitschek@web.de		
+Kunde	Anna Karolina	 	www.annakunde@gmail.com		
+Küster	Anny	 	d.n.a.leni@gmail.com		
+Lange	Charlotte	09n-SJ2021	lange-charlotte@gmx.net		
+Lantelme	Edwin Alexander	 	edwin.lantelme@gmail.com		
+Lätsch	Pauline	09s-SJ2021	pauline-laetsch@web.de		
+Leopold	Alexandra	09s-SJ2021	alexandraleopold89@gmail.com		
+Limpert	Tilman Lukas	 	tilman.lukas.limpert@landesschule-pforta.de		
+Lütke-Entrup	Sophia Irene	 	sophia@infotour.com		
+Mahn	Lucia	09n-SJ2021	luciamahn@online.de		
+Mehnert	Johannes	09m-SJ2021	johannes.g.mehnert@gmail.com		
+Meinhof	Franz	 	franzelmusico@gmx.de		
+Mertens	Joseline	 	joseline.mertens@gmail.com		
+Meyer	Mia	 	m.meyer0408@gmail.com		
+Mohrs	Bennet	 	S-15@landesschule-pforta.de		
+Müller	Arthur	 	S-16@landesschule-pforta.de		
+Müller	Hannah	 	hannahoskar@web.de		
+Münch	Freya	09n-SJ2021	freya.irene@gmail.com		
+Naab	Anton	 	anton@naab-mv.de		
+Neumann	Hannes	 	hannes-neumann@outlook.de		
+Noack	Clara	09m-SJ2021	clararosa.noack@icloud.com		
+Odparlik	Wieland	09s-SJ2021	wodparlik@icloud.com		
+Overbeck	Livia	09s-SJ2021	Liviaoberbeck@hotmail.com		
+Pabst	Maria Theresia	 	S-17@landesschule-pforta.de		
+Peterhänsel	Maya	 	maya.peterhaensel@icloud.com		
+Pfeiffer	Nele	09n-SJ2021	nele.pfeiffer@mail.de		
+Reinhardt	Amelie-Lucie	 	amelie.reinhardt2004@gmail.com		
+Reißmann	Johannes Georg	 	S-18@landesschule-pforta.de		
+Reißmann	Jonas	09n-SJ2021	joferei888@gmail.com		
+Riemer	Aaron	09n-SJ2021	a.j.riemer@icloud.com		
+Röders	Christine	 	christine.roeders@icloud.com		
+Rodigast	Anna	 	anna.rodigast@gmail.com		
+Rönsch	Romy	09s-SJ2021	romy.roensch@web.de		
+Rönsch	Scott	 	scott.roensch@web.de		
+Rosenkranz	Felix	09m-SJ2021	felix@rosenkranz-online.com		
+Rost	Magdalena	09s-SJ2021	MR2007@outlook.de		
+Sander	Emily	09s-SJ2021	emilysander0503@gmail.com		
+Scheewe	Kilian	09n-SJ2021	kilirakete@gmail.com		
+Scheibe	Johannes	09n-SJ2021	marjohannes.minecraft@gmail.com		
+Schill	Luise	 	luise.schill375@gmail.com		
+Schilling-Schön	David	09s-SJ2021	david.schilling.schoen07@gmail.com		
+Schlichting	Ella	 	E.Schlicht185@gmx.de		
+Schlindwein	Karl Richard	 	Schlindweinkarl12@gmail.com		
+Schmidt	Frida	09m-SJ2021	frida-schmidt@gmx.de		
+Schoppe	Valentin	 	valentin.schoppe04@gmail.com		
+Schreiber	Nina Carolin	 	Ninacarolin@web.de		
+Schreiber	Timo	09n-SJ2021	timomaxi@web.de		
+Schueler	Lotta-Maris	 	lotta-maris.schueler@outlook.de		
+Schulz	Teresa	 	S-22@landesschule-pforta.de		
+Schulze	Felix	 	schulze-machern@gmx.de		
+Senger	Hanna	09m-SJ2021	hasenger@icloud.com		
+Sparenberg	Alexa	 	alexa.sparenberg@gmail.com		
+Spengler	Josephine	 	josephine.spengler@spengler-web.de		
+Spiegel	Luise	 	coxali02@gmail.com		
+Spindler	Nikolaus	09n-SJ2021	nikolaus.s@outlook.de		
+Stage	Sarina	09s-SJ2021	sarina.stage@kabelmail.de		
+Stephan	Esther	09m-SJ2021	esther.27@gmx.de		
+Steuerwald	Elanor Ann	 	elli@steuerwald-privat.de		
+Stoll	Clara Charlotte	 	clarastoll04@gmail.com		
+Sültmann	Jonathan	 	jonathan.sueltmann@icloud.com		
+Tautorus	Anna	 	anna@tautorus.com		
+Theilemann	Christian Martin	 	theilemann.christian@gmail.com		
+Thieroff	Lorenz	 	lorenz.thieroff@landesschule-pforta.de		
+Tonndorf	Oskar	09m-SJ2021	OWTonndorf@freenet.de		
+Traut	Milena	 	milena.traut2006@icloud.de		
+Trautmann	Jonathan	 	trautmannjonathan@gmail.com		
+Udelnova	Sofia	 	udelnovasofia@gmail.com		
+Ulrich	Leopold	09s-SJ2021	leopold.ulrich@gmx.de		
+Unckell	Greta	09m-SJ2021	gretaunckell@gmail.com		
+Vogel	Emily	09m-SJ2021	emi.vogel@icloud.com		
+von Rümker	Justus Ferdinand Alfred	 	justusvr@icloud.com		
+Walther	Pia	 	pia-walther33@freenet.de		
+Waselau	Clara	09m-SJ2021	cwaselau@me.com		
+Waterstradt	Maya	 	maya.waterstradt@gmail.com		
+Weber	Luca Natascha	 	lucanatascha@web.de		
+Weiß	Emma	09s-SJ2021	Emma.Weiss2006@outlook.de		
+Wenzel	Vinzent	09n-SJ2021	vincent.wenzel@outlook.de		
+Wersebe von	Sophia	 	wersebesophia@gmail.com		
+Wesser	Pauline	09s-SJ2021	paulilo11@outlook.de		
+Wilzer	Leni	09n-SJ2021	lewina707@gmail.com		
+Winter	Lena	 	winterslena@web.de		
+Winter	Mathilde	09n-SJ2021	wintersmathilde@web.de		
+Wrana	Nele	 	nele.wrana@gmail.com		
+Yang	Eva Felicitas	 	yangeva024@gmail.com		
+Zerbe	Klara	 	klarazerbe@icloud.com		
+Zimmer	Martha Charlotte Ursula	 	marthazimmer@icloud.com		
+Heyder	Philine Cecilia	 	philine.cecilia.heyder@uni-weimar.de	Mädchenzimmer 1	
