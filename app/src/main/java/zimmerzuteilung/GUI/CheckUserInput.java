@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+
 import javax.swing.JCheckBox;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -30,7 +31,7 @@ public class CheckUserInput {
             public void warn() {
                 File f = new File(textField.getText());
                 if (f.exists() && !f.isDirectory()) {
-                    if (!textField.getText().endsWith(".csv")) {
+                    if (!textField.getText().endsWith(".csv") && !textField.getText().endsWith(".txt")) {
                         textField.setBackground(Colors.yellowTransp);
                     } else {
                         textField.setBackground(Colors.blueTransp);

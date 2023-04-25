@@ -12,8 +12,8 @@ import gurobi.GRBLinExpr;
 import gurobi.GRBModel;
 import gurobi.GRBVar;
 import zimmerzuteilung.Config;
+import zimmerzuteilung.Exceptions.RoomOccupiedException;
 import zimmerzuteilung.Log;
-import zimmerzuteilung.Exceptions.*;
 import zimmerzuteilung.GUI.Gui;
 import zimmerzuteilung.objects.Allocation;
 import zimmerzuteilung.objects.Allocations;
@@ -99,7 +99,8 @@ public class Gurobi {
 
             // ------------------------------------------------OBJECTIVE------------------------------------------------
 
-            this.objective = this.calculateObjectiveLinExpr(0.1, 1, this.rules.contains(Gurobi.RULES.addExtraRandomness));
+            this.objective = this.calculateObjectiveLinExpr(0.1, 1,
+                    this.rules.contains(Gurobi.RULES.addExtraRandomness));
             this.model.setObjective(this.objective, GRB.MAXIMIZE);
 
             // -------------------------------------------------OPTIMIZE------------------------------------------------
@@ -195,7 +196,7 @@ public class Gurobi {
     }
 
     /**
-     * Garanties max one team per room.
+     * Guaranties max one team per room.
      * 
      * @param model:       GRBModel object
      * @param allocations: Allocations object
@@ -556,31 +557,31 @@ public class Gurobi {
         // score matrix:
         if (all) {
             print += "\n\n--------------------- Score matrix: ---------------------";
-            print += "\n" + teamNames + "ZimmerNr";
+            print += "\n" + "ZimmerNr" + teamNames;
             for (int r = 0; r < this.rooms.size(); ++r) {
                 String str = "";
                 for (int s = 0; s < this.teams.size(); ++s) {
-                    str += DoubleRounder.round(this.allocations.get(r, s).score(), 1) + "\t";
+                    str += DoubleRounder.round(this.allocations.get(r, s).score(), 1) + "\t\t";
                 }
-                print += "\n" + str + this.rooms.get(r).officialRoomNumber();
+                print += "\n" + this.rooms.get(r).officialRoomNumber() + str;
             }
 
             print += "\n\n--------------------- ALLOCATION ---------------------";
         }
 
-        print += "\n" + teamNames + "ZimmerNr";
+        print += "\n" + "ZimmerNr" + "\t" + teamNames;
 
         for (int r = 0; r < this.rooms.size(); r++) {
             String allocated = "";
             for (int t = 0; t < this.teams.size(); t++) {
                 if (this.results[r][t] == 0) {
-                    allocated += " - \t";
+                    allocated += "\t        -\t";
                 } else {
-                    allocated += " # \t";
+                    allocated += "\t        #\t";
                 }
             }
             if (allocated.contains("#")) {
-                print += "\n" + allocated + " " + this.rooms.get(r).officialRoomNumber();
+                print += "\n" + this.rooms.get(r).officialRoomNumber() + allocated + " ";
             }
         }
         return print;

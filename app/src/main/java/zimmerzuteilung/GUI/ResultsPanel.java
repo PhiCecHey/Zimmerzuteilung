@@ -1,11 +1,13 @@
 package zimmerzuteilung.GUI;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -20,6 +22,7 @@ public class ResultsPanel extends JPanel {
     private JScrollPane scroll;
     private JButton calcResults, exportResultsButton;
     private ChooseFilePanel chooseFolder;
+    private JTextField deliminator;
 
     public ResultsPanel() {
         this.init();
@@ -30,16 +33,20 @@ public class ResultsPanel extends JPanel {
         this.showResults = new JTextArea();
         this.scroll = new JScrollPane(this.showResults);
         this.calcResults = new JButton("Ergebnisse berechnen");
+        this.deliminator = new JTextField(";");
+        this.deliminator.setMaximumSize(new Dimension(30, Gui.row.height));
 
         this.add(calcResults);
         this.add(scroll);
 
         this.chooseFolder = new ChooseFilePanel("Ergebnisse speichern unter:", "folder");
         this.exportResultsButton = new JButton("Ergebnisse als csv exportieren");
-        ResultsPanel.exportResults(exportResultsButton, this.chooseFolder.field);
         this.add(new GroupPanel(
-                new Component[] { this.chooseFolder, new Filler(50, Gui.row.height), this.exportResultsButton },
+                new Component[] { this.chooseFolder, new Filler(50, Gui.row.height), new JLabel("Trennzeichen: "),
+                        this.deliminator, this.exportResultsButton },
                 "row"));
+
+        ResultsPanel.exportResults(exportResultsButton, this.chooseFolder.field, this.deliminator.getText());
     }
 
     private void calcResult() {
@@ -57,11 +64,11 @@ public class ResultsPanel extends JPanel {
         });
     }
 
-    private static void exportResults(JButton b, JTextField f) {
+    private static void exportResults(JButton b, JTextField f, String deliminator) {
         b.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 File file = new File(f.getText());
-                if (ExportFiles.eportToCsv(file) == true) {
+                if (ExportFiles.eportToCsv(file, deliminator)) {
                     f.setBackground(Colors.greenTransp);
                 } else {
                     f.setBackground(Colors.redTransp);

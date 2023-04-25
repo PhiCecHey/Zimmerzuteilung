@@ -136,7 +136,7 @@ Tonndorf	Oskar	09m-SJ2021	OWTonndorf@freenet.de
 Traut	Milena	 	milena.traut2006@icloud.de		
 Trautmann	Jonathan	 	trautmannjonathan@gmail.com		
 Udelnova	Sofia	 	udelnovasofia@gmail.com		
-Ulrich	Leopold	09s-SJ2021	leopold.ulrich@gmx.de		
+Ulrich	Leopold	09s-SJ2021	leopold.ulrich@gmx.de	Jungenzimmer 3
 Unckell	Greta	09m-SJ2021	gretaunckell@gmail.com		
 Vogel	Emily	09m-SJ2021	emi.vogel@icloud.com		
 von Rümker	Justus Ferdinand Alfred	 	justusvr@icloud.com		
@@ -148,11 +148,11 @@ Weiß	Emma	09s-SJ2021	Emma.Weiss2006@outlook.de
 Wenzel	Vinzent	09n-SJ2021	vincent.wenzel@outlook.de		
 Wersebe von	Sophia	 	wersebesophia@gmail.com		
 Wesser	Pauline	09s-SJ2021	paulilo11@outlook.de		
-Wilzer	Leni	09n-SJ2021	lewina707@gmail.com		
+Wilzer	Leni	09n-SJ2021	lewina707@gmail.com	Jungenzimmer 7
 Winter	Lena	 	winterslena@web.de		
 Winter	Mathilde	09n-SJ2021	wintersmathilde@web.de		
 Wrana	Nele	 	nele.wrana@gmail.com		
 Yang	Eva Felicitas	 	yangeva024@gmail.com		
 Zerbe	Klara	 	klarazerbe@icloud.com		
-Zimmer	Martha Charlotte Ursula	 	marthazimmer@icloud.com		
+Zimmer	Martha Charlotte Ursula	 	marthazimmer@icloud.com	Jungenzimmer 4
 Heyder	Philine Cecilia	 	philine.cecilia.heyder@uni-weimar.de

@@ -2,8 +2,8 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>/home/philine/Documents/Nextcloud/Zimmerzuteilung/github/release/app-standalone.jar</jar>
-  <outfile>zimmerzuteilung_wrapped.exe</outfile>
+  <jar>/home/philine/Documents/MeineNextcloud/Platz/Studium/Zimmerzuteilung/github/app/build/libs/app-standalone.jar</jar>
+  <outfile>/home/philine/Documents/MeineNextcloud/Platz/Studium/Zimmerzuteilung/github/release/Zimmerzuteilung.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
@@ -13,7 +13,7 @@
   <stayAlive>false</stayAlive>
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
-  <icon></icon>
+  <icon>/home/philine/Documents/MeineNextcloud/Platz/Studium/Zimmerzuteilung/github/app/icon/Pforte-4bit.ico</icon>
   <jre>
     <path>jre</path>
     <requiresJdk>false</requiresJdk>

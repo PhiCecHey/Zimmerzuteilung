@@ -16,9 +16,9 @@ public class ExportFiles {
     // private static ArrayList<Building> buildings = ImportFiles.buildings();
     private static ArrayList<Team> teams = ImportFiles.teams();
 
-    public static boolean eportToCsv(File file) {
+    public static boolean eportToCsv(File file, String deliminator) {
         // one row represents one team
-        String toWrite = "Gruppenname, Zimmermitbewohner, Zugeteiltes Zimmer, Score (hoeher ist besser), Erstwunschinternat, Erstwunschzimmer, Zweitwunschzimmer, Zweitwunschinternat, Kommentar\n";
+        String toWrite = "Gruppenname" + deliminator + " " + "Zimmermitbewohner" + deliminator + " " + "Zugeteiltes Zimmer" + deliminator + " " + "Score (hoeher ist besser)" + deliminator + " " + "Erstwunschinternat" + deliminator + " " + "Erstwunschzimmer" + deliminator + " " + "Zweitwunschzimmer" + deliminator + " " + "Zweitwunschinternat" + deliminator + " " + "Kommentar\n";
 
         for (Team team : ExportFiles.teams) {
             String comment = "";
@@ -30,20 +30,20 @@ public class ExportFiles {
             Room allocatedRoom = team.allocatedRoom();
             Wish wish = team.wish();
 
-            toWrite += team.name() + ", " + team.membersToCsv() + ", ";
+            toWrite += team.name() + deliminator + " " + team.membersToCsv() + deliminator + " ";
 
             if (allocatedRoom == null) {
                 System.out.println("Team " + team.name() + " wurde kein Zimmer zugewiesen!");
                 comment += "Team " + team.name() + " wurde kein Zimmer zugewiesen! ";
-                toWrite += "-, -,";
+                toWrite += "-" + deliminator + " " + "-,";
             } else {
                 toWrite += team.allocatedRoom().officialRoomNumber()
-                        + ", " + team.score() + ", ";
+                        + deliminator + " " + team.score() + deliminator + " ";
             }
             if (wish == null) {
                 System.out.println("Team " + team.name() + " hat keinen Zimmerwunsch abgegeben!");
                 comment += "Team " + team.name() + " hat keinen Zimmerwunsch abgegeben! ";
-                toWrite += "-, ";
+                toWrite += "-" + deliminator + " " + "";
             } else {
                 b1 = wish.building1();
                 b2 = wish.building2();
@@ -53,30 +53,30 @@ public class ExportFiles {
             if (b1 == null) {
                 System.out.println("Team " + team.name() + " hat kein Erstwunschinternat angegeben!");
                 comment += "Team " + team.name() + " hat kein Erstwunschinternat angegeben! ";
-                toWrite += "-, ";
+                toWrite += "-" + deliminator + " " + "";
             } else {
-                toWrite += b1.name() + ", ";
+                toWrite += b1.name() + deliminator + " ";
             }
             if (r1 == null) {
                 System.out.println("Team " + team.name() + " hat kein Erstwunschzimmer angegeben!");
                 comment += "Team " + team.name() + " hat kein Erstwunschzimmer angegeben! ";
-                toWrite += "-, ";
+                toWrite += "-" + deliminator + " " + "";
             } else {
-                toWrite += r1.officialRoomNumber() + ", ";
+                toWrite += r1.officialRoomNumber() + deliminator + " ";
             }
             if (r2 == null) {
                 System.out.println("Team " + team.name() + " hat kein Zweitwunschzimmer angegeben!");
                 comment += "Team " + team.name() + " hat kein Zweitwunschzimmer angegeben! ";
-                toWrite += "-, ";
+                toWrite += "-" + deliminator + " " + "";
             } else {
-                toWrite += r2.officialRoomNumber() + ", ";
+                toWrite += r2.officialRoomNumber() + deliminator + " ";
             }
             if (b2 == null) {
                 System.out.println("Team " + team.name() + " hat kein Zweitwunschinternat angegeben!");
                 comment += "Team " + team.name() + " hat kein Zweitwunschinternat angegeben! ";
-                toWrite += "-, ";
+                toWrite += "-" + deliminator + " " + "";
             } else {
-                toWrite += b2.name() + ", ";
+                toWrite += b2.name() + deliminator + " ";
             }
             toWrite += comment + "\n";
         }

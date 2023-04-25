@@ -41,7 +41,7 @@ public class ImportsPanel extends JPanel {
     }
 
     private void imports() {
-        String[] importLabelStrings = new String[] { "Zimmer: ", "Personenbezogene Daten der Schueler:innen: ",
+        String[] importLabelStrings = new String[] { "Zimmer: ", "Klassen und Zweige: ",
                 "Maedchenteams: ", "Jungenteams: ", "Zimmerwuensche: " };
 
         for (String s : importLabelStrings) {
@@ -53,11 +53,11 @@ public class ImportsPanel extends JPanel {
         }
 
         // TODO: remove following
-        this.importsPanels.get(0).field.setText("/home/philine/Documents/Link to files/Internatszimmer.csv");
+        /*this.importsPanels.get(0).field.setText("/home/philine/Documents/Link to files/Internatszimmer.csv");
         this.importsPanels.get(1).field.setText("/home/philine/Documents/Link to files/Klassenstufe_und_Zweig.csv");
         this.importsPanels.get(2).field.setText("/home/philine/Documents/Link to files/Zimmereinteilung Mädchenzimmer.txt");
         this.importsPanels.get(3).field.setText("/home/philine/Documents/Link to files/Zimmereinteilung Jungenzimmer.txt");
-        this.importsPanels.get(4).field.setText("/home/philine/Documents/Link to files/Zimmerwunsch.csv");
+        this.importsPanels.get(4).field.setText("/home/philine/Documents/Link to files/Zimmerwunsch.csv");*/
     }
 
     private void importButton() {

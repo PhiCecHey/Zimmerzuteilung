@@ -60,7 +60,7 @@ application {
 // https://github.com/TheBoegl/gradle-launch4j
 launch4j { // TODO: configure
   mainClassName = "zimmerzuteilung.App"
-  //icon = "${projectDir}/icons/myApp.ico"
+  icon = "../../../app/icon/Pforte-4bit.ico"
   outfile = "../../../release/${rootProject.name}.exe"
   // jarTask =  tasks.fatJar
   bundledJrePath = "jre"
