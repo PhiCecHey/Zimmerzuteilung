@@ -8,5 +8,3 @@ How to run:
 1. Clone repository
 2. cd Zimmerzuteilung
 3. ./gradlew run
-
-Aktuell werden "zufaellige" Schueler "zufaelligen" Raeumen zugewiesen. Dabei werden die drei Regeln eingehalten: 1 Zimmer pro Person, maximal so viele Personen pro Zimmer wie das Zimmer Platz hat und keine gemischten (m, w, d) Zimmer. Ausserdem werden jeweils die drei Mitbewohner- und Zimmerwuensche stark bevorzugt (mit jeweils anderen Gewichtungen).
