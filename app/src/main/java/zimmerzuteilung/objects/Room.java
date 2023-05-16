@@ -16,6 +16,12 @@ public class Room {
         this.id = Room.count;
     }
 
+    public Room(String offRoomNum) {
+        this.officialRoomNumber = offRoomNum;
+        Room.count++;
+        this.id = Room.count;
+    }
+
     public Room(final String unoffName, final String offNum, final GENDER s,
             final int c, boolean res) throws IllegalArgumentException {
         ++Room.count;
@@ -53,6 +59,10 @@ public class Room {
 
     public String officialRoomNumber() {
         return this.officialRoomNumber;
+    }
+
+    public void officialRoomNumber(String n){
+        this.officialRoomNumber = n;
     }
 
     public boolean reserved() {

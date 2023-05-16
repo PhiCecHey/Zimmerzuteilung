@@ -1,7 +1,7 @@
-﻿Internat, Zimmernummer, Offizielle Zimmerbezeichnung, Geschlecht, Belegung, Zimmer reservieren
+Internat, Zimmernummer, Offizielle Zimmerbezeichnung, Geschlecht, Belegung, Zimmer reservieren
 ,,,,,
-Klausur,1,K.01,W,4,Nein
-Klausur,2,K.02,W,4,Nein
+Klausur,1,K.01,W,4,Ja
+Klausur,2,K.02,W,4,Ja
 Klausur,3,K.03,W,2,Nein
 Klausur,4,K.04,W,2,Nein
 Klausur,5,K.05,W,3,Nein
@@ -12,18 +12,18 @@ Klausur,13,K.13,W,2,Nein
 Klausur,14,K.14,W,2,Nein
 Klausur,15,K.15,W,2,Nein
 Klausur,16,K.16,W,3,Nein
-Klausur,17,K.17,W,2,Nein
+Klausur,17,K.17,W,2,Ja
 Klausur,18,K.18,W,3,Nein
 Klausur,19,K.19,W,2,Nein
 Klausur,20,K.20,M,2,Nein
 Klausur,21,K.21,M,2,Nein
 Klausur,22,K.22,M,3,Nein
-Klausur,23,K.23,M,3,Nein
+Klausur,23,K.23,M,2,Nein
 Klausur,24,K.24,M,2,Nein
 Klausur,25,K.25,M,2,Nein
 Klausur,30,K.30,M,2,Nein
 Klausur,31,K.31,M,2,Nein
-Klausur,32,K.32,M,3,Nein
+Klausur,32,K.32,M,4,Ja
 Klausur,33,K.33,M,1,Nein
 Klausur,34,K.34,M,2,Nein
 ,,,,,
@@ -32,44 +32,44 @@ Fürstenhaus,2,1.02,M,2,Nein
 Fürstenhaus,3,1.03,M,2,Nein
 Fürstenhaus,4,1.04,M,2,Nein
 Fürstenhaus,5,1.05,M,1,Nein
-Fürstenhaus,6,1.06,M,4,Nein
+Fürstenhaus,6,1.06,M,4,Ja
 Fürstenhaus,7,1.07,M,2,Nein
 Fürstenhaus,8,1.08,M,2,Nein
 Fürstenhaus,9,1.09,M,2,Nein
 Fürstenhaus,10,1.10,M,2,Nein
 Fürstenhaus,11,1.11,M,2,Nein
-Fürstenhaus,13,1.13,M,2,Nein
+Fürstenhaus,13,1.13,M,2,Ja
 Fürstenhaus,14,1.14,M,2,Nein
 Fürstenhaus,1,2.01,W,2,Nein
 Fürstenhaus,2,2.02,W,2,Nein
 Fürstenhaus,3,2.03,W,2,Nein
 Fürstenhaus,4,2.04,W,2,Nein
 Fürstenhaus,5,2.05,W,1,Nein
-Fürstenhaus,6,2.06,W,4,Nein
+Fürstenhaus,6,2.06,W,4,Ja
 Fürstenhaus,7,2.07,W,2,Nein
 Fürstenhaus,8,2.08,W,2,Nein
 Fürstenhaus,9,2.09,W,2,Nein
 Fürstenhaus,10,2.10,W,2,Nein
 Fürstenhaus,11,2.11,W,2,Nein
 Fürstenhaus,12,2.12,W,2,Nein
-Fürstenhaus,13,2.13,W,2,Nein
+Fürstenhaus,13,2.13,W,2,Ja
 Fürstenhaus,14,2.14,W,2,Nein
 ,,,,,
 Internat 2,2,202,W,3,Nein
-Internat 2,3,203,W,2,Nein
+Internat 2,3,203,W,2,Ja
 Internat 2,4,204,W,2,Nein
 Internat 2,7,207,W,2,Nein
 Internat 2,12,212,W,1,Nein
 Internat 2,13,213,W,3,Nein
 Internat 2,14,214,W,2,Nein
 Internat 2,15,215,W,2,Nein
-Internat 2,16,216,W,2,Nein
-Internat 2,17,217,W,3,Nein
+Internat 2,16,216,W,3,Ja
+Internat 2,17,217,W,4,Ja
 Internat 2,18,218,W,2,Nein
 Internat 2,23,223,W,2,Nein
 Internat 2,26,226,W,1,Nein
-Internat 2,27,227,W,2,Nein
-Internat 2,28,228,W,2,Nein
+Internat 2,27,227,W,3,Ja
+Internat 2,28,228,W,2,Ja
 Internat 2,29,229,W,2,Nein
 Internat 2,30,230,W,2,Nein
 Internat 2,31,231,W,1,Nein
@@ -78,37 +78,37 @@ Internat 2,33,233,W,2,Nein
 ,,,,,
 Internat 3,21,321,M,2,Nein
 Internat 3,22,322,M,2,Nein
-Internat 3,23,323,M,3,Nein
-Internat 3,26,326,M,2,Nein
-Internat 3,27,327,M,3,Nein
-Internat 3,41,341,W,2,Nein
-Internat 3,42,342,W,2,Nein
+Internat 3,23,323,M,4,Ja
+Internat 3,26,326,M,1,Nein
+Internat 3,27,327,M,2,Nein
+Internat 3,41,341,W,2,Ja
+Internat 3,42,342,W,2,Ja
 Internat 3,43,343,W,3,Nein
-Internat 3,45,345,W,2,Nein
+Internat 3,45,345,W,1,Nein
 Internat 3,46,346,W,2,Nein
 Internat 3,49,349,W,2,Nein
 Internat 3,50,350,W,4,Nein
-Internat 3,51,351,W,2,Nein
-Internat 3,52,352,W,2,Nein
+Internat 3,51,351,W,2,Ja
+Internat 3,52,352,W,2,Ja
 Internat 3,54,354,W,2,Nein
 Internat 3,55,355,W,2,Nein
-Internat 3,61,361,W,3,Nein
-Internat 3,62,362,W,2,Nein
-Internat 3,63,363,W,2,Nein
+Internat 3,61,361,W,3,Ja
+Internat 3,62,362,W,1,Nein
+Internat 3,63,363,W,1,Nein
 Internat 3,65,365,W,2,Nein
 Internat 3,68,368,W,1,Nein
 Internat 3,69,369,W,3,Nein
-Internat 3,70,370,W,3,Nein
-Internat 3,71,371,W,3,Nein
+Internat 3,70,370/371,W,4,Nein
+Internat 3,71,371,W,0,Ja
 ,,,,,
-Internat 5,25,525,M,2,Nein
+Internat 5,25,525,M,2,Ja
 Internat 5,26,526,M,2,Nein
 Internat 5,27,527,M,2,Nein
 Internat 5,28,528,M,1,Nein
 Internat 5,30,530,M,1,Nein
 Internat 5,31,531,M,2,Nein
 Internat 5,32,532,M,2,Nein
-Internat 5,50,550,W,2,Nein
+Internat 5,50,550,W,2,Ja
 Internat 5,51,551,W,2,Nein
 Internat 5,52,552,W,2,Nein
 Internat 5,53,553,W,1,Nein
@@ -120,7 +120,7 @@ Internat 5,60,560,W,2,Nein
 Internat 5,61,561,W,3,Nein
 Internat 5,64,564,W,1,Nein
 Internat 5,66,566,W,3,Nein
-Internat 5,67,567,W,2,Nein
+Internat 5,67,567,W,2,Ja
 Internat 5,68,568,W,3,Nein
 Internat 5,75,575,M,1,Nein
 Internat 5,76,576,M,3,Nein
@@ -132,9 +132,9 @@ Internat 5,85,585,M,3,Nein
 Internat 5,86,586,M,2,Nein
 ,,,,,
 Internat 6,21,621,W,2,Nein
-Internat 6,22,622,W,2,Nein
+Internat 6,22,622,W,1,Nein
 Internat 6,23,623,W,3,Nein
-Internat 6,27,627,W,2,Nein
+Internat 6,27,627,W,2,Ja
 Internat 6,29,629,W,2,Nein
 Internat 6,31,631,W,1,Nein
 Internat 6,32,632,W,2,Nein
@@ -142,17 +142,16 @@ Internat 6,33,633,W,3,Nein
 Internat 6,36,636,W,2,Nein
 ,,,,,
 Internat 7,1,701,M,2,Nein
-Internat 7,2,702,M,4,Nein
+Internat 7,2,702,M,3,Ja
 Internat 7,3,703,M,3,Nein
 Internat 7,4,704,M,2,Nein
 Internat 7,5,705,M,2,Nein
-Internat 7,11,711,W,4,Nein
-Internat 7,12,712,W,4,Nein
+Internat 7,11,711,W,3,Nein
+Internat 7,12,712,W,3,Ja
 Internat 7,13,713,W,3,Nein
-Internat 7,14,714,W,2,Nein
-Internat 7,21,721,W,3,Nein
-Internat 7,22,722,W,3,Nein
+Internat 7,14,714,W,2,Ja
+Internat 7,21,721,W,2,Nein
+Internat 7,22,722,W,2,Nein
 Internat 7,23,723,W,2,Nein
 Internat 7,24,724,W,1,Nein
 Internat 7,25,725,W,2,Nein
-,,,,,

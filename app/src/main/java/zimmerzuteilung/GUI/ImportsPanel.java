@@ -42,7 +42,7 @@ public class ImportsPanel extends JPanel {
 
     private void imports() {
         String[] importLabelStrings = new String[] { "Zimmer: ", "Klassen und Zweige: ",
-                "Maedchenteams: ", "Jungenteams: ", "Zimmerwuensche: " };
+                "Maedchenteams: ", "Jungenteams: ", "Zimmerwuensche (Maedchen): ", "Zimmerwuensche (Jungen): " };
 
         for (String s : importLabelStrings) {
             ChooseFilePanel i = new ChooseFilePanel(s, "file");
@@ -51,13 +51,6 @@ public class ImportsPanel extends JPanel {
             this.add(i);
             this.add(new Filler(Gui.row.width, Gui.row.height));
         }
-
-        // TODO: remove following
-        /*this.importsPanels.get(0).field.setText("/home/philine/Documents/Link to files/Internatszimmer.csv");
-        this.importsPanels.get(1).field.setText("/home/philine/Documents/Link to files/Klassenstufe_und_Zweig.csv");
-        this.importsPanels.get(2).field.setText("/home/philine/Documents/Link to files/Zimmereinteilung Mädchenzimmer.txt");
-        this.importsPanels.get(3).field.setText("/home/philine/Documents/Link to files/Zimmereinteilung Jungenzimmer.txt");
-        this.importsPanels.get(4).field.setText("/home/philine/Documents/Link to files/Zimmerwunsch.csv");*/
     }
 
     private void importButton() {
@@ -104,6 +97,13 @@ public class ImportsPanel extends JPanel {
                         importsPanels.get(4).field.setBackground(Colors.greenTransp);
                     }
                     i = 5;
+
+                    if (!ImportFiles.importWishes(new File(importsPanels.get(i).field.getText()))) {
+                        importsPanels.get(5).field.setBackground(Colors.yellowTransp);
+                    } else {
+                        importsPanels.get(5).field.setBackground(Colors.greenTransp);
+                    }
+                    i = 6;
                 } catch (FileNotFoundException f) {
                     Log.append("Datei konnte nicht gefunden werden.");
                 } catch (Exception e) {

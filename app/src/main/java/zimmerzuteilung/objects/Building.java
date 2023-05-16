@@ -3,22 +3,10 @@ package zimmerzuteilung.objects;
 import java.util.ArrayList;
 
 public class Building {
-
-    /*
-     * public enum BEZEICHNUNG{
-     * Klausur, II, III, Fueha, V, VI, VII;
-     * }
-     * BEZEICHNUNG bezeichnung;
-     * Internat(BEZEICHNUNG bezeichnung){
-     * this.bezeichnung = bezeichnung;
-     * }
-     */
-
     private static int count = 0;
 
     private int id;
     private String name;
-    // private Map<Integer, Room> rooms = new HashMap<>();
     private ArrayList<Room> rooms = new ArrayList<>();
 
     public Building(final String n) {
@@ -54,5 +42,23 @@ public class Building {
             }
         }
         return false;
+    }
+
+    public Room getRoom(String name) {
+        for (Room room : this.rooms) {
+            if (room.officialRoomNumber().equals(name)) {
+                return room;
+            }
+        }
+        return null;
+    }
+
+    public Room getRoomAlternative(String name) {
+        for (Room room : this.rooms) {
+            if (room.officialRoomNumber().contains(name) || name.contains(room.officialRoomNumber())) {
+                return room;
+            }
+        }
+        return null;
     }
 }

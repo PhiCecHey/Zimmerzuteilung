@@ -11,12 +11,17 @@ public class Student {
     private SPECIALIZATION special;
     private String moodleDate;
     private String email;
+    private String groupName;
+    private Room lastYearsRoom;
+    private Building lastYearsBuilding;
 
-    /*public Student() {
-        ++Student.count;
-        this.id = Student.count;
-        this.name = Integer.toString(this.id);
-    }*/
+    /*
+     * public Student() {
+     * ++Student.count;
+     * this.id = Student.count;
+     * this.name = Integer.toString(this.id);
+     * }
+     */
 
     public Student(final String n, final String u) {
         this.name = n;
@@ -62,7 +67,31 @@ public class Student {
         this.moodleDate = mD;
     }
 
-    public void email(String em){
+    public void email(String em) {
         this.email = em;
+    }
+
+    public void group(String g) {
+        this.groupName = g;
+    }
+
+    public String group() {
+        return this.groupName;
+    }
+
+    public void lastYearsRoom(Room r) {
+        this.lastYearsRoom = r;
+    }
+
+    public Room lastYearsRoom() {
+        return this.lastYearsRoom;
+    }
+
+    public void lastYearsBuilding(Building b) {
+        this.lastYearsBuilding = b;
+    }
+
+    public Building lastYearsBuilding() {
+        return this.lastYearsBuilding;
     }
 }

@@ -33,25 +33,28 @@ public class Config {
     public static int impBuildRoomReserved = 5;
 
     // importWishes:
+    public static int importWishDate = 1;
     public static int impWishTeamName = 5;
-    public static int impWishCycleLengthTilNextMember = 9;
+    public static int impWishB1 = 9;
 
     // importTeams:
-    public static int impTeamTeamName = 1;
+    /*public static int impTeamTeamName = 1;
     public static int impTeamTeamSize = 2;
     public static int impTeamFirstMember = 8;
-    public static int impTeamCycleLengthTilNextMember = 5;
+    public static int impTeamCycleLengthTilNextMember = 5;*/
 
-    public static int impTeamFirstName = 1;
     public static int impTeamLastName = 0;
+    public static int impTeamFirstName = 1;
     public static int impTeamEmail = 3;
-    public static int impTeamTeamName2 = 4;
+    public static int impTeamTeamName = 4;
 
     // importStudents:
     public static int impStudDate = 1;
+    public static int impStudTeamName = 5;
     public static int impStudName = 7;
     public static int impStudUsername = 8;
-    public static int impStudGrade = 9;
-    public static int impStudSpecial = 10;
-    public static int impStudGender = 11;
+    public static int impStudLastBuild = 9;
+    public static int impStudLastRoom = 10; // til 16
+    public static int impStudGrade = 17;
+    public static int impStudSpecial = 18;
 }

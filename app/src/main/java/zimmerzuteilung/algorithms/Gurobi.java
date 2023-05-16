@@ -28,7 +28,8 @@ public class Gurobi {
         // constraints
         oneRoomPerTeam, oneTeamPerRoom, maxStudentsPerRoom,
         // other rules
-        respectWish, respectReservations, respectGradePrivilege, respectRoomGender, addExtraRandomness;
+        respectWish, respectReservations, respectGradePrivilege, respectRoomGender, addExtraRandomness,
+        respectPrevBuilding, respectPrevRoom;
     }
 
     private ArrayList<Gurobi.RULES> rules;
@@ -412,6 +413,52 @@ public class Gurobi {
             }
         }
     }
+
+    private void respectPrevRoom() {
+        for (int r = 0; r < this.allocations.nRooms(); ++r) {
+            for (int t = 0; t < this.allocations.nTeams(); ++t) {
+                Allocation allocation = this.allocations.get(r, t);
+                Wish wish = allocation.team().wish();
+
+                if (wish.building1() == null || wish.building2() == null || wish.room1() == null
+                        || wish.room2() == null) {
+                    continue;
+                } else if (wish.building1().containsRoom(allocation.room())) {
+                    if (allocation.team().canStayInBuilding()) {
+                        // TODO: make sure team stays in building
+                    }
+                    if (wish.room1().id() == allocation.room().id()) {
+                        if (allocation.team().canStayInRoom()) {
+                            // TODO: make sure team stays in room
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void respectPrevAlternative(float scoreLastRoom, float scoreLastBuilding) {
+        for (int r = 0; r < this.allocations.nRooms(); ++r) {
+            for (int t = 0; t < this.allocations.nTeams(); ++t) {
+                Allocation allocation = this.allocations.get(r, t);
+                Wish wish = allocation.team().wish();
+
+                if (wish.building1() == null || wish.building2() == null || wish.room1() == null
+                        || wish.room2() == null) {
+                    continue;
+                } else if (wish.building1().containsRoom(allocation.room())) {
+                    if (allocation.team().canStayInBuilding()) {
+                        allocation.addToScore(scoreLastBuilding);
+                    }
+                    if (wish.room1().id() == allocation.room().id()) {
+                        if (allocation.team().canStayInRoom()) {
+                            allocation.addToScore(scoreLastRoom);
+                        }
+                    }
+                }
+            }
+        }
+    }
     // ----------------------------------------------------OBJECTIVE----------------------------------------------------
 
     /**
@@ -431,13 +478,6 @@ public class Gurobi {
         return grbvars;
     }
 
-    /**
-     * TODO
-     * 
-     * @param min
-     * @param max
-     * @return
-     */
     private GRBLinExpr calculateObjectiveLinExpr(final double min, final double max, boolean addExtraRandomness) {
         GRBLinExpr objective = new GRBLinExpr();
         for (int r = 0; r < this.allocations.nRooms(); ++r) {

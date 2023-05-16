@@ -6,14 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import zimmerzuteilung.Config;
-import zimmerzuteilung.Exceptions.BuildingDoesNotExistException;
-import zimmerzuteilung.Exceptions.LineEmptyException;
-import zimmerzuteilung.Exceptions.RoomDoesNotExistException;
-import zimmerzuteilung.Exceptions.StudentDoesNotExistException;
-import zimmerzuteilung.Exceptions.StudentInSeveralMoodleGroupsException;
-import zimmerzuteilung.Exceptions.TeamDoesNotExistException;
+import zimmerzuteilung.Exceptions.*;
 import zimmerzuteilung.Log;
 import zimmerzuteilung.objects.Building;
 import zimmerzuteilung.objects.GENDER;
@@ -153,6 +149,7 @@ public class ImportFiles {
         String line = reader.readLine(); // skip heading
         while ((line = reader.readLine()) != null) {
             lineNum++;
+            System.out.println("linenum: " + lineNum);
             String[] entry;
             try {
                 entry = ImportFiles.splitOnString(line, ",");
@@ -258,6 +255,8 @@ public class ImportFiles {
                 continue;
             }
             // ----------------------------------------------get_team-----------------------------------------------
+            String date = entry[Config.importWishDate];
+
             Team team = new Team();
             for (Team t : ImportFiles.teams) {
                 if (t.name().equals(entry[Config.impWishTeamName])) {
@@ -274,198 +273,90 @@ public class ImportFiles {
                 reader.close();
                 // throw new TeamDoesNotExistException(errormsg);
                 noWarnings = false;
+                continue;
             }
+
+            if ((team.date() != null) && (!team.date().equals(""))) {
+                // if team has already voted earlier, then skip this vote
+                if (ImportFiles.compareDate(team.date(), date)) {
+                    continue;
+                }else{
+                    System.out.println(date + " ist eher als " + team.date() + " ?");
+                }
+            }
+
             // ----------------------------------------------get_wish-----------------------------------------------
-            String nameBuilding1 = "";
-            String nameRoom1 = "";
-            String nameRoom2 = "";
-            String nameBuilding2 = "";
-            for (int i = Config.impWishCycleLengthTilNextMember; i < entry.length; i++) {
+            Building b1 = null;
+            Room r1 = null;
+            Room r2 = null;
+            Building b2 = null;
+
+            for (int i = Config.impWishB1; i < entry.length; i++) {
                 if (entry[i] != "") {
-                    if (nameBuilding1.equals("")) {
-                        nameBuilding1 = entry[i];
-                    } else if (nameRoom1.equals("")) {
-                        nameRoom1 = entry[i];
-                    } else if (nameRoom2.equals("")) {
-                        nameRoom2 = entry[i];
-                    } else if (nameBuilding2.equals("")) {
-                        nameBuilding2 = entry[i];
+                    if (b1 == null) {
+                        b1 = ImportFiles.findBuilding(entry[i]);
+                    } else if (r1 == null) {
+                        r1 = b1.getRoom(entry[i]);
+                    } else if (r2 == null) {
+                        r2 = b1.getRoom(entry[i]);
+                    } else if (b2 == null) {
+                        b2 = ImportFiles.findBuilding(entry[i]);
                     }
                 }
             }
 
-            Boolean building1 = false, building2 = false, room1 = false, room2 = false;
-            for (Building building : ImportFiles.buildings) {
-                if (building.name().equals(nameBuilding1)) {
-                    building1 = true;
-                    team.wish().building1(building);
-                }
-                if (building.name().equals(nameBuilding2)) {
-                    building2 = true;
-                    team.wish().building2(building);
-                }
-
-                if (building1 && building2) {
-                    break;
-                }
-            }
-            if (!building1) {
-                String errormsg = "Das Internat " + nameBuilding1
-                        + " existiert nicht! Wurde es vorher korrekt eingelesen?";
-                Log.append(errormsg);
-                reader.close();
-                throw new BuildingDoesNotExistException(errormsg);
-            }
-            if (!building2) {
-                String errormsg = "Das Internat " + nameBuilding2
-                        + " existiert nicht! Wurde es vorher korrekt eingelesen?";
-                Log.append(errormsg);
-                reader.close();
-                throw new BuildingDoesNotExistException(errormsg);
+            if ((b1 != null) && (b2 != null) && (r1 != null) && (r2 != null)) {
+                team.wish().building1(b1);
+                team.wish().room1(r1);
+                team.wish().room2(r2);
+                team.wish().building2(b2);
+            } else {
+                team.date("");
+                noWarnings = false;
             }
 
-            for (Room room : team.wish().building1().rooms()) {
-                if (room.officialRoomNumber().equals(nameRoom1)) {
-                    room1 = true;
-                    team.wish().room1(room);
-                } else if (nameRoom1.contains(room.officialRoomNumber())) {
-                    room1 = true;
-                    team.wish().room1(room);
-                }
-
-                if (room.officialRoomNumber().equals(nameRoom2)) {
-                    room2 = true;
-                    team.wish().room2(room);
-                } else if (nameRoom2.contains(room.officialRoomNumber())) {
-                    room2 = true;
-                    team.wish().room2(room);
-                }
-
-                if (room1 && room2) {
-                    break;
-                }
-            }
-            if (!room1) {
-                String errormsg = "Das Zimmer " + nameRoom1
-                        + " existiert nicht! Wurde es vorher korrekt eingelesen?";
+            if (b1 == null) {
+                String errormsg = "Das Erstwunschinternat von Team " + team.name() + " konnte nicht gefunden werden!";
+                b1 = ImportFiles.getRandomBuilding(b2);
+                errormsg += " Es wurde das Internat " + b1.name() + " zufaellig als Erstwunschinternat ausgewaehlt.";
                 Log.append(errormsg);
-                reader.close();
-                throw new RoomDoesNotExistException(errormsg);
+                System.out.println(errormsg);
+                // reader.close();
+                // throw new BuildingDoesNotExistException(errormsg);
             }
-            if (!room2) {
-                String errormsg = "Das Zimmer " + nameRoom2
-                        + " existiert nicht! Wurde es vorher korrekt eingelesen?";
+            if (b2 == null) {
+                String errormsg = "Das Zweitwunschinternat von Team " + team.name() + " konnte nicht gefunden werden!";
+                b2 = ImportFiles.getRandomBuilding(b1);
+                errormsg += " Es wurde das Internat " + b2.name() + " zufaellig als Zweitwunschinternat ausgewaehlt.";
+                System.out.println(errormsg);
                 Log.append(errormsg);
-                reader.close();
-                throw new RoomDoesNotExistException(errormsg);
+                // reader.close();
+                // throw new BuildingDoesNotExistException(errormsg);
+            }
+            if (r1 == null) {
+                String errormsg = "Das Erstwunschzimmer von Team " + team.name() + " konnte nicht gefunden werden!";
+                r1 = ImportFiles.getRandomRoom(b1, r2);
+                errormsg += " Es wurde das Zimmer " + r1.officialRoomNumber()
+                        + " zufaellig als Erstwunschzimmer ausgewaehlt.";
+                Log.append(errormsg);
+                System.out.println(errormsg);
+                // reader.close();
+                // throw new RoomDoesNotExistException(errormsg);
+            }
+            if (r2 == null) {
+                String errormsg = "Das Zweitwunschzimmer von Team " + team.name() + " konnte nicht gefunden werden!";
+                r2 = ImportFiles.getRandomRoom(b1, r1);
+                errormsg += " Es wurde das Zimmer " + r2.officialRoomNumber()
+                        + " zufaellig als Erstwunschzimmer ausgewaehlt.";
+                Log.append(errormsg);
+                System.out.println(errormsg);
+                // reader.close();
+                // throw new RoomDoesNotExistException(errormsg);
             }
         }
         reader.close();
         return noWarnings;
     }
-
-    // tested, works
-    /*
-     * public static boolean importTeams(File csv)
-     * throws IOException, IllegalArgumentException,
-     * StudentInSeveralMoodleGroupsException {
-     * boolean noWarnings = true;
-     * BufferedReader reader = new BufferedReader(new FileReader(csv));
-     * // int lineNum = 2;
-     * String line = reader.readLine();
-     * line = reader.readLine(); // skip heading
-     * 
-     * while ((line = reader.readLine()) != null) {
-     * // lineNum++;
-     * String[] entry;
-     * try {
-     * entry = ImportFiles.splitOnString(line, ",");
-     * } catch (LineEmptyException e) {
-     * continue;
-     * }
-     * //
-     * --------------------------------------------get_team_size--------------------
-     * ------------------------
-     * int teamSize = Integer.valueOf(entry[Config.impTeamTeamSize]);
-     * if (teamSize == 0) {
-     * continue; // team is empty
-     * }
-     * //
-     * --------------------------------------------get_teamname---------------------
-     * ------------------------
-     * Team team = new Team();
-     * team.name(entry[Config.impTeamTeamName]); // moodle team name
-     * 
-     * boolean duplicateTeam = false;
-     * for (Team t : ImportFiles.teams) {
-     * if (team.name().equals(t.name())) {
-     * duplicateTeam = true;
-     * team = t; // team already added to list of teams
-     * break;
-     * }
-     * }
-     * //
-     * ----------------------------------------get_students_of_team-----------------
-     * ------------------------
-     * for (int i = Config.impTeamFirstMember; i <=
-     * Config.impTeamCycleLengthTilNextMember - 1 + teamSize
-     * Config.impTeamCycleLengthTilNextMember; i +=
-     * Config.impTeamCycleLengthTilNextMember) {
-     * String userName = entry[i];
-     * String name = entry[i + 2] + " " + entry[i + 3]; // FirstName LastName
-     * 
-     * Student student = null;
-     * for (Student s : ImportFiles.students) {
-     * if (s.userName().equals(userName)) {
-     * student = s;
-     * }
-     * }
-     * if (student == null) {
-     * student = new Student(name, userName);
-     * System.err.println("Schueler:in " + name +
-     * " hat die Umfrage zu den persoenlichen Daten nicht "
-     * + "(vollstaendig) ausgefuellt!");
-     * Log.append("Schueler:in " + name +
-     * " hat die Umfrage zu den persoenlichen Daten nicht "
-     * + "(vollstaendig) ausgefuellt!");
-     * noWarnings = false;
-     * }
-     * 
-     * // check for duplicates:
-     * for (Team t : ImportFiles.teams) {
-     * Student duplicate = t.getStudent(userName);
-     * if (duplicate != null) {
-     * String errormsg = "Schueler:in befindet sich in mehreren Moodlegruppen! "
-     * + duplicate.userName() + ": " + team.name() + ", " + t.name();
-     * Log.append(errormsg);
-     * reader.close();
-     * throw new StudentInSeveralMoodleGroupsException(errormsg);
-     * }
-     * }
-     * team.addStudent(student); // create new student and add to team
-     * }
-     * if (!duplicateTeam) {
-     * // check gender of students
-     * GENDER gender = ImportFiles.determineGender(team);
-     * if (gender == null) {
-     * team.gender(GENDER.d);
-     * String errormsg = "Das Team " + team.name() +
-     * " ist nicht gleichgeschlechtlich!";
-     * System.err.println(errormsg);
-     * Log.append(errormsg);
-     * noWarnings = false;
-     * } else {
-     * team.gender(gender);
-     * }
-     * 
-     * // add team
-     * ImportFiles.teams.add(team);
-     * }
-     * }
-     * reader.close();
-     * return noWarnings;
-     * }
-     */
 
     public static boolean importGirlTeams(File txt)
             throws IOException, IllegalArgumentException, StudentInSeveralMoodleGroupsException,
@@ -503,7 +394,7 @@ public class ImportFiles {
             String teamName = "";
             boolean studentHasNoGroup = false;
             try {
-                teamName = entry[Config.impTeamTeamName2];
+                teamName = entry[Config.impTeamTeamName];
             } catch (ArrayIndexOutOfBoundsException e) {
                 studentHasNoGroup = true;
             }
@@ -658,24 +549,40 @@ public class ImportFiles {
                 Log.append(errormsg);
                 noWarnings = false;
             }
-            /*
-             * //
-             * ---------------------------------------------get_gender----------------------
-             * ------------------------
-             * if (entry[Config.impStudGender].equals("weiblich")) {
-             * student.gender(GENDER.f);
-             * } else if (entry[Config.impStudGender].contains("m") &&
-             * entry[Config.impStudGender].contains("nnlich")) {
-             * student.gender(GENDER.m);
-             * } else if (entry[Config.impStudGender].equals("divers")) {
-             * student.gender(GENDER.d);
-             * } else {
-             * String errormsg = "Schueler:in " + name + " hat ein ungueltiges Geschlecht!";
-             * System.err.println(errormsg);
-             * Log.append(errormsg);
-             * noWarnings = false;
-             * }
-             */
+            // ---------------------------------------------get_group----------------------------------------------
+            if (entry[Config.impStudTeamName] != null) { // TODO: doesnt do anything yet
+                student.group(entry[Config.impStudTeamName]);
+            }
+            // -------------------------------------------get_lastRoom---------------------------------------------
+            try {
+                if (entry[Config.impStudLastBuild].equals("")) {
+                    String errormsg = "Schueler:in " + student.name() + " hat nicht angegeben, in welchem Internat "
+                            + "er/sie dieses Jahr gewohnt hat!";
+                    Log.append(errormsg);
+                } else {
+                    Building lastYearsBuilding = ImportFiles.getLastYearsBuilding(entry[Config.impStudLastBuild]);
+                    student.lastYearsBuilding(lastYearsBuilding);
+                    String lastYearsRoomsName = "";
+                    for (int i = Config.impStudLastBuild + 1; i < Config.impStudGrade; i++) {
+                        if (!entry[i].equals("")) {
+                            lastYearsRoomsName = entry[i];
+                            break;
+                        }
+                    }
+                    if (lastYearsRoomsName.equals("")) {
+                        String errormsg = "Schueler:in " + student.name() + " hat nicht angegeben, in welchem Zimmer " +
+                                "er/sie dieses Jahr gewohnt hat!";
+                        Log.append(errormsg);
+                    } else {
+                        Room lastYearsRoom = ImportFiles.getLastYearsRoom(student.lastYearsBuilding(),
+                                lastYearsRoomsName);
+                        student.lastYearsRoom(lastYearsRoom);
+                    }
+                }
+            } catch (NoRoomWithThatNameException | NoBuildingWithThatNameException e) {
+                Log.append(e.getMessage());
+                System.err.println(e.getMessage());
+            }
 
             if (!duplicate) {
                 ImportFiles.students.add(student);
@@ -683,6 +590,77 @@ public class ImportFiles {
         }
         reader.close();
         return noWarnings;
+    }
+
+    private static Building getLastYearsBuilding(String nameOfBuilding) throws NoBuildingWithThatNameException {
+        for (Building building : ImportFiles.buildings) {
+            if (building.name().equals(nameOfBuilding)) {
+                return building;
+            }
+        }
+        throw new NoBuildingWithThatNameException("Das Internat " + nameOfBuilding + " konnte nicht gefunden werden!");
+    }
+
+    private static Room getLastYearsRoom(Building lastYearsBuilding, String nameOfRoom)
+            throws NoRoomWithThatNameException {
+        Room lastYearsRoom = lastYearsBuilding.getRoom(nameOfRoom);
+        if (lastYearsRoom == null) {
+            return ImportFiles.getLastYearsRoomAlternative(lastYearsBuilding, nameOfRoom);
+        }
+        return lastYearsRoom;
+    }
+
+    private static Room getLastYearsRoomAlternative(Building lastYearsBuilding, String nameOfRoom)
+            throws NoRoomWithThatNameException {
+        Room lastYearsRoom = lastYearsBuilding.getRoomAlternative(nameOfRoom);
+        if (lastYearsRoom == null) {
+            throw new NoRoomWithThatNameException("Das Zimmer " + nameOfRoom + " im Internat "
+                    + lastYearsBuilding.name() + " konnte nicht gefunden werden!");
+        }
+        String errormsg = "Das Zimmer " + nameOfRoom + " im Internat " + lastYearsBuilding.name()
+                + " konnte nicht gefunden werden. Es wurde ein Zimmer mit aehnlichem Namen gefunden: "
+                + lastYearsRoom.officialRoomNumber();
+        Log.append(errormsg);
+        System.out.println(errormsg);
+        return lastYearsRoom;
+    }
+
+    private static Building findBuilding(String nameBuilding) {
+        for (Building building : ImportFiles.buildings) {
+            if (building.name().equals(nameBuilding)) {
+                return building;
+            }
+        }
+        return null;
+    }
+
+    private static Building getRandomBuilding(Building building) {
+        if (building == null) {
+            building = new Building("ThereShallBeNoBuildingWithThisName");
+        }
+        Building random = new Building("ThereShallBeNoBuildingWithThisName");
+        boolean doWhile = true;
+        while (doWhile || random.name().equals(building.name())) {
+            int n = new Random().nextInt(ImportFiles.buildings.size());
+            random = ImportFiles.buildings.get(n);
+            doWhile = false;
+        }
+        return random;
+    }
+
+    private static Room getRandomRoom(Building building, Room room) {
+        if (room == null) {
+            room = new Room("ThereShallBeNoRoomWithThisName");
+        }
+        Room random = new Room("ThereShallBeNoRoomWithThisName");
+        boolean doWhile = true;
+        while (doWhile || random.officialRoomNumber().equals(room.officialRoomNumber())) {
+            int n = new Random().nextInt(building.rooms().size());
+            System.out.println(n);
+            random = building.rooms().get(n);
+            doWhile = false;
+        }
+        return random;
     }
 
     public static ArrayList<Building> buildings() {
@@ -699,44 +677,4 @@ public class ImportFiles {
         ImportFiles.teams.clear();
     }
 
-    /*
-     * private static GENDER determineGender(Team team) {
-     * short countM = 0;
-     * short countF = 0;
-     * short countD = 0;
-     * for (Student s : team.members()) {
-     * if (s.gender().equals(GENDER.f)) {
-     * countF++;
-     * } else if (s.gender().equals(GENDER.m)) {
-     * countM++;
-     * } else if (s.gender().equals(GENDER.d)) {
-     * countD++;
-     * } else {
-     * s.gender(GENDER.d);
-     * String errmsg = "Schueler " + s.userName() +
-     * " hat kein gueltiges Geschlecht!";
-     * System.err.println(errmsg);
-     * Log.append(errmsg);
-     * }
-     * }
-     * if (countM > 0 && countF > 0 || countM > 0 && countD > 0 || countF > 0 &&
-     * countD > 0) {
-     * return null;
-     * }
-     * 
-     * if (countM > countF) {
-     * if (countM >= countD) {
-     * return GENDER.m;
-     * } else {
-     * return GENDER.d;
-     * }
-     * } else {
-     * if (countF >= countD) {
-     * return GENDER.f;
-     * } else {
-     * return GENDER.d;
-     * }
-     * }
-     * }
-     */
 }

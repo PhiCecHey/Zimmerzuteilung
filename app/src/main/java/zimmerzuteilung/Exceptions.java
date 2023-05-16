@@ -66,4 +66,16 @@ public class Exceptions {
             super(str);
         }
     }
+
+    public static class NoRoomWithThatNameException extends Exception {
+        public NoRoomWithThatNameException(String str) {
+            super(str);
+        }
+    }
+
+    public static class NoBuildingWithThatNameException extends Exception {
+        public NoBuildingWithThatNameException(String str) {
+            super(str);
+        }
+    }
 }

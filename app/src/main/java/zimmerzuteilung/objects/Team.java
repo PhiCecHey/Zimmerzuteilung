@@ -7,8 +7,8 @@ public class Team {
     private Wish wish;
     private int id;
     private GENDER gender;
-    private String name; // for json
-    private String time; // for json
+    private String name;
+    private String date;
     private Room allocatedRoom;
     private float score;
     private static int count = 0;
@@ -18,6 +18,28 @@ public class Team {
         this.wish = new Wish();
         Team.count++;
         this.id = Team.count;
+    }
+
+    public boolean canStayInRoom() {
+        Room room = this.members.get(0).lastYearsRoom();
+        for (Student student : this.members) {
+            Room r = student.lastYearsRoom();
+            if (!r.officialRoomNumber().equals(room.officialRoomNumber())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean canStayInBuilding() {
+        Building building = this.members.get(0).lastYearsBuilding();
+        for (Student student : this.members) {
+            Building b = student.lastYearsBuilding();
+            if (!building.name().equals(b.name())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean allocateRoom(Room r) {
@@ -86,6 +108,14 @@ public class Team {
             }
         }
         return null;
+    }
+
+    public String date(){
+        return this.date;
+    }
+
+    public void date(String date){
+        this.date = date;
     }
 
     public String membersToCsv() {
