@@ -270,13 +270,6 @@ public class ImportFiles {
         boolean noWarningsBoys = importWishesWithoutLog(csvBoys);
 
         for (Team team : ImportFiles.teams) {
-            String debug = team.errorMsg();
-            if (!debug.equals("")) {
-                if (team.name().equals("jungenzimmer 21")) {
-                    int debgu2 = 3;
-                }
-            }
-
             Log.append(team.errorMsg());
         }
 

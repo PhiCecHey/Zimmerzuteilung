@@ -84,9 +84,6 @@ public class Team {
     }
 
     public String errorMsg() {
-        if (this.name.equals("jungenzimmer 21")) {
-            int debug = 4;
-        }
         boolean problem = false;
         for (boolean wv : this.wishValid) {
             if (!wv) {
