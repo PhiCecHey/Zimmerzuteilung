@@ -4,14 +4,16 @@ public class Log {
     private static String log = "";
 
     public static void append(String s) {
-        Log.log += "\n" + s + "\n";
+        if(s != null && !s.equals("")){
+            Log.log += "\n" + s + "\n";
+        }
     }
 
     public static String log() {
         return Log.log;
     }
 
-    public static void clear(){
+    public static void clear() {
         Log.log = "";
     }
 }

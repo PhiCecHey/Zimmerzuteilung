@@ -53,37 +53,63 @@ public class ImportFiles {
      * @return returns true, if date1 is earlier or equal to date2
      */
     public static boolean compareDate(String date1, String date2) {
-        int year1, year2, month1, month2, day1, day2;
+        int year1, year2, month1, month2, day1, day2, hour1, hour2, min1, min2, sec1, sec2;
         try {
+            // date
             year1 = Integer.valueOf(date1.substring(6, 10));
             year2 = Integer.valueOf(date2.substring(6, 10));
             month1 = Integer.valueOf(date1.substring(3, 5));
             month2 = Integer.valueOf(date2.substring(3, 5));
             day1 = Integer.valueOf(date1.substring(0, 2));
             day2 = Integer.valueOf(date2.substring(0, 2));
+
+            // time
+            hour1 = Integer.valueOf(date1.substring(11, 13));
+            hour2 = Integer.valueOf(date2.substring(11, 13));
+            min1 = Integer.valueOf(date1.substring(14, 16));
+            min2 = Integer.valueOf(date2.substring(14, 16));
+            sec1 = Integer.valueOf(date1.substring(17, 19));
+            sec2 = Integer.valueOf(date2.substring(17, 19));
+
         } catch (NumberFormatException e) {
             System.err.println(date1 + " und " + date2 + " sind keine validen Moodletimestamps.");
             Log.append(date1 + " und " + date2 + " sind keine validen Moodletimestamps.");
             throw e;
         }
-        if (year1 < year2) {
-            return true;
-        } else if (year1 > year2) {
-            return false;
-        }
 
-        if (month1 < month2) {
+        // compare date
+        if (year1 < year2)
             return true;
-        } else if (month1 > month2) {
+        else if (year1 > year2)
             return false;
-        }
 
-        if (day1 < day2) {
+        if (month1 < month2)
             return true;
-        } else if (day1 > day2) {
+        else if (month1 > month2)
             return false;
-        }
 
+        if (day1 < day2)
+            return true;
+        else if (day1 > day2)
+            return false;
+
+        // compare time
+        if (hour1 < hour2)
+            return true;
+        else if (hour1 > hour2)
+            return false;
+
+        if (min1 < min2)
+            return true;
+        else if (min1 > min2)
+            return false;
+
+        if (sec1 < sec2)
+            return true;
+        else if (sec1 > sec2)
+            return false;
+
+        // if date and time equal
         return true;
     }
 
@@ -149,7 +175,7 @@ public class ImportFiles {
         String line = reader.readLine(); // skip heading
         while ((line = reader.readLine()) != null) {
             lineNum++;
-            System.out.println("linenum: " + lineNum);
+            // System.out.println("linenum: " + lineNum);
             String[] entry;
             try {
                 entry = ImportFiles.splitOnString(line, ",");
@@ -222,9 +248,8 @@ public class ImportFiles {
             } else if (!(entry[Config.impBuildRoomReserved].equals("nein")
                     || entry[Config.impBuildRoomReserved].equals(""))) {
                 // if invalid argument
-                String errormsg = "\"ja\" or \"nein\" expected" + " but got " + entry[Config.impBuildRoomReserved]
-                        + "\n"
-                        + csv.getAbsolutePath() + ":" + lineNum;
+                String errormsg = "\"ja\" or \"nein\" expected but got " + entry[Config.impBuildRoomReserved]
+                        + "\n" + csv.getAbsolutePath() + ":" + lineNum;
                 System.err.println(errormsg);
                 Log.append(errormsg);
                 noWarnings = false;
@@ -238,8 +263,27 @@ public class ImportFiles {
         return noWarnings;
     }
 
-    // tested, works
-    public static boolean importWishes(File csv)
+    public static boolean[] importWishesGirlsBoys(File csvGirls, File csvBoys)
+            throws IllegalArgumentException, IOException,
+            BuildingDoesNotExistException, RoomDoesNotExistException, TeamDoesNotExistException {
+        boolean noWarningsGirls = importWishesWithoutLog(csvGirls);
+        boolean noWarningsBoys = importWishesWithoutLog(csvBoys);
+
+        for (Team team : ImportFiles.teams) {
+            String debug = team.errorMsg();
+            if (!debug.equals("")) {
+                if (team.name().equals("jungenzimmer 21")) {
+                    int debgu2 = 3;
+                }
+            }
+
+            Log.append(team.errorMsg());
+        }
+
+        return new boolean[] { noWarningsGirls, noWarningsBoys };
+    }
+
+    private static boolean importWishesWithoutLog(File csv)
             throws IOException, IllegalArgumentException, BuildingDoesNotExistException, RoomDoesNotExistException,
             TeamDoesNotExistException {
         boolean noWarnings = true;
@@ -270,18 +314,29 @@ public class ImportFiles {
                         + "werden, da das Team noch nicht angelegt wurde. Haben sich die entsprechenden "
                         + "Schueler:innen in eine Gruppe im Moodleraum eingetragen?";
                 Log.append(errormsg);
-                reader.close();
+                team.validateB1(false);
+                team.validateB2(false);
+                team.validateR1(false);
+                team.validateR2(false);
                 // throw new TeamDoesNotExistException(errormsg);
                 noWarnings = false;
                 continue;
             }
 
-            if ((team.date() != null) && (!team.date().equals(""))) {
-                // if team has already voted earlier, then skip this vote
-                if (ImportFiles.compareDate(team.date(), date)) {
+            if (team.name().equals("jungenzimmer 21")) {
+                int debug = 3;
+            }
+
+            // if this wish is younger than the wish stored, overwrite the earlier wish with
+            // the later wish.
+            // team needs to have valid wish so that earlier votes can be skipped and latest
+            // vote is not overwritten.
+            // check if team has a valid wish:
+            if ((team.date() != null) && (!team.date().equals("")) && (!team.problems())) {
+                // if team has already voted and team wish is younger than this one:
+                if (ImportFiles.compareDate(date, team.date())) {
+                    // skip this vote since it is older and should not overwrite already stored wish
                     continue;
-                }else{
-                    System.out.println(date + " ist eher als " + team.date() + " ?");
                 }
             }
 
@@ -307,10 +362,21 @@ public class ImportFiles {
 
             if ((b1 != null) && (b2 != null) && (r1 != null) && (r2 != null)) {
                 team.wish().building1(b1);
+                team.validateB1(true);
                 team.wish().room1(r1);
+                team.validateR1(true);
                 team.wish().room2(r2);
+                team.validateR2(true);
                 team.wish().building2(b2);
+                team.validateB2(true);
+                team.date(date);
+                if (team.name().equals("jungenzimmer 21")) {
+                    int debug = 3;
+                }
             } else {
+                if (team.name().equals("jungenzimmer 21")) {
+                    int debug = 3;
+                }
                 team.date("");
                 noWarnings = false;
             }
@@ -318,43 +384,69 @@ public class ImportFiles {
             if (b1 == null) {
                 String errormsg = "Das Erstwunschinternat von Team " + team.name() + " konnte nicht gefunden werden!";
                 b1 = ImportFiles.getRandomBuilding(b2);
-                errormsg += " Es wurde das Internat " + b1.name() + " zufaellig als Erstwunschinternat ausgewaehlt.";
-                Log.append(errormsg);
+                team.validateB1(false);
+                // errormsg += " Es wurde das Internat " + b1.name() + " zufaellig als
+                // Erstwunschinternat ausgewaehlt.";
+                // Log.append(errormsg);
                 System.out.println(errormsg);
                 // reader.close();
                 // throw new BuildingDoesNotExistException(errormsg);
+                if (team.name().equals("jungenzimmer 21")) {
+                    int debug = 3;
+                }
+            } else {
+                team.validateB1(true);
             }
             if (b2 == null) {
                 String errormsg = "Das Zweitwunschinternat von Team " + team.name() + " konnte nicht gefunden werden!";
                 b2 = ImportFiles.getRandomBuilding(b1);
+                team.validateB2(false);
                 errormsg += " Es wurde das Internat " + b2.name() + " zufaellig als Zweitwunschinternat ausgewaehlt.";
                 System.out.println(errormsg);
-                Log.append(errormsg);
+                // Log.append(errormsg);
                 // reader.close();
                 // throw new BuildingDoesNotExistException(errormsg);
+                if (team.name().equals("jungenzimmer 21")) {
+                    int debug = 3;
+                }
+            } else {
+                team.validateB2(true);
             }
             if (r1 == null) {
                 String errormsg = "Das Erstwunschzimmer von Team " + team.name() + " konnte nicht gefunden werden!";
                 r1 = ImportFiles.getRandomRoom(b1, r2);
+                team.validateR1(false);
                 errormsg += " Es wurde das Zimmer " + r1.officialRoomNumber()
                         + " zufaellig als Erstwunschzimmer ausgewaehlt.";
-                Log.append(errormsg);
+                // Log.append(errormsg);
                 System.out.println(errormsg);
                 // reader.close();
                 // throw new RoomDoesNotExistException(errormsg);
+                if (team.name().equals("jungenzimmer 21")) {
+                    int debug = 3;
+                }
+            } else {
+                team.validateR1(true);
             }
             if (r2 == null) {
                 String errormsg = "Das Zweitwunschzimmer von Team " + team.name() + " konnte nicht gefunden werden!";
                 r2 = ImportFiles.getRandomRoom(b1, r1);
+                team.validateR2(false);
                 errormsg += " Es wurde das Zimmer " + r2.officialRoomNumber()
                         + " zufaellig als Erstwunschzimmer ausgewaehlt.";
-                Log.append(errormsg);
+                // Log.append(errormsg);
                 System.out.println(errormsg);
                 // reader.close();
                 // throw new RoomDoesNotExistException(errormsg);
+                if (team.name().equals("jungenzimmer 21")) {
+                    int debug = 3;
+                }
+            } else {
+                team.validateR2(true);
             }
         }
         reader.close();
+
         return noWarnings;
     }
 
@@ -401,57 +493,88 @@ public class ImportFiles {
 
             Student student = ImportFiles.findStudentByName(firstName, lastName);
 
-            if (studentHasNoGroup && student == null) {
-                String errormsg = "Schueler:in " + firstName + " " + lastName
-                        + " hat sich in keine Moodlegruppe eingetragen und kann demnach keinem "
-                        + "Zimmer zugeteilt werden!";
-                Log.append(errormsg);
-                noWarnings = false;
-            }
-
             if (student == null) {
                 // student duplicate
                 String errormsg = "Schueler:in " + firstName + " " + lastName
                         + " hat nicht die Persoenliche Daten Umfrage ausgefuellt! Damit sind die "
                         + "Klassenstufe und der Zweig unbekannt.";
                 // throw new StudentDoesNotExistException(errormsg);
-                Log.append(errormsg);
+                // Log.append(errormsg);
                 noWarnings = false;
                 student = new Student(firstName + " " + lastName, email);
                 student.email(email);
                 ImportFiles.students.add(student);
+                student.validateGrade(false);
+                student.validateSpecial(false);
+                student.validateLastYearsBuilding(false);
+                student.validateLastYearsRoom(false);
             }
 
-            GENDER gender = teamName.toLowerCase().contains("jung") ? GENDER.m : GENDER.f;
+            if (studentHasNoGroup) {
+                String errormsg = "Schueler:in " + firstName + " " + lastName
+                        + " hat sich in keine Moodlegruppe eingetragen und kann demnach keinem "
+                        + "Zimmer zugeteilt werden!";
+                // Log.append(errormsg);
+                System.out.println(errormsg);
+                student.validateTeam(false);
+                noWarnings = false;
+            }
+
+            if (!teamName.equals("")) {
+                student.gender(teamName.toLowerCase().contains("jung") ? GENDER.m : GENDER.f);
+                student.validateGender(true);
+                if ((student.gender() == GENDER.f) != girl) {
+                    char debug = 3; // maybe swapped input files for girls and boys?
+                }
+            } else {
+                student.validateGender(false);
+            }
+
             student.email(email);
 
-            if (studentHasNoGroup) {
+            if (studentHasNoGroup) { // TODO: unused
                 ImportFiles.studentsWithoutGroup.add(student);
+                student.validateTeam(false);
                 continue;
             }
 
+            // all students have a group now
             Team team = ImportFiles.findTeamByName(teamName);
             if (team == null) {
                 team = new Team();
                 team.name(teamName);
             }
-            team.gender(gender);
+            if (student.gender() != null) {
+                team.gender(student.gender());
+                team.validateGen(true);
+            }
 
             if (ImportFiles.findStudentInTeam(student) != null) {
                 reader.close();
                 String errormsg = "Schueler:in " + student.name() + " hat sich in mehrere "
                         + "Moodlegruppen eingetragen!";
-                Log.append(errormsg);
+                Log.append(errormsg); // yes, append to log
+                student.validateTeam(false);
                 throw new StudentInSeveralMoodleGroupsException("errormsg");
             }
 
-            student.gender(gender);
             team.addStudent(student);
+            student.validateTeam(true);
 
             // add team
-            ImportFiles.teams.add(team);
+            if (!ImportFiles.teams.contains(team)) {
+                ImportFiles.teams.add(team);
+            }
         }
         reader.close();
+
+        // print one errormsg per faulty student
+        for (Student student : ImportFiles.students) {
+            if (student.problems()) {
+                String errormsg = student.errormsg();
+                Log.append(student.errormsg());
+            }
+        }
         return noWarnings;
     }
 
@@ -522,6 +645,7 @@ public class ImportFiles {
                 continue; // read next line
             }
             // ----------------------------------------------get_grade----------------------------------------------
+            student.validateGrade(true);
             if (entry[Config.impStudGrade].contains("9")) {
                 student.grade(9);
             } else if (entry[Config.impStudGrade].contains("10")) {
@@ -533,10 +657,12 @@ public class ImportFiles {
             } else {
                 String errormsg = "Schueler:in " + name + " hat keine gueltige Klassenstufe!";
                 System.err.println(errormsg);
-                Log.append(errormsg);
+                // Log.append(errormsg);
+                student.validateGrade(false);
                 noWarnings = false;
             }
             // -----------------------------------------get_specialization------------------------------------------
+            student.validateSpecial(true);
             if (entry[Config.impStudSpecial].equals("naturwissenschaften")) {
                 student.special(SPECIALIZATION.NAWI);
             } else if (entry[Config.impStudSpecial].equals("musik")) {
@@ -546,7 +672,8 @@ public class ImportFiles {
             } else {
                 String errormsg = "Schueler:in " + name + " hat keinen gueltigen Zweig!";
                 System.err.println(errormsg);
-                Log.append(errormsg);
+                // Log.append(errormsg);
+                student.validateSpecial(false);
                 noWarnings = false;
             }
             // ---------------------------------------------get_group----------------------------------------------
@@ -558,7 +685,9 @@ public class ImportFiles {
                 if (entry[Config.impStudLastBuild].equals("")) {
                     String errormsg = "Schueler:in " + student.name() + " hat nicht angegeben, in welchem Internat "
                             + "er/sie dieses Jahr gewohnt hat!";
-                    Log.append(errormsg);
+                    // Log.append(errormsg);
+                    System.out.println(errormsg);
+                    student.validateLastYearsBuilding(false);
                 } else {
                     Building lastYearsBuilding = ImportFiles.getLastYearsBuilding(entry[Config.impStudLastBuild]);
                     student.lastYearsBuilding(lastYearsBuilding);
@@ -572,7 +701,9 @@ public class ImportFiles {
                     if (lastYearsRoomsName.equals("")) {
                         String errormsg = "Schueler:in " + student.name() + " hat nicht angegeben, in welchem Zimmer " +
                                 "er/sie dieses Jahr gewohnt hat!";
-                        Log.append(errormsg);
+                        // Log.append(errormsg);
+                        student.validateLastYearsRoom(false);
+                        System.out.println(errormsg);
                     } else {
                         Room lastYearsRoom = ImportFiles.getLastYearsRoom(student.lastYearsBuilding(),
                                 lastYearsRoomsName);

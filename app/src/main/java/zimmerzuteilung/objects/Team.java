@@ -11,11 +11,14 @@ public class Team {
     private String date;
     private Room allocatedRoom;
     private float score;
+    private boolean[] wishValid;
+
     private static int count = 0;
 
     public Team() {
         this.members = new ArrayList<>();
         this.wish = new Wish();
+        this.wishValid = new boolean[] { false, false, false, false, false };
         Team.count++;
         this.id = Team.count;
     }
@@ -48,6 +51,70 @@ public class Team {
         }
         this.allocatedRoom = r;
         return true;
+    }
+
+    public void validateB1(boolean wishValid) {
+        this.wishValid[0] = wishValid;
+    }
+
+    public void validateR1(boolean wishValid) {
+        this.wishValid[1] = wishValid;
+    }
+
+    public void validateR2(boolean wishValid) {
+        this.wishValid[2] = wishValid;
+    }
+
+    public void validateB2(boolean wishValid) {
+        this.wishValid[3] = wishValid;
+    }
+
+    public void validateGen(boolean wishValid) {
+        this.wishValid[4] = wishValid;
+    }
+
+    public boolean problems() {
+        boolean problems = false;
+        for (boolean wv : this.wishValid) {
+            if (!wv) {
+                problems = true;
+            }
+        }
+        return problems;
+    }
+
+    public String errorMsg() {
+        if (this.name.equals("jungenzimmer 21")) {
+            int debug = 4;
+        }
+        boolean problem = false;
+        for (boolean wv : this.wishValid) {
+            if (!wv) {
+                problem = true;
+                break;
+            }
+        }
+        if (!problem) {
+            return "";
+        }
+
+        String errormsg = "Team " + this.name + " weist folgende Probleme auf: ";
+        if (!this.wishValid[4]) {
+            errormsg += " ~ Geschlecht unbekannt ";
+        }
+        if (!this.wishValid[0]) {
+            errormsg += " ~ Erstwunschinternat unbekannt ";
+        }
+        if (!this.wishValid[1]) {
+            errormsg += " ~ Erstwunschzimmer unbekannt ";
+        }
+        if (!this.wishValid[2]) {
+            errormsg += " ~ Zweitwunschzimmer unbekannt";
+        }
+        if (!this.wishValid[3]) {
+            errormsg += " ~ Zweitwunschinternat unbekannt";
+        }
+        return errormsg;
     }
 
     public Room allocatedRoom() {
@@ -110,11 +177,11 @@ public class Team {
         return null;
     }
 
-    public String date(){
+    public String date() {
         return this.date;
     }
 
-    public void date(String date){
+    public void date(String date) {
         this.date = date;
     }
 

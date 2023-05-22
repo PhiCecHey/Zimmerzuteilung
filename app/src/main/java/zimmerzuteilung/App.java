@@ -25,6 +25,7 @@ public class App {
 
     }
 
+    /*
     public static void programm() {
         File zimmer = new File("files/Internatszimmer.csv");
         File maedchen = new File("files/Zimmereinteilung Mädchenzimmer.txt.csv");
@@ -37,7 +38,7 @@ public class App {
             ImportFiles.importStudents(persDaten);
             ImportFiles.importGirlTeams(maedchen);
             ImportFiles.importBoyTeams(jungen);
-            ImportFiles.importWishes(zimmerwahl);
+            ImportFiles.importWishesGirlsBoys(zimmerwahl);
         } catch (Exception e) {
             System.out.println(zimmer.getAbsolutePath());
             e.printStackTrace();
@@ -51,5 +52,5 @@ public class App {
         rules.add(Gurobi.RULES.respectWish);
         Gurobi g = new Gurobi(rules, ImportFiles.buildings(), ImportFiles.teams());
         g.calculate();
-    }
+    }*/
 }

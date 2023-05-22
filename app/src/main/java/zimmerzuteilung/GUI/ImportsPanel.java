@@ -91,19 +91,24 @@ public class ImportsPanel extends JPanel {
                     }
                     i = 4;
 
-                    if (!ImportFiles.importWishes(new File(importsPanels.get(i).field.getText()))) {
+                    boolean[] workedGirlsBoys = ImportFiles.importWishesGirlsBoys(
+                            new File(importsPanels.get(4).field.getText()),
+                            new File(importsPanels.get(5).field.getText()));
+
+                    if (workedGirlsBoys[0]) {
                         importsPanels.get(4).field.setBackground(Colors.yellowTransp);
                     } else {
                         importsPanels.get(4).field.setBackground(Colors.greenTransp);
                     }
                     i = 5;
 
-                    if (!ImportFiles.importWishes(new File(importsPanels.get(i).field.getText()))) {
+                    if (workedGirlsBoys[1]) {
                         importsPanels.get(5).field.setBackground(Colors.yellowTransp);
                     } else {
                         importsPanels.get(5).field.setBackground(Colors.greenTransp);
                     }
                     i = 6;
+
                 } catch (FileNotFoundException f) {
                     Log.append("Datei konnte nicht gefunden werden.");
                 } catch (Exception e) {

@@ -309,7 +309,8 @@ public class Gurobi {
                         || wish.room2() == null) {
                     if (!this.invalidTeam.contains(allocation.team())) {
                         System.err.println("Das Team " + allocation.team().name()
-                                + " hat keinen (vollstaendigen) Zimmerwunsch abgegeben!");
+                                + " hat keinen (vollstaendigen) Zimmerwunsch abgegeben und somit kann kein "
+                                + "Zimmer zugewiesen werden!");
                         this.invalidTeam.add(allocation.team());
                         Log.append("Das Team " + allocation.team().name()
                                 + " hat keinen (vollstaendigen) Zimmerwunsch abgegeben!");
