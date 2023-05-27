@@ -473,10 +473,6 @@ public class ImportFiles {
                 // a group then
             }
 
-            if (firstName.contains("joel")) {
-                int debug = 3;
-            }
-
             Student student = ImportFiles.findStudentByName(firstName, lastName);
 
             if (student == null) {
@@ -604,9 +600,6 @@ public class ImportFiles {
             Student student = new Student(name, username);
             student.moodleDate(entry[Config.impStudDate]);
             // -------------------------------------------check_duplicate-------------------------------------------
-            if (name.contains("joel")) {
-                int debug = 3;
-            }
 
             boolean duplicate = false;
             boolean skip = false;
@@ -710,9 +703,8 @@ public class ImportFiles {
                 } else if (!student.lastYearsRoomValid()) {
                     overwrite = student;
                 }
-            } else {
-                int debug = 3;
             }
+            
             if (!duplicate) {
                 ImportFiles.students.add(student);
             }
