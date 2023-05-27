@@ -316,10 +316,6 @@ public class ImportFiles {
                 continue;
             }
 
-            if (team.name().equals("jungenzimmer 21")) {
-                int debug = 3;
-            }
-
             // if this wish is younger than the wish stored, overwrite the earlier wish with
             // the later wish.
             // team needs to have valid wish so that earlier votes can be skipped and latest
@@ -363,13 +359,7 @@ public class ImportFiles {
                 team.wish().building2(b2);
                 team.validateB2(true);
                 team.date(date);
-                if (team.name().equals("jungenzimmer 21")) {
-                    int debug = 3;
-                }
             } else {
-                if (team.name().equals("jungenzimmer 21")) {
-                    int debug = 3;
-                }
                 team.date("");
                 noWarnings = false;
             }
@@ -384,9 +374,6 @@ public class ImportFiles {
                 System.out.println(errormsg);
                 // reader.close();
                 // throw new BuildingDoesNotExistException(errormsg);
-                if (team.name().equals("jungenzimmer 21")) {
-                    int debug = 3;
-                }
             } else {
                 team.validateB1(true);
             }
@@ -399,9 +386,6 @@ public class ImportFiles {
                 // Log.append(errormsg);
                 // reader.close();
                 // throw new BuildingDoesNotExistException(errormsg);
-                if (team.name().equals("jungenzimmer 21")) {
-                    int debug = 3;
-                }
             } else {
                 team.validateB2(true);
             }
@@ -415,9 +399,6 @@ public class ImportFiles {
                 System.out.println(errormsg);
                 // reader.close();
                 // throw new RoomDoesNotExistException(errormsg);
-                if (team.name().equals("jungenzimmer 21")) {
-                    int debug = 3;
-                }
             } else {
                 team.validateR1(true);
             }
@@ -431,9 +412,6 @@ public class ImportFiles {
                 System.out.println(errormsg);
                 // reader.close();
                 // throw new RoomDoesNotExistException(errormsg);
-                if (team.name().equals("jungenzimmer 21")) {
-                    int debug = 3;
-                }
             } else {
                 team.validateR2(true);
             }
@@ -443,19 +421,28 @@ public class ImportFiles {
         return noWarnings;
     }
 
-    public static boolean importGirlTeams(File txt)
-            throws IOException, IllegalArgumentException, StudentInSeveralMoodleGroupsException,
-            StudentDoesNotExistException {
-        return ImportFiles.importGirlBoyTeams(txt, true);
+    public static boolean[] importGirlBoyTeams(File txtGirls, File txtBoys) throws IllegalArgumentException,
+            IOException, StudentInSeveralMoodleGroupsException, StudentDoesNotExistException {
+        boolean workedGirls = ImportFiles.importTeams(txtGirls, true);
+        boolean workedBoys = ImportFiles.importTeams(txtBoys, false);
+
+        // print one errormsg per faulty student
+        for (Student student : ImportFiles.students) {
+            if (student.problems()) {
+                String errormsg = student.errormsg();
+                Log.append(student.errormsg());
+            }
+            if (!student.teamValid()) {
+                ImportFiles.studentsWithoutGroup.add(student);
+            } else {
+                ImportFiles.studentsWithoutGroup.remove(student);
+            }
+        }
+
+        return new boolean[] { workedGirls, workedBoys };
     }
 
-    public static boolean importBoyTeams(File txt)
-            throws IOException, IllegalArgumentException, StudentInSeveralMoodleGroupsException,
-            StudentDoesNotExistException {
-        return ImportFiles.importGirlBoyTeams(txt, false);
-    }
-
-    private static boolean importGirlBoyTeams(File txt, boolean girl)
+    private static boolean importTeams(File txt, boolean girl)
             throws IOException, IllegalArgumentException, StudentInSeveralMoodleGroupsException,
             StudentDoesNotExistException {
         boolean noWarnings = true;
@@ -482,12 +469,17 @@ public class ImportFiles {
                 teamName = entry[Config.impTeamTeamName];
             } catch (ArrayIndexOutOfBoundsException e) {
                 studentHasNoGroup = true;
+                // this doesnt matter though because student may be imported second time and has
+                // a group then
+            }
+
+            if (firstName.contains("joel")) {
+                int debug = 3;
             }
 
             Student student = ImportFiles.findStudentByName(firstName, lastName);
 
             if (student == null) {
-                // student duplicate
                 String errormsg = "Schueler:in " + firstName + " " + lastName
                         + " hat nicht die Persoenliche Daten Umfrage ausgefuellt! Damit sind die "
                         + "Klassenstufe und der Zweig unbekannt.";
@@ -497,21 +489,21 @@ public class ImportFiles {
                 student = new Student(firstName + " " + lastName, email);
                 student.email(email);
                 ImportFiles.students.add(student);
-                student.validateGrade(false);
-                student.validateSpecial(false);
-                student.validateLastYearsBuilding(false);
-                student.validateLastYearsRoom(false);
             }
 
-            if (studentHasNoGroup) {
-                String errormsg = "Schueler:in " + firstName + " " + lastName
-                        + " hat sich in keine Moodlegruppe eingetragen und kann demnach keinem "
-                        + "Zimmer zugeteilt werden!";
-                // Log.append(errormsg);
-                System.out.println(errormsg);
-                student.validateTeam(false);
-                noWarnings = false;
-            }
+            // not necessary and causes bugs. TODO: determine students without group at the
+            // end and not here
+            /*
+             * if (studentHasNoGroup && (!student.teamValid())) {
+             * String errormsg = "Schueler:in " + firstName + " " + lastName
+             * + " hat sich in keine Moodlegruppe eingetragen und kann demnach keinem "
+             * + "Zimmer zugeteilt werden!";
+             * // Log.append(errormsg);
+             * System.out.println(errormsg);
+             * student.validateTeam(false);
+             * noWarnings = false;
+             * }
+             */
 
             if (!teamName.equals("")) {
                 student.gender(teamName.toLowerCase().contains("jung") ? GENDER.m : GENDER.f);
@@ -519,19 +511,18 @@ public class ImportFiles {
                 if ((student.gender() == GENDER.f) != girl) {
                     char debug = 3; // maybe swapped input files for girls and boys?
                 }
-            } else {
-                student.validateGender(false);
-            }
+            } /*
+               * else { // causes bugs and not necessary either
+               * student.validateGender(false);
+               * }
+               */
 
             student.email(email);
 
-            if (studentHasNoGroup) { // TODO: unused
+            if (teamName.equals("")) {
                 ImportFiles.studentsWithoutGroup.add(student);
-                student.validateTeam(false);
                 continue;
             }
-
-            // all students have a group now
             Team team = ImportFiles.findTeamByName(teamName);
             if (team == null) {
                 team = new Team();
@@ -542,7 +533,8 @@ public class ImportFiles {
                 team.validateGen(true);
             }
 
-            if (ImportFiles.findStudentInTeam(student) != null) {
+            Team teamInWhichStudentWasFound = ImportFiles.findStudentInTeam(student);
+            if ((teamInWhichStudentWasFound != null) && (!teamInWhichStudentWasFound.name().equals(team.name()))) {
                 reader.close();
                 String errormsg = "Schueler:in " + student.name() + " hat sich in mehrere "
                         + "Moodlegruppen eingetragen!";
@@ -558,16 +550,9 @@ public class ImportFiles {
             if (!ImportFiles.teams.contains(team)) {
                 ImportFiles.teams.add(team);
             }
+
         }
         reader.close();
-
-        // print one errormsg per faulty student
-        for (Student student : ImportFiles.students) {
-            if (student.problems()) {
-                String errormsg = student.errormsg();
-                Log.append(student.errormsg());
-            }
-        }
         return noWarnings;
     }
 
@@ -580,11 +565,11 @@ public class ImportFiles {
         return null;
     }
 
-    private static Student findStudentInTeam(Student student) {
+    private static Team findStudentInTeam(Student student) {
         for (Team team : ImportFiles.teams) {
             Student s = team.getStudent(student.userName());
             if (s != null) {
-                return s;
+                return team;
             }
         }
         return null;
@@ -619,17 +604,25 @@ public class ImportFiles {
             Student student = new Student(name, username);
             student.moodleDate(entry[Config.impStudDate]);
             // -------------------------------------------check_duplicate-------------------------------------------
+            if (name.contains("joel")) {
+                int debug = 3;
+            }
+
             boolean duplicate = false;
             boolean skip = false;
+            Student overwrite = null;
             for (Student s : ImportFiles.students) {
                 if (s.userName().equals(username)) {
-                    if (ImportFiles.compareDate(s.moodleDate(), student.moodleDate())) {
-                        // overwrite instead of skip
-                        student = s;
-                        duplicate = true;
-                    } else {
-                        // ignore and skip instead of overwrite
-                        skip = true;
+                    duplicate = true;
+                    if (ImportFiles.compareDate(student.moodleDate(), s.moodleDate())) {
+                        if (!s.problems()) {
+                            student = s;
+                            skip = true;
+                        }
+                    } else { // s.moodleDate() <= student.moodleDate()
+                        // only overwrite if data correct: s = student;
+                        overwrite = s;
+                        // planned: overwrite = student;
                     }
                     break;
                 }
@@ -684,6 +677,7 @@ public class ImportFiles {
                 } else {
                     Building lastYearsBuilding = ImportFiles.getLastYearsBuilding(entry[Config.impStudLastBuild]);
                     student.lastYearsBuilding(lastYearsBuilding);
+                    student.validateLastYearsBuilding(true);
                     String lastYearsRoomsName = "";
                     for (int i = Config.impStudLastBuild + 1; i < Config.impStudGrade; i++) {
                         if (!entry[i].equals("")) {
@@ -701,6 +695,7 @@ public class ImportFiles {
                         Room lastYearsRoom = ImportFiles.getLastYearsRoom(student.lastYearsBuilding(),
                                 lastYearsRoomsName);
                         student.lastYearsRoom(lastYearsRoom);
+                        student.validateLastYearsRoom(true);
                     }
                 }
             } catch (NoRoomWithThatNameException | NoBuildingWithThatNameException e) {
@@ -708,6 +703,16 @@ public class ImportFiles {
                 System.err.println(e.getMessage());
             }
 
+            // only overwrite, if survey has been filled out correctly
+            if ((overwrite != null) && overwrite.gradeValid()) {
+                if (overwrite.lastYearsBuildingValid() && overwrite.lastYearsRoomValid()) {
+                    overwrite = student;
+                } else if (!student.lastYearsRoomValid()) {
+                    overwrite = student;
+                }
+            } else {
+                int debug = 3;
+            }
             if (!duplicate) {
                 ImportFiles.students.add(student);
             }

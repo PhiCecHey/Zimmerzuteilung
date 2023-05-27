@@ -54,7 +54,7 @@ public class Config {
     public static int impStudName = 7;
     public static int impStudUsername = 8;
     public static int impStudLastBuild = 9;
-    public static int impStudLastRoom = 10; // til 16
+    //public static int impStudLastRoom = 10; // til 16
     public static int impStudGrade = 17;
     public static int impStudSpecial = 18;
 }

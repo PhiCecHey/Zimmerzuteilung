@@ -77,21 +77,24 @@ public class ImportsPanel extends JPanel {
                     }
                     i = 2;
 
-                    if (!ImportFiles.importGirlTeams(new File(importsPanels.get(i).field.getText()))) {
+                    boolean[] workedGirlsBoys = ImportFiles.importGirlBoyTeams(
+                            new File(importsPanels.get(2).field.getText()),
+                            new File(importsPanels.get(3).field.getText()));
+                    if (!workedGirlsBoys[0]) {
                         importsPanels.get(2).field.setBackground(Colors.yellowTransp);
                     } else {
                         importsPanels.get(2).field.setBackground(Colors.greenTransp);
                     }
                     i = 3;
 
-                    if (!ImportFiles.importBoyTeams(new File(importsPanels.get(i).field.getText()))) {
+                    if (!workedGirlsBoys[1]) {
                         importsPanels.get(3).field.setBackground(Colors.yellowTransp);
                     } else {
                         importsPanels.get(3).field.setBackground(Colors.greenTransp);
                     }
                     i = 4;
 
-                    boolean[] workedGirlsBoys = ImportFiles.importWishesGirlsBoys(
+                    workedGirlsBoys = ImportFiles.importWishesGirlsBoys(
                             new File(importsPanels.get(4).field.getText()),
                             new File(importsPanels.get(5).field.getText()));
 

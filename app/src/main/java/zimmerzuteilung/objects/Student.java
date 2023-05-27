@@ -49,6 +49,26 @@ public class Student {
         this.registrationValid[5] = genderValid;
     }
 
+    public boolean genderValid() {
+        return this.registrationValid[5];
+    }
+
+    public boolean teamValid() {
+        return this.registrationValid[3];
+    }
+
+    public boolean gradeValid() {
+        return this.registrationValid[0];
+    }
+
+    public boolean lastYearsRoomValid() {
+        return this.registrationValid[1];
+    }
+
+    public boolean lastYearsBuildingValid() {
+        return this.registrationValid[2];
+    }
+
     public boolean problems() {
         boolean problem = false;
         for (boolean v : this.registrationValid) {
@@ -63,6 +83,7 @@ public class Student {
         if (!this.problems()) {
             return "";
         }
+
         String errormsg = "Bei Schüler:in " + this.name + " gibt es folgende Probleme: ";
         if (!this.registrationValid[0]) {
             errormsg += " ~ Klassenstufe unbekannt ";
