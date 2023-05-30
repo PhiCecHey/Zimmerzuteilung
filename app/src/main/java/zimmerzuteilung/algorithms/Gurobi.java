@@ -28,8 +28,7 @@ public class Gurobi {
         // constraints
         oneRoomPerTeam, oneTeamPerRoom, maxStudentsPerRoom,
         // other rules
-        respectWish, respectReservations, respectGradePrivilege, respectRoomGender, addExtraRandomness,
-        respectPrevBuilding, respectPrevRoom;
+        respectWish, respectReservations, respectGradePrivilege, respectRoomGender, addExtraRandomness, respectPrevRoom;
     }
 
     private ArrayList<Gurobi.RULES> rules;
@@ -169,6 +168,11 @@ public class Gurobi {
             this.respectRoomGender();
         } else {
             this.respectRoomGenderAlternative(Config.scoreGender);
+        }
+        if (this.rules.contains(Gurobi.RULES.respectPrevRoom)) {
+            this.respectPrevRoom();
+        } else {
+            this.respectPrevAlternative(Config.scoreStayInRoom, Config.scoreStayInBuilding);
         }
     }
 
@@ -415,26 +419,31 @@ public class Gurobi {
         }
     }
 
+    /**
+     * If a team wants to stay in their previous room, make sure that they will.
+     */
     private void respectPrevRoom() {
-        for (int r = 0; r < this.allocations.nRooms(); ++r) {
-            for (int t = 0; t < this.allocations.nTeams(); ++t) {
-                Allocation allocation = this.allocations.get(r, t);
-                Wish wish = allocation.team().wish();
-
-                if (wish.building1() == null || wish.building2() == null || wish.room1() == null
-                        || wish.room2() == null) {
-                    continue;
-                } else if (wish.building1().containsRoom(allocation.room())) {
-                    if (allocation.team().canStayInBuilding()) {
-                        // TODO: make sure team stays in building
+        try {
+            GRBLinExpr expr;
+            for (int r = 0; r < this.rooms.size(); ++r) {
+                for (int t = 0; t < this.teams.size(); ++t) {
+                    Allocation alloc = allocations.get(r, t);
+                    // if this room is not this teams first wish, continue
+                    if (alloc.team().wish().room1() == null
+                            || (alloc.room().id() != alloc.team().wish().room1().id())) {
+                        continue;
                     }
-                    if (wish.room1().id() == allocation.room().id()) {
-                        if (allocation.team().canStayInRoom()) {
-                            // TODO: make sure team stays in room
-                        }
+                    // if team wants to stay in room, make sure it stays in room
+                    if (alloc.team().canStayInRoom()) {
+                        expr = new GRBLinExpr();
+                        expr.addTerm(1, alloc.grbVar());
+                        String st = "respectPrevRoom_" + String.valueOf(r);
+                        this.model.addConstr(expr, GRB.EQUAL, 1, st);
                     }
                 }
             }
+        } catch (GRBException e) {
+            System.out.println("Error code: " + e.getErrorCode() + ". " + e.getMessage());
         }
     }
 

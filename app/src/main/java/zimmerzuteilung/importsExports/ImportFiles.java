@@ -442,9 +442,6 @@ public class ImportFiles {
                 String errormsg = student.errormsg();
                 Log.append(student.errormsg());
             }
-            if (student.name().contains("philine")) {
-                int debug = 3;
-            }
             if (!student.teamValid()) {
                 if (!ImportFiles.studentsWithoutGroup.contains(student)) {
                     ImportFiles.studentsWithoutGroup.add(student);
@@ -507,7 +504,7 @@ public class ImportFiles {
                 ImportFiles.students.add(student);
             }
 
-            // not necessary and causes bugs. TODO: determine students without group at the
+            // not necessary and causes bugs. determine students without group at the
             // end and not here
             /*
              * if (studentHasNoGroup && (!student.teamValid())) {
@@ -535,9 +532,6 @@ public class ImportFiles {
 
             student.email(email);
 
-            if (student.name().contains("philine")) {
-                int debug = 3;
-            }
             if (teamName.equals("")) {
                 if (!ImportFiles.studentsWithoutGroup.contains(student)) {
                     ImportFiles.studentsWithoutGroup.add(student);

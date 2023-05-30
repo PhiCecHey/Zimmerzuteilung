@@ -20,6 +20,7 @@ public class GurobiPanel extends JPanel {
     private static ArrayList<Gurobi.RULES> gurobiRules = new ArrayList<>();
     private CheckBoxPanel oneRoomPerTeam, oneTeamPerRoom, respectWishPanel, respectGradePrivPanel, randomPanel;
     private MustOrShouldPanel maxStudentsPerRoom, respectResPanel, respectRoomGenderPanel;
+    private StayInRoomPanel stayInRoomPanel;
     private GradePanel gradePanel;
     private WishPanel wishPanel;
     private JButton save;
@@ -43,14 +44,14 @@ public class GurobiPanel extends JPanel {
 
     private void initTopRight(GroupPanel topRight) {
         String heading, descript1, descript2, descript3;
-        float value;
+        float value1;
 
         heading = "Zimmer reservieren";
         descript1 = "Unbedingt reservierte Zimmer freihalten";
         descript2 = "Falls moeglich reservierte Zimmer freihalten: ";
         descript3 = "Bonus fuer nicht reservierte Zimmer: ";
-        value = Config.scoreReservation;
-        this.respectResPanel = new MustOrShouldPanel(heading, descript1, descript2, descript3, value);
+        value1 = Config.scoreReservation;
+        this.respectResPanel = new MustOrShouldPanel(heading, descript1, descript2, descript3, value1);
         topRight.add(this.respectResPanel);
 
         topRight.add(new JLabel("       "));
@@ -61,8 +62,8 @@ public class GurobiPanel extends JPanel {
         descript1 = "Immer maximale Belegung einhalten";
         descript2 = "Moeglichst maximale Belegung einhalten: ";
         descript3 = "Bonus bei Nichteinhalten: ";
-        value = Config.maxStudentsPerRoom;
-        this.maxStudentsPerRoom = new MustOrShouldPanel(heading, descript1, descript2, descript3, value);
+        value1 = Config.maxStudentsPerRoom;
+        this.maxStudentsPerRoom = new MustOrShouldPanel(heading, descript1, descript2, descript3, value1);
         topRight.add(maxStudentsPerRoom);
 
         topRight.add(new JLabel("       "));
@@ -73,9 +74,23 @@ public class GurobiPanel extends JPanel {
         descript1 = "Immer einhalten";
         descript2 = "Moeglichst einhalten: ";
         descript3 = "Bonus bei Nichteinhalten: ";
-        value = Config.scoreGender;
-        this.respectRoomGenderPanel = new MustOrShouldPanel(heading, descript1, descript2, descript3, value);
+        value1 = Config.scoreGender;
+        this.respectRoomGenderPanel = new MustOrShouldPanel(heading, descript1, descript2, descript3, value1);
         topRight.add(this.respectRoomGenderPanel);
+
+        topRight.add(new JLabel("       "));
+        topRight.add(new JLabel("       "));
+        topRight.add(new JLabel("       "));
+
+        heading = "Alle Teams, die in ihrem vorherigen Zimmer bleiben wollen, bleiben in diesem";
+        descript1 = "Immer einhalten";
+        descript2 = "Moeglichst einhalten";
+        descript3 = "Bonus fuer das Bleiben im Erstwunschinternat: ";
+        String descript4 = "Bonus fuer das Bleiben im Erstwunschzimmer: ";
+        value1 = Config.scoreStayInRoom;
+        float value2 = Config.scoreStayInBuilding;
+        this.stayInRoomPanel = new StayInRoomPanel(heading, descript1, descript2, descript3, descript4, value1, value2);
+        topRight.add(this.stayInRoomPanel);
     }
 
     private void initTopLeft(GroupPanel topLeft) {
@@ -216,6 +231,33 @@ public class GurobiPanel extends JPanel {
             }
         }
 
+        if (this.stayInRoomPanel.radioPanel1.radio.isSelected()) {
+            GurobiPanel.gurobiRules.add(Gurobi.RULES.respectPrevRoom);
+        } else if (this.stayInRoomPanel.radioPanel2.radio.isSelected()) {
+            boolean worked = true;
+            try {
+                Config.scoreStayInBuilding = Float.parseFloat(this.stayInRoomPanel.fieldStayInBuilding.getText());
+            } catch (NumberFormatException e) {
+                worked = false;
+            }
+            if (worked) {
+                this.stayInRoomPanel.fieldStayInBuilding.setBackground(Colors.greenTransp);
+            } else {
+                this.area.append("Im vorherigen Internat bleiben: Bitte eine negative Zahl eintragen!\n");
+            }
+            worked = true;
+            try {
+                Config.scoreStayInRoom = Float.parseFloat(this.stayInRoomPanel.fieldStayInRoom.getText());
+            } catch (NumberFormatException e) {
+                worked = false;
+            }
+            if (worked) {
+                this.stayInRoomPanel.fieldStayInRoom.setBackground(Colors.greenTransp);
+            } else {
+                this.area.append("Im vorherigen Zimmer bleiben: Bitte eine negative Zahl eintragen!\n");
+            }
+        }
+
         if (this.respectWishPanel.box.isSelected()) {
             GurobiPanel.gurobiRules.add(Gurobi.RULES.respectWish);
             boolean worked = GurobiPanel.checkUserInput(this.wishPanel.b1Field, "b1");
@@ -234,14 +276,7 @@ public class GurobiPanel extends JPanel {
             if (!worked) {
                 this.area.append("Zweitwunschinternat Bonus: Bitte eine positive Zahl eintragen!\n");
             }
-        } /*
-           * else {
-           * this.wishPanel.b1Field.setBackground(Colors.yellowTransp);
-           * this.wishPanel.r1Field.setBackground(Colors.yellowTransp);
-           * this.wishPanel.r2Field.setBackground(Colors.yellowTransp);
-           * this.wishPanel.b2Field.setBackground(Colors.yellowTransp);
-           * }
-           */
+        }
 
         if (this.respectGradePrivPanel.box.isSelected()) {
             GurobiPanel.gurobiRules.add(Gurobi.RULES.respectGradePrivilege);
@@ -257,13 +292,7 @@ public class GurobiPanel extends JPanel {
             if (!worked) {
                 this.area.append("10er Privileg: Bitte eine positive Zahl eintragen!\n");
             }
-        } /*
-           * else {
-           * this.gradePanel.twelveField.setBackground(Colors.yellowTransp);
-           * this.gradePanel.elevenField.setBackground(Colors.yellowTransp);
-           * this.gradePanel.tenField.setBackground(Colors.yellowTransp);
-           * }
-           */
+        }
     }
 
     public static ArrayList<Gurobi.RULES> rules() {
@@ -301,6 +330,10 @@ public class GurobiPanel extends JPanel {
                 Config.scoreEleven = config;
             } else if (configName.toLowerCase().contains("10")) {
                 Config.scoreTen = config;
+            } else if (configName.toLowerCase().contains("stay") && configName.toLowerCase().contains("building")) {
+                Config.scoreStayInBuilding = config;
+            } else if (configName.toLowerCase().contains("stay") && configName.toLowerCase().contains("room")) {
+                Config.scoreStayInRoom = config;
             } else {
                 System.out.println("Problem in function checkUserInput()");
             }

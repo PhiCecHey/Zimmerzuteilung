@@ -23,6 +23,9 @@ public class Config {
     public static float maxStudentsPerRoom = -100;
     public static float scoreGender = -50;
 
+    public static float scoreStayInRoom = 10;
+    public static float scoreStayInBuilding = 10;
+
     // -----------------------MOODLE-----------------------
     // importBuildings:
     public static int impBuildBuildingName = 0;

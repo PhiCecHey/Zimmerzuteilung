@@ -23,26 +23,49 @@ public class Team {
         this.id = Team.count;
     }
 
+    /**
+     * Check if team wants to stay in the room they were in previously and then if
+     * so check if the bonus applies.
+     * 
+     * @return true if bonus applies, else false
+     */
     public boolean canStayInRoom() {
         Room room = this.members.get(0).lastYearsRoom();
         for (Student student : this.members) {
             Room r = student.lastYearsRoom();
-            if (!r.officialRoomNumber().equals(room.officialRoomNumber())) {
+            if (r == null || (!r.officialRoomNumber().equals(room.officialRoomNumber()))) {
                 return false;
             }
         }
-        return true;
+
+        // only return true if team wants to stay in room
+        if (this.wish.room1().id() == room.id()) {
+            return true;
+        }
+        return false;
     }
 
+    /**
+     * Check if team wants to stay in the building they were in previously and then
+     * if
+     * so check if the bonus applies.
+     * 
+     * @return true if bonus applies, else false
+     */
     public boolean canStayInBuilding() {
         Building building = this.members.get(0).lastYearsBuilding();
         for (Student student : this.members) {
             Building b = student.lastYearsBuilding();
-            if (!building.name().equals(b.name())) {
+            if (b == null || (!building.name().equals(b.name()))) {
                 return false;
             }
         }
-        return true;
+
+        // only return true if team wants to stay in building
+        if (this.wish.building1().id() == building.id()) {
+            return true;
+        }
+        return false;
     }
 
     public boolean allocateRoom(Room r) {
