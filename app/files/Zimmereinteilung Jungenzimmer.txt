@@ -81,7 +81,6 @@ Kuehn	Franziska	 	franziskakuehn2005@gmail.com
 Kurth	Tonio	 	tonli.kurth@icloud.com		
 Kuschert	Emily	 	kuschert@pforta.onmicrosoft.com		
 Lange	Charlotte	09n-SJ2021	lange-charlotte@gmx.net		
-Lantelme	Edwin Alexander	 	edwin.lantelme@gmail.com		
 Lätsch	Pauline	09s-SJ2021	pauline-laetsch@web.de		
 Lehmann	Alexa	 	lehmann@mail.de		
 Leopold	Alexandra	09s-SJ2021	alexandraleopold89@gmail.com		
@@ -117,7 +116,6 @@ Rost	Magdalena	09s-SJ2021	MR2007@outlook.de
 Rumlich	Chiara	 	chiaragranger05@gmail.com		
 Sander	Emily	09s-SJ2021	emilysander0503@gmail.com		
 Scheer	Paulina-Leonie	 	paulinaleonischeer@gmail.com		
-Scheewe	Kilian	09n-SJ2021	kilirakete@gmail.com		
 Schewczyk	Helene	 	schewczyk@pforta.onmicrosoft.com		
 Schinkel	Anna.Lena	 	anna@dieschinkels.de		
 Schirlitz	Helen	 	schirlitz@mail.de		
@@ -164,6 +162,7 @@ Alber	Johannes	 	johannes.alber06@gmail.com	Jungenzimmer 10
 Koecher	Theo	 	theok2@gmx.de	Jungenzimmer 10	
 Awokoya	Tomiwa	09n-SJ2021	tomiawokoya@gmail.com	Jungenzimmer 20	
 Hecht	Paul	09n-SJ2021	paulhecht05@gmail.com	Jungenzimmer 20	
+Lantelme	Edwin Alexander	 	edwin.lantelme@gmail.com	Jungenzimmer 20	
 Batous	Rawad	 	rawad.batous2006@gmail.com	Jungenzimmer 31	
 Wagner	Hannes	 	wagner-hannes@freenet.de	Jungenzimmer 31	
 Bernuth	Peter von	 	peter@vonbernuth.de	Jungenzimmer 21	
@@ -214,6 +213,7 @@ Naab	Anton	 	anton@naab-mv.de	Jungenzimmer 97
 Nitsch	Samuel	 	samuel.nitsch@hotmail.com	Jungenzimmer 13	
 Ploscariu	Cosmin	 	cosminploscariu@outlook.de	Jungenzimmer 28	
 Reißmann	Jonas	09n-SJ2021	joferei888@gmail.com	Jungenzimmer 42	
+Scheewe	Kilian	09n-SJ2021	kilirakete@gmail.com	Jungenzimmer 42	
 Riemer	Aaron	09n-SJ2021	a.j.riemer@icloud.com	Jungenzimmer 26	
 Wenzel	Vinzent	09n-SJ2021	vincent.wenzel@outlook.de	Jungenzimmer 26	
 Scharipow	Erik	 	erikscharipow@gmail.com	Jungenzimmer 49	

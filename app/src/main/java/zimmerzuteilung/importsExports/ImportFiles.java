@@ -169,6 +169,8 @@ public class ImportFiles {
 
     // tested, works
     public static boolean importBuildings(File csv) throws IOException, IllegalArgumentException {
+        Log.newSection("Einlesen der Internate und Zimmer");
+
         boolean noWarnings = true;
         BufferedReader reader = new BufferedReader(new FileReader(csv));
         int lineNum = 1;
@@ -269,6 +271,7 @@ public class ImportFiles {
         boolean noWarningsGirls = importWishesWithoutLog(csvGirls);
         boolean noWarningsBoys = importWishesWithoutLog(csvBoys);
 
+        Log.newSection("Einlesen der Teamwahlen (Umfragen Maedchen-/Jungenzimmer)");
         for (Team team : ImportFiles.teams) {
             Log.append(team.errorMsg());
         }
@@ -302,6 +305,12 @@ public class ImportFiles {
                 }
             }
             if (team.name() == null) {
+                if (entry[Config.impWishTeamName].contains("keiner gruppe zugeordnet")) {
+                    // just Moodle things... :'D
+                    ImportFiles.teams.remove(team);
+                    continue;
+                }
+
                 String errormsg = "Die Zimmerwahl von Team \"" + entry[Config.impWishTeamName]
                         + "\" kann nicht angenommen "
                         + "werden, da das Team noch nicht angelegt wurde. Haben sich die entsprechenden "
@@ -427,18 +436,29 @@ public class ImportFiles {
         boolean workedBoys = ImportFiles.importTeams(txtBoys, false);
 
         // print one errormsg per faulty student
+        Log.newSection("Einlesen der Schueler:innen (Umfrage Zimmer, Klassenstufe, Zweig)");
         for (Student student : ImportFiles.students) {
             if (student.problems()) {
                 String errormsg = student.errormsg();
                 Log.append(student.errormsg());
             }
+            if (student.name().contains("philine")) {
+                int debug = 3;
+            }
             if (!student.teamValid()) {
-                ImportFiles.studentsWithoutGroup.add(student);
+                if (!ImportFiles.studentsWithoutGroup.contains(student)) {
+                    ImportFiles.studentsWithoutGroup.add(student);
+                }
             } else {
                 ImportFiles.studentsWithoutGroup.remove(student);
             }
         }
-
+        String studentsWithoutGroup = "Schueler:innen, die keiner Gruppe angehoeren und demnach keinem Zimmer "
+                + "zugeteilt werden:\n~ ";
+        for (Student student : ImportFiles.studentsWithoutGroup) {
+            studentsWithoutGroup += student.name() + " ~ ";
+        }
+        Log.append(studentsWithoutGroup + "\n");
         return new boolean[] { workedGirls, workedBoys };
     }
 
@@ -515,8 +535,13 @@ public class ImportFiles {
 
             student.email(email);
 
+            if (student.name().contains("philine")) {
+                int debug = 3;
+            }
             if (teamName.equals("")) {
-                ImportFiles.studentsWithoutGroup.add(student);
+                if (!ImportFiles.studentsWithoutGroup.contains(student)) {
+                    ImportFiles.studentsWithoutGroup.add(student);
+                }
                 continue;
             }
             Team team = ImportFiles.findTeamByName(teamName);
@@ -692,6 +717,7 @@ public class ImportFiles {
                     }
                 }
             } catch (NoRoomWithThatNameException | NoBuildingWithThatNameException e) {
+                Log.newSection("Einlesen der Schueler:innen (Umfrage Zimmer, Klassenstufe, Zweig)");
                 Log.append(e.getMessage());
                 System.err.println(e.getMessage());
             }
@@ -704,7 +730,7 @@ public class ImportFiles {
                     overwrite = student;
                 }
             }
-            
+
             if (!duplicate) {
                 ImportFiles.students.add(student);
             }
