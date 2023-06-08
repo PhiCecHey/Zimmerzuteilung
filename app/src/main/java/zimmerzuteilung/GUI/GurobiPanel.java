@@ -262,11 +262,11 @@ public class GurobiPanel extends JPanel {
             GurobiPanel.gurobiRules.add(Gurobi.RULES.respectWish);
             boolean worked = GurobiPanel.checkUserInput(this.wishPanel.b1Field, "b1");
             if (!worked) {
-                this.area.append("Erstwusnschinternat Bonus: Bitte eine positive Zahl eintragen!\n");
+                this.area.append("Erstwunschinternat Bonus: Bitte eine positive Zahl eintragen!\n");
             }
             worked = GurobiPanel.checkUserInput(this.wishPanel.r1Field, "r1");
             if (!worked) {
-                this.area.append("Erstwusnschzimmer Bonus: Bitte eine positive Zahl eintragen!\n");
+                this.area.append("Erstwunschzimmer Bonus: Bitte eine positive Zahl eintragen!\n");
             }
             worked = GurobiPanel.checkUserInput(this.wishPanel.r2Field, "r2");
             if (!worked) {

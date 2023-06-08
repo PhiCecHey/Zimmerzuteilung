@@ -3,25 +3,25 @@ package zimmerzuteilung;
 public class Config {
     // -----------------------SCORES-----------------------
     // score for wishes
-    public static float scoreBuilding1 = 5;
-    public static float scoreBuilding2 = 10;
-    public static float scoreRoom1 = 8;
-    public static float scoreRoom2 = 5;
+    public static float scoreBuilding1 = 30;
+    public static float scoreBuilding2 = 20;
+    public static float scoreRoom1 = 20;
+    public static float scoreRoom2 = 10;
 
     // score for grade priv
-    public static float scoreTwelve = 7;
-    public static float scoreEleven = 5;
-    public static float scoreTen = 3;
+    public static float scoreTwelve = 10;
+    public static float scoreEleven = 7;
+    public static float scoreTen = 4;
 
     // score for room reservation
-    public static float scoreReservation = -50;
+    public static float scoreReservation = -100;
 
     public static float scoreRandom = 0;
     
     public static float oneRoomPerTeam = -100;
     public static float oneTeamPerRoom = -100;
     public static float maxStudentsPerRoom = -100;
-    public static float scoreGender = -50;
+    public static float scoreGender = -100;
 
     public static float scoreStayInRoom = 10;
     public static float scoreStayInBuilding = 10;

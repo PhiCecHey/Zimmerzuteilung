@@ -43,7 +43,7 @@ class WishPanel extends JPanel {
 
         this.b2Field = new JTextField();
         this.b2Field.setMaximumSize(dimField);
-        this.b2Field.setText(Float.toString(Config.scoreBuilding1));
+        this.b2Field.setText(Float.toString(Config.scoreBuilding2));
         this.add(new GroupPanel(
                 new Component[] { new Filler(50, Gui.row.height), new JLabel("Zweitwunschinternat Bonus: "), b2Field },
                 "row", dimPanel));

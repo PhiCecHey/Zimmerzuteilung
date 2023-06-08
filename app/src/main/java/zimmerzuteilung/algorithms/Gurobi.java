@@ -38,7 +38,7 @@ public class Gurobi {
     private ArrayList<Student> students;
     private ArrayList<Building> buildings;
     private ArrayList<Room> rooms;
-    
+
     // TODO: bad design
     public static ArrayList<Room> unoccupiedRooms = new ArrayList<>();
     public static ArrayList<Team> unallocatedTeams = new ArrayList<>();
@@ -147,6 +147,7 @@ public class Gurobi {
 
     // ---------------------------------------------------CONSTRAINTS---------------------------------------------------
 
+    // tested, works
     private void addConstraints() {
         if (this.rules.contains(Gurobi.RULES.maxStudentsPerRoom)) {
             this.maxStudentsPerRoom();
@@ -182,6 +183,7 @@ public class Gurobi {
         }
     }
 
+    // tested, works
     /**
      * Guaranties max one room per team.
      * 
@@ -206,6 +208,7 @@ public class Gurobi {
         }
     }
 
+    // tested, works
     /**
      * Guaranties max one team per room.
      * 
@@ -230,6 +233,7 @@ public class Gurobi {
         }
     }
 
+    // tested, works
     private void maxStudentsPerRoom() {
         try {
             GRBLinExpr expr;
@@ -247,6 +251,7 @@ public class Gurobi {
         }
     }
 
+    // tested, works
     private void maxStudentsPerRoomAlternative(float scoreMaxStudents) {
         for (int r = 0; r < this.allocations.nRooms(); ++r) {
             for (int t = 0; t < this.allocations.nTeams(); ++t) {
@@ -260,6 +265,7 @@ public class Gurobi {
         }
     }
 
+    // tested, works
     private void respectReservations() {
         try {
             GRBLinExpr expr;
@@ -279,6 +285,7 @@ public class Gurobi {
         }
     }
 
+    // tested, works
     /**
      * Adds res from the allocation score so that the respective room is
      * reserved for ninth graders.
@@ -297,6 +304,7 @@ public class Gurobi {
         }
     }
 
+    // tested, works
     /**
      * Respects the wishes of the students regarding their rooms.
      * 
@@ -341,6 +349,7 @@ public class Gurobi {
         }
     }
 
+    // tested, works
     /**
      * Respects the grade of the students of a team. If all students are in 12th
      * grade, they have highest privilege to get that room, followed by 11th
@@ -395,6 +404,7 @@ public class Gurobi {
         }
     }
 
+    // tested, works
     private void respectRoomGender() {
         try {
             GRBLinExpr expr;
@@ -416,6 +426,7 @@ public class Gurobi {
         }
     }
 
+    // tested, works
     private void respectRoomGenderAlternative(float scoreGender) {
         for (int r = 0; r < this.allocations.nRooms(); ++r) {
             for (int t = 0; t < this.allocations.nTeams(); ++t) {
@@ -544,25 +555,24 @@ public class Gurobi {
                 if (this.results[r][t] != 0) {
                     Team team = this.teams.get(t);
                     Room room = this.rooms.get(r);
-                    try {
+                    try { // tested, works
                         boolean allocateRoom = team.allocateRoom(room);
                         boolean allocateTeam = room.allocateTeam(team);
-                        if (!allocateRoom) {
-                            throw new RoomOccupiedException("Team " + team.name() + " wurde bereits das Zimmer "
-                                    + room.officialRoomNumber() + " zugeordnet.");
-                        }
-                        if (!allocateTeam) {
-                            throw new RoomOccupiedException(
-                                    "Dem Zimmer " + room.officialRoomNumber() + " wurde bereits das Team "
-                                            + team.name() + " zugeordnet.");
-                        }
-                        // TODO: test, probably buggy
                         // if room is empty or several teams may be in the room:
-                        if ((allocateRoom || !this.rules.contains(Gurobi.RULES.oneTeamPerRoom))
-                                && (allocateTeam || !this.rules.contains(Gurobi.RULES.oneRoomPerTeam))) {
+                        if ((allocateRoom || !this.rules.contains(Gurobi.RULES.oneRoomPerTeam))
+                                && (allocateTeam || !this.rules.contains(Gurobi.RULES.oneTeamPerRoom))) {
                             double score = this.allocations.get(r, t).score();
                             score = DoubleRounder.round(score, 1);
                             team.score((float) score);
+                        } else if (!allocateRoom) {
+                            throw new RoomOccupiedException("Team " + team.name() + " wurde bereits das Zimmer "
+                                    + room.officialRoomNumber() + " zugeordnet.");
+                        } else if (!allocateTeam) {
+                            throw new RoomOccupiedException(
+                                    "Dem Zimmer " + room.officialRoomNumber() + " wurde bereits das Team "
+                                            + team.name() + " zugeordnet.");
+                        } else {
+                            int debug = 3;
                         }
                     } catch (RoomOccupiedException e) {
                         e.printStackTrace();
@@ -663,6 +673,7 @@ public class Gurobi {
         }
     }
 
+    // tested, works
     public ArrayList<Room> unoccupiedRooms() {
         for (Room room : this.rooms) {
             if (room.allocatedTeams().size() == 0) {
@@ -672,6 +683,7 @@ public class Gurobi {
         return Gurobi.unoccupiedRooms;
     }
 
+    // tested, works
     public ArrayList<Team> unallocatedTeams() {
         for (Team team : this.teams) {
             if (team.allocatedRooms().size() == 0) {

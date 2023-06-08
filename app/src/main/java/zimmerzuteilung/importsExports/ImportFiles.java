@@ -25,7 +25,7 @@ public class ImportFiles {
     private static ArrayList<Team> teams = new ArrayList<>();
 
     /*
-     * public static File[] getFilesFromFolder(String pathToFolder) {
+     * private static File[] getFilesFromFolder(String pathToFolder) {
      * File[] fileList = new File[0];
      * try {
      * File folder = new File(pathToFolder);
@@ -113,6 +113,7 @@ public class ImportFiles {
         return true;
     }
 
+    // tested, works
     private static String[] splitOnString(String line, String splitOn) throws LineEmptyException {
         String quote = "\"";
         String testIfEmpty = line.replace(splitOn, "");
@@ -265,6 +266,7 @@ public class ImportFiles {
         return noWarnings;
     }
 
+    // tested, works
     public static boolean[] importWishesGirlsBoys(File csvGirls, File csvBoys)
             throws IllegalArgumentException, IOException,
             BuildingDoesNotExistException, RoomDoesNotExistException, TeamDoesNotExistException {
@@ -279,6 +281,7 @@ public class ImportFiles {
         return new boolean[] { noWarningsGirls, noWarningsBoys };
     }
 
+    // tested, works
     private static boolean importWishesWithoutLog(File csv)
             throws IOException, IllegalArgumentException, BuildingDoesNotExistException, RoomDoesNotExistException,
             TeamDoesNotExistException {
@@ -359,15 +362,37 @@ public class ImportFiles {
             }
 
             if ((b1 != null) && (b2 != null) && (r1 != null) && (r2 != null)) {
+                boolean noDoubles = true;
                 team.wish().building1(b1);
                 team.validateB1(true);
                 team.wish().room1(r1);
                 team.validateR1(true);
-                team.wish().room2(r2);
-                team.validateR2(true);
-                team.wish().building2(b2);
-                team.validateB2(true);
-                team.date(date);
+                if (team.wish().room1().id() != r2.id()) {
+                    // only use r2 as second room wish if r2 != r1
+                    team.wish().room2(r2);
+                    team.validateR2(true);
+                } else {
+                    // get random room for r2
+                    r2 = ImportFiles.getRandomRoom(b1, r1);
+                    team.wish().room2(r2);
+                    team.validateR2(false);
+                    noDoubles = false;
+                }
+                if (team.wish().building1().id() != b2.id()) {
+                    team.wish().building2(b2);
+                    team.validateB2(true);
+                } else {
+                    b2 = ImportFiles.getRandomBuilding(b1);
+                    team.wish().building2(b2);
+                    team.validateB2(false);
+                    noDoubles = false;
+                }
+                if (noDoubles) {
+                    team.date(date);
+                } else {
+                    team.date("");
+                    noWarnings = false;
+                }
             } else {
                 team.date("");
                 noWarnings = false;
@@ -430,6 +455,7 @@ public class ImportFiles {
         return noWarnings;
     }
 
+    // tested, works
     public static boolean[] importGirlBoyTeams(File txtGirls, File txtBoys) throws IllegalArgumentException,
             IOException, StudentInSeveralMoodleGroupsException, StudentDoesNotExistException {
         boolean workedGirls = ImportFiles.importTeams(txtGirls, true);
@@ -459,6 +485,7 @@ public class ImportFiles {
         return new boolean[] { workedGirls, workedBoys };
     }
 
+    // tested, works
     private static boolean importTeams(File txt, boolean girl)
             throws IOException, IllegalArgumentException, StudentInSeveralMoodleGroupsException,
             StudentDoesNotExistException {
@@ -571,6 +598,7 @@ public class ImportFiles {
         return noWarnings;
     }
 
+    // tested, works
     private static Student findStudentByName(String firstName, String lastName) {
         for (Student student : ImportFiles.students) {
             if (student.name().contains(firstName.toLowerCase()) && student.name().contains(lastName.toLowerCase())) {
@@ -580,6 +608,7 @@ public class ImportFiles {
         return null;
     }
 
+    // tested, works
     private static Team findStudentInTeam(Student student) {
         for (Team team : ImportFiles.teams) {
             Student s = team.getStudent(student.userName());
@@ -590,6 +619,7 @@ public class ImportFiles {
         return null;
     }
 
+    // tested, works
     private static Team findTeamByName(String teamName) {
         for (Team team : ImportFiles.teams) {
             if (team.name().equals(teamName.toLowerCase())) {
@@ -733,6 +763,7 @@ public class ImportFiles {
         return noWarnings;
     }
 
+    // tested, works
     private static Building getLastYearsBuilding(String nameOfBuilding) throws NoBuildingWithThatNameException {
         for (Building building : ImportFiles.buildings) {
             if (building.name().equals(nameOfBuilding)) {
@@ -742,6 +773,7 @@ public class ImportFiles {
         throw new NoBuildingWithThatNameException("Das Internat " + nameOfBuilding + " konnte nicht gefunden werden!");
     }
 
+    // tested, works
     private static Room getLastYearsRoom(Building lastYearsBuilding, String nameOfRoom)
             throws NoRoomWithThatNameException {
         Room lastYearsRoom = lastYearsBuilding.getRoom(nameOfRoom);
@@ -751,6 +783,7 @@ public class ImportFiles {
         return lastYearsRoom;
     }
 
+    // tested, works
     private static Room getLastYearsRoomAlternative(Building lastYearsBuilding, String nameOfRoom)
             throws NoRoomWithThatNameException {
         Room lastYearsRoom = lastYearsBuilding.getRoomAlternative(nameOfRoom);
@@ -766,6 +799,7 @@ public class ImportFiles {
         return lastYearsRoom;
     }
 
+    // tested, works
     private static Building findBuilding(String nameBuilding) {
         for (Building building : ImportFiles.buildings) {
             if (building.name().equals(nameBuilding)) {
@@ -775,6 +809,7 @@ public class ImportFiles {
         return null;
     }
 
+    // tested, works
     private static Building getRandomBuilding(Building building) {
         if (building == null) {
             building = new Building("ThereShallBeNoBuildingWithThisName");
@@ -789,6 +824,7 @@ public class ImportFiles {
         return random;
     }
 
+    // tested, works
     private static Room getRandomRoom(Building building, Room room) {
         if (room == null) {
             room = new Room("ThereShallBeNoRoomWithThisName");
