@@ -9,13 +9,14 @@ public class Team {
     private GENDER gender;
     private String name;
     private String date;
-    private Room allocatedRoom;
+    private ArrayList<Room> allocatedRooms;
     private float score;
     private boolean[] wishValid;
 
     private static int count = 0;
 
     public Team() {
+        this.allocatedRooms = new ArrayList<>();
         this.members = new ArrayList<>();
         this.wish = new Wish();
         this.wishValid = new boolean[] { false, false, false, false, false };
@@ -68,17 +69,17 @@ public class Team {
         return false;
     }
 
-    public Room unallocateRoom() {
-        Room room = this.allocatedRoom;
-        this.allocatedRoom = null;
-        return room;
+    public ArrayList<Room> unallocateRoom() {
+        ArrayList<Room> rooms = this.allocatedRooms;
+        this.allocatedRooms.clear();
+        return rooms;
     }
 
     public boolean allocateRoom(Room r) {
-        if (this.allocatedRoom != null) {
+        if (this.allocatedRooms.size() > 1) {
             return false;
         }
-        this.allocatedRoom = r;
+        this.allocatedRooms.add(r);
         return true;
     }
 
@@ -143,8 +144,8 @@ public class Team {
         return errormsg;
     }
 
-    public Room allocatedRoom() {
-        return this.allocatedRoom;
+    public ArrayList<Room> allocatedRooms() {
+        return this.allocatedRooms;
     }
 
     public void score(float s) {

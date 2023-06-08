@@ -19,7 +19,7 @@ import zimmerzuteilung.algorithms.Gurobi;
 public class GurobiPanel extends JPanel {
     private static ArrayList<Gurobi.RULES> gurobiRules = new ArrayList<>();
     private CheckBoxPanel oneRoomPerTeam, oneTeamPerRoom, respectWishPanel, respectGradePrivPanel, randomPanel;
-    private MustOrShouldPanel maxStudentsPerRoom, respectResPanel, respectRoomGenderPanel;
+    private MustOrShouldPanel maxStudentsPerRoom, respectReservationPanel, respectRoomGenderPanel;
     private StayInRoomPanel stayInRoomPanel;
     private GradePanel gradePanel;
     private WishPanel wishPanel;
@@ -51,8 +51,8 @@ public class GurobiPanel extends JPanel {
         descript2 = "Falls moeglich reservierte Zimmer freihalten: ";
         descript3 = "Bonus fuer nicht reservierte Zimmer: ";
         value1 = Config.scoreReservation;
-        this.respectResPanel = new MustOrShouldPanel(heading, descript1, descript2, descript3, value1);
-        topRight.add(this.respectResPanel);
+        this.respectReservationPanel = new MustOrShouldPanel(heading, descript1, descript2, descript3, value1);
+        topRight.add(this.respectReservationPanel);
 
         topRight.add(new JLabel("       "));
         topRight.add(new JLabel("       "));
@@ -199,17 +199,17 @@ public class GurobiPanel extends JPanel {
             }
         }
 
-        if (this.respectResPanel.radioPanel1.radio.isSelected()) {
+        if (this.respectReservationPanel.radioPanel1.radio.isSelected()) {
             GurobiPanel.gurobiRules.add(Gurobi.RULES.respectReservations);
-        } else if (this.respectResPanel.radioPanel2.radio.isSelected()) {
+        } else if (this.respectReservationPanel.radioPanel2.radio.isSelected()) {
             boolean worked = true;
             try {
-                Config.scoreReservation = Float.parseFloat(this.maxStudentsPerRoom.field.getText());
+                Config.scoreReservation = Float.parseFloat(this.respectReservationPanel.field.getText());
             } catch (NumberFormatException e) {
                 worked = false;
             }
             if (worked) {
-                this.respectResPanel.field.setBackground(Colors.greenTransp);
+                this.respectReservationPanel.field.setBackground(Colors.greenTransp);
             } else {
                 this.area.append("Reservierte Zimmer: Bitte eine negative Zahl eintragen!\n");
             }

@@ -4,7 +4,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
+import zimmerzuteilung.algorithms.Gurobi;
 import zimmerzuteilung.objects.Building;
 import zimmerzuteilung.objects.Room;
 import zimmerzuteilung.objects.Team;
@@ -15,27 +17,33 @@ public class ExportFiles {
 
     public static boolean eportToCsv(File file, String deliminator) {
         // one row represents one team
-        String toWrite = "Gruppenname" + deliminator + " " + "Zimmermitbewohner" + deliminator + " " + "Zugeteiltes Zimmer" + deliminator + " " + "Score (hoeher ist besser)" + deliminator + " " + "Erstwunschinternat" + deliminator + " " + "Erstwunschzimmer" + deliminator + " " + "Zweitwunschzimmer" + deliminator + " " + "Zweitwunschinternat" + deliminator + " " + "Kommentar\n";
+        String toWrite = "Gruppenname" + deliminator + " " + "Zimmermitbewohner" + deliminator + " "
+                + "Zugeteiltes Zimmer" + deliminator + " " + "Score (hoeher ist besser)" + deliminator + " "
+                + "Erstwunschinternat" + deliminator + " " + "Erstwunschzimmer" + deliminator + " "
+                + "Zweitwunschzimmer" + deliminator + " " + "Zweitwunschinternat" + deliminator + " " + "Kommentar\n";
 
-        for (Team team : ImportFiles.teams()) {            
+        for (Team team : ImportFiles.teams()) {
             String comment = "";
 
             Building b1 = null;
             Building b2 = null;
             Room r1 = null;
             Room r2 = null;
-            Room allocatedRoom = team.allocatedRoom();
+            ArrayList<Room> allocatedRooms = team.allocatedRooms();
             Wish wish = team.wish();
 
             toWrite += team.name() + deliminator + " " + team.membersToCsv() + deliminator + " ";
 
-            if (allocatedRoom == null) {
+            if (allocatedRooms == null) {
                 System.out.println("Team " + team.name() + " wurde kein Zimmer zugewiesen!");
                 comment += "Team " + team.name() + " wurde kein Zimmer zugewiesen! ";
                 toWrite += "-" + deliminator + " " + "-,";
             } else {
-                toWrite += team.allocatedRoom().officialRoomNumber()
-                        + deliminator + " " + team.score() + deliminator + " ";
+                for (Room room : team.allocatedRooms()) {
+                    toWrite += room.officialRoomNumber() + "&";
+                }
+                toWrite = toWrite.substring(0, toWrite.length() - 1);
+                toWrite += deliminator + " " + team.score() + deliminator + " ";
             }
             if (wish == null) {
                 System.out.println("Team " + team.name() + " hat keinen Zimmerwunsch abgegeben!");
@@ -76,6 +84,15 @@ public class ExportFiles {
                 toWrite += b2.name() + deliminator + " ";
             }
             toWrite += comment + "\n";
+        }
+
+        toWrite += "\n\nTeams ohne Zimmer:" + deliminator;
+        for (Team team : Gurobi.unallocatedTeams) {
+            toWrite += "~ " + team.name();
+        }
+        toWrite += "\nFreie Zimmer:" + deliminator;
+        for (Room room : Gurobi.unoccupiedRooms) {
+            toWrite += "~ " + room.officialRoomNumber();
         }
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {

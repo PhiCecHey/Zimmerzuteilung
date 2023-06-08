@@ -1,5 +1,7 @@
 package zimmerzuteilung.objects;
 
+import java.util.ArrayList;
+
 public class Room {
     private static int count = 0;
 
@@ -9,14 +11,16 @@ public class Room {
     private int capacity;
     private GENDER gender;
     private boolean reserved = false;
-    private Team allocatedTeam;
+    private ArrayList<Team> allocatedTeams;
 
     public Room() {
+        this.allocatedTeams = new ArrayList<>();
         Room.count++;
         this.id = Room.count;
     }
 
     public Room(String offRoomNum) {
+        this.allocatedTeams = new ArrayList<>();
         this.officialRoomNumber = offRoomNum;
         Room.count++;
         this.id = Room.count;
@@ -24,6 +28,7 @@ public class Room {
 
     public Room(final String unoffName, final String offNum, final GENDER s,
             final int c, boolean res) throws IllegalArgumentException {
+        this.allocatedTeams = new ArrayList<>();
         ++Room.count;
         this.id = Room.count;
         if (c < 0) {
@@ -37,18 +42,22 @@ public class Room {
         this.reserved = res;
     }
 
-    public Team unallocateTeam() {
-        Team team = this.allocatedTeam;
-        this.allocatedTeam = null;
-        return team;
+    public ArrayList<Team> unallocateTeams() {
+        ArrayList<Team> teams = this.allocatedTeams;
+        this.allocatedTeams.clear();
+        return teams;
     }
 
     public boolean allocateTeam(Team t) {
-        if (this.allocatedTeam != null) {
+        if (this.allocatedTeams.size() > 1) {
             return false;
         }
-        this.allocatedTeam = t;
+        this.allocatedTeams.add(t);
         return true;
+    }
+
+    public ArrayList<Team> allocatedTeams() {
+        return this.allocatedTeams;
     }
 
     public int id() {

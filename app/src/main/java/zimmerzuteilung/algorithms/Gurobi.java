@@ -38,6 +38,10 @@ public class Gurobi {
     private ArrayList<Student> students;
     private ArrayList<Building> buildings;
     private ArrayList<Room> rooms;
+    
+    // TODO: bad design
+    public static ArrayList<Room> unoccupiedRooms = new ArrayList<>();
+    public static ArrayList<Team> unallocatedTeams = new ArrayList<>();
 
     private Allocations allocations;
 
@@ -396,13 +400,15 @@ public class Gurobi {
             GRBLinExpr expr;
             for (int r = 0; r < this.rooms.size(); ++r) {
                 for (int t = 0; t < this.teams.size(); ++t) {
-                    expr = new GRBLinExpr();
                     Allocation alloc = allocations.get(r, t);
-                    // if room and team gender matches: 1, else: 0
-                    int genderMatches = (alloc.team().gender() == alloc.room().gender() ? 1 : 0);
-                    expr.addTerm(genderMatches, alloc.grbVar());
+                    boolean genderMatches = alloc.team().gender() == alloc.room().gender();
                     String st = "respectRoomGender_" + String.valueOf(r);
-                    this.model.addConstr(expr, GRB.EQUAL, 1, st);
+                    if (!genderMatches) {
+                        // team may not be in this room
+                        expr = new GRBLinExpr();
+                        expr.addTerm(1, alloc.grbVar());
+                        this.model.addConstr(expr, GRB.EQUAL, 0, st);
+                    }
                 }
             }
         } catch (GRBException e) {
@@ -421,6 +427,7 @@ public class Gurobi {
         }
     }
 
+    // tested, works
     /**
      * If a team wants to stay in their previous room, make sure that they will.
      */
@@ -449,7 +456,8 @@ public class Gurobi {
         }
     }
 
-    private void respectPrevAlternative(float scoreLastRoom, float scoreLastBuilding) {
+    // tested, works
+    private void respectPrevAlternative(float scorePrevRoom, float scorePrevBuilding) {
         for (int r = 0; r < this.allocations.nRooms(); ++r) {
             for (int t = 0; t < this.allocations.nTeams(); ++t) {
                 Allocation allocation = this.allocations.get(r, t);
@@ -460,11 +468,11 @@ public class Gurobi {
                     continue;
                 } else if (wish.building1().containsRoom(allocation.room())) {
                     if (allocation.team().canStayInBuilding()) {
-                        allocation.addToScore(scoreLastBuilding);
+                        allocation.addToScore(scorePrevBuilding);
                     }
                     if (wish.room1().id() == allocation.room().id()) {
                         if (allocation.team().canStayInRoom()) {
-                            allocation.addToScore(scoreLastRoom);
+                            allocation.addToScore(scorePrevRoom);
                         }
                     }
                 }
@@ -548,7 +556,10 @@ public class Gurobi {
                                     "Dem Zimmer " + room.officialRoomNumber() + " wurde bereits das Team "
                                             + team.name() + " zugeordnet.");
                         }
-                        if (allocateRoom && allocateTeam) {
+                        // TODO: test, probably buggy
+                        // if room is empty or several teams may be in the room:
+                        if ((allocateRoom || !this.rules.contains(Gurobi.RULES.oneTeamPerRoom))
+                                && (allocateTeam || !this.rules.contains(Gurobi.RULES.oneRoomPerTeam))) {
                             double score = this.allocations.get(r, t).score();
                             score = DoubleRounder.round(score, 1);
                             team.score((float) score);
@@ -641,13 +652,32 @@ public class Gurobi {
         return print;
     }
 
+    // tested, works
     private void unoccupyAllRooms() {
         for (Room room : this.rooms) {
-            room.unallocateTeam();
+            room.unallocateTeams();
         }
         for (Team team : this.teams) {
             team.score(0);
             team.unallocateRoom();
         }
+    }
+
+    public ArrayList<Room> unoccupiedRooms() {
+        for (Room room : this.rooms) {
+            if (room.allocatedTeams().size() == 0) {
+                Gurobi.unoccupiedRooms.add(room);
+            }
+        }
+        return Gurobi.unoccupiedRooms;
+    }
+
+    public ArrayList<Team> unallocatedTeams() {
+        for (Team team : this.teams) {
+            if (team.allocatedRooms().size() == 0) {
+                Gurobi.unallocatedTeams.add(team);
+            }
+        }
+        return Gurobi.unallocatedTeams;
     }
 }
