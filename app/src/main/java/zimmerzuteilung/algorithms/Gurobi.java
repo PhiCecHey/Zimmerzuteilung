@@ -69,6 +69,7 @@ public class Gurobi {
             }
         }
 
+        this.unoccupyAllRooms();
         this.allocations = new Allocations(rooms.size(), this.teams.size());
 
         try {
@@ -80,7 +81,7 @@ public class Gurobi {
         }
     }
 
-    public void calculate() {
+    public void calculate() throws GRBException {
         try {
             // ------------------------------------------------VARIABLES------------------------------------------------
 
@@ -135,6 +136,7 @@ public class Gurobi {
             Log.append("Ein Fehler ist waehrend der Berechnung aufgetreten.");
             Gui.result.showResults.append("\n\nEin Fehler ist waehrend der Berechnung aufgetreten.");
             model.dispose();
+            throw e;
         }
         Gui.result.showResults.append("\n\nBerechnung beendet.\n\n");
     }
@@ -499,7 +501,7 @@ public class Gurobi {
                     random = ThreadLocalRandom.current().nextDouble(min, max);
                 }
                 Allocation currentAlloc = this.allocations.get(r, t);
-                this.allocations.get(r, t).score(currentAlloc.score() + random);
+                currentAlloc.score(currentAlloc.score() + random);
                 objective.addTerm(currentAlloc.score(), currentAlloc.grbVar());
             }
         }
@@ -527,6 +529,8 @@ public class Gurobi {
             return false;
         }
 
+        boolean worked = true;
+
         for (int r = 0; r < this.rooms.size(); r++) {
             for (int t = 0; t < this.teams.size(); t++) {
                 if (this.results[r][t] != 0) {
@@ -535,12 +539,11 @@ public class Gurobi {
                     try {
                         boolean allocateRoom = team.allocateRoom(room);
                         boolean allocateTeam = room.allocateTeam(team);
-                        if (allocateRoom == false) {
+                        if (!allocateRoom) {
                             throw new RoomOccupiedException("Team " + team.name() + " wurde bereits das Zimmer "
                                     + room.officialRoomNumber() + " zugeordnet.");
-
                         }
-                        if (allocateTeam == false) {
+                        if (!allocateTeam) {
                             throw new RoomOccupiedException(
                                     "Dem Zimmer " + room.officialRoomNumber() + " wurde bereits das Team "
                                             + team.name() + " zugeordnet.");
@@ -552,11 +555,12 @@ public class Gurobi {
                         }
                     } catch (RoomOccupiedException e) {
                         e.printStackTrace();
+                        worked = false;
                     }
                 }
             }
         }
-        return true;
+        return worked;
     }
 
     private String print(boolean all, boolean worked) {
@@ -635,5 +639,15 @@ public class Gurobi {
             }
         }
         return print;
+    }
+
+    private void unoccupyAllRooms() {
+        for (Room room : this.rooms) {
+            room.unallocateTeam();
+        }
+        for (Team team : this.teams) {
+            team.score(0);
+            team.unallocateRoom();
+        }
     }
 }

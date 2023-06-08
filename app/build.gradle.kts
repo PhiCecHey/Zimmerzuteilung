@@ -46,6 +46,10 @@ dependencies {
     implementation("com.formdev:flatlaf:3.0")
     implementation("com.formdev:flatlaf-intellij-themes:3.0")
 
+    // escape utils
+    implementation("org.apache.commons:commons-text:1.9")
+
+
     //implementation("com.github.johnrengelman:shadow:7.0.0")
     
     // https://github.com/ebourg/jsign

@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import zimmerzuteilung.objects.Building;
 import zimmerzuteilung.objects.Room;
@@ -12,15 +11,13 @@ import zimmerzuteilung.objects.Team;
 import zimmerzuteilung.objects.Wish;
 
 public class ExportFiles {
-
     // private static ArrayList<Building> buildings = ImportFiles.buildings();
-    private static ArrayList<Team> teams = ImportFiles.teams();
 
     public static boolean eportToCsv(File file, String deliminator) {
         // one row represents one team
         String toWrite = "Gruppenname" + deliminator + " " + "Zimmermitbewohner" + deliminator + " " + "Zugeteiltes Zimmer" + deliminator + " " + "Score (hoeher ist besser)" + deliminator + " " + "Erstwunschinternat" + deliminator + " " + "Erstwunschzimmer" + deliminator + " " + "Zweitwunschzimmer" + deliminator + " " + "Zweitwunschinternat" + deliminator + " " + "Kommentar\n";
 
-        for (Team team : ExportFiles.teams) {
+        for (Team team : ImportFiles.teams()) {            
             String comment = "";
 
             Building b1 = null;

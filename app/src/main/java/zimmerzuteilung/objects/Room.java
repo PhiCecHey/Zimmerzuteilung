@@ -37,6 +37,12 @@ public class Room {
         this.reserved = res;
     }
 
+    public Team unallocateTeam() {
+        Team team = this.allocatedTeam;
+        this.allocatedTeam = null;
+        return team;
+    }
+
     public boolean allocateTeam(Team t) {
         if (this.allocatedTeam != null) {
             return false;
@@ -52,7 +58,7 @@ public class Room {
     public int capacity() {
         return this.capacity;
     }
-    
+
     public void capacity(final int c) {
         this.capacity = c;
     }
@@ -61,7 +67,7 @@ public class Room {
         return this.officialRoomNumber;
     }
 
-    public void officialRoomNumber(String n){
+    public void officialRoomNumber(String n) {
         this.officialRoomNumber = n;
     }
 

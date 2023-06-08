@@ -68,6 +68,12 @@ public class Team {
         return false;
     }
 
+    public Room unallocateRoom() {
+        Room room = this.allocatedRoom;
+        this.allocatedRoom = null;
+        return room;
+    }
+
     public boolean allocateRoom(Room r) {
         if (this.allocatedRoom != null) {
             return false;

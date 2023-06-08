@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -13,9 +14,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import org.apache.commons.text.StringEscapeUtils;
+
+import gurobi.GRBException;
 import zimmerzuteilung.algorithms.Gurobi;
 import zimmerzuteilung.importsExports.ExportFiles;
 import zimmerzuteilung.importsExports.ImportFiles;
+import zimmerzuteilung.objects.Team;
 
 public class ResultsPanel extends JPanel {
     public JTextArea showResults;
@@ -46,7 +51,7 @@ public class ResultsPanel extends JPanel {
                         this.deliminator, this.exportResultsButton },
                 "row"));
 
-        ResultsPanel.exportResults(exportResultsButton, this.chooseFolder.field, this.deliminator.getText());
+        ResultsPanel.exportResults(exportResultsButton, this.chooseFolder.field, this.deliminator);
     }
 
     private void calcResult() {
@@ -59,19 +64,23 @@ public class ResultsPanel extends JPanel {
                 showResults.append("Berechnung gestartet...\n\n");
 
                 Gurobi g = new Gurobi(GurobiPanel.rules(), ImportFiles.buildings(), ImportFiles.teams());
-                g.calculate();
+                try {
+                    g.calculate();
+                } catch (GRBException e) {
+                    showResults.append("Berechnung konnte nicht durchgefuehrt werden.");
+                }
             }
         });
     }
 
-    private static void exportResults(JButton b, JTextField f, String deliminator) {
+    private static void exportResults(JButton b, JTextField path, JTextField deliminator) {
         b.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                File file = new File(f.getText());
-                if (ExportFiles.eportToCsv(file, deliminator)) {
-                    f.setBackground(Colors.greenTransp);
+                File file = new File(path.getText());
+                if (ExportFiles.eportToCsv(file, StringEscapeUtils.unescapeJava(deliminator.getText()))) {
+                    path.setBackground(Colors.greenTransp);
                 } else {
-                    f.setBackground(Colors.redTransp);
+                    path.setBackground(Colors.redTransp);
                 }
             }
         });
